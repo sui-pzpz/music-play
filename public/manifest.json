@@ -1,0 +1,18 @@
+{
+  "name": "音瓶 - 在线音乐播放器",
+  "short_name": "音瓶",
+  "description": "支持网易云和QQ音乐双平台搜索播放的在线音乐播放器",
+  "start_url": "/music-play/",
+  "display": "standalone",
+  "background_color": "#f0fdf4",
+  "theme_color": "#ea580c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/music-play/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
