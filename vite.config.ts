@@ -44,7 +44,6 @@ export default defineConfig({
         navigateFallback: '/music-play/index.html',
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         disableDevLogs: true,
-        // 跳过 workbox 内部 terser 压缩，避免 serialize-javascript 兼容问题
         skipWaiting: true,
         clientsClaim: true,
         runtimeCaching: [

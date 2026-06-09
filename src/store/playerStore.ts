@@ -7,6 +7,7 @@ import { showToast } from '@/store/toastStore'
 
 export type PlayMode = 'sequential' | 'loop' | 'single' | 'shuffle'
 export type DisplayMode = 'lyrics' | 'vinyl'
+export type ThemeColor = 'green' | 'orange' | 'blue' | 'purple'
 
 // 从 localStorage 读取收藏列表
 function loadFavorites(): Song[] {
@@ -192,6 +193,10 @@ interface PlayerStore {
   // 搜索历史
   searchHistory: string[]
 
+  // 主题色
+  themeColor: ThemeColor
+  setThemeColor: (color: ThemeColor) => void
+
   setSearchKeyword: (keyword: string) => void
   setPlatform: (platform: MusicPlatform) => void
   search: (keyword?: string) => Promise<void>
@@ -290,6 +295,14 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
   })(),
   savedPlaylists: loadSavedPlaylists(),
   searchHistory: loadSearchHistory(),
+  themeColor: (() => {
+    try {
+      const saved = localStorage.getItem('music_themeColor') as ThemeColor
+      return saved || 'green'
+    } catch {
+      return 'green'
+    }
+  })(),
 
   // 初始化时加载推荐热歌
   initRecommend: async () => {
@@ -1447,6 +1460,13 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     const newHistory = get().searchHistory.filter((k) => k !== keyword)
     set({ searchHistory: newHistory })
     saveSearchHistory(newHistory)
+  },
+
+  setThemeColor: (color: ThemeColor) => {
+    set({ themeColor: color })
+    try {
+      localStorage.setItem('music_themeColor', color)
+    } catch { /* ignore */ }
   },
 }))
 

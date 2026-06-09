@@ -5,6 +5,7 @@ import { Search, Loader2, Sparkles, Compass, RefreshCw, History, X, Music, Folde
 import { clsx } from 'clsx'
 import type { MusicPlatform } from '@/types'
 
+
 export default function Home() {
   const search = usePlayerStore((s) => s.search)
   const isSearching = usePlayerStore((s) => s.isSearching)
@@ -104,31 +105,31 @@ export default function Home() {
     <div className="px-4 pb-4">
       {/* 搜索区 */}
       <div className="mb-4">
-        {/* 平台切换 - 米白底色+浅绿边框，选中浅绿填充 */}
-        <div className="flex gap-1 mb-2">
-          <button
-            onClick={() => handlePlatformChange('netease')}
-            className={clsx(
-              'rounded-lg px-2.5 py-1 text-xs font-medium transition-all border',
-              platform === 'netease'
-                ? (darkMode ? 'bg-emerald-600/80 text-white border-emerald-500' : 'bg-emerald-500 text-white border-emerald-400')
-                : (darkMode ? 'bg-[#27273a] text-zinc-400 border-[#3a3a5a] hover:bg-[#3a3a5a]' : 'bg-white/80 text-emerald-700 border-green-200 hover:bg-green-50')
-            )}
-          >
-            网易云
-          </button>
-          <button
-            onClick={() => handlePlatformChange('qq')}
-            className={clsx(
-              'rounded-lg px-2.5 py-1 text-xs font-medium transition-all border',
-              platform === 'qq'
-                ? (darkMode ? 'bg-emerald-600/80 text-white border-emerald-500' : 'bg-emerald-500 text-white border-emerald-400')
-                : (darkMode ? 'bg-[#27273a] text-zinc-400 border-[#3a3a5a] hover:bg-[#3a3a5a]' : 'bg-white/80 text-emerald-700 border-green-200 hover:bg-green-50')
-            )}
-          >
-            QQ音乐
-          </button>
-        </div>
+          {/* 平台切换 - 米白底色+浅绿边框，选中浅绿填充 */}
+          <div className="flex gap-1 mb-2">
+            <button
+              onClick={() => handlePlatformChange('netease')}
+              className={clsx(
+                'rounded-lg px-2.5 py-1 text-xs font-medium transition-all border',
+                platform === 'netease'
+                  ? (darkMode ? 'bg-emerald-600/80 text-white border-emerald-500' : 'bg-emerald-500 text-white border-emerald-400')
+                  : (darkMode ? 'bg-[#27273a] text-zinc-400 border-[#3a3a5a] hover:bg-[#3a3a5a]' : 'bg-white/80 text-emerald-700 border-green-200 hover:bg-green-50')
+              )}
+            >
+              网易云
+            </button>
+            <button
+              onClick={() => handlePlatformChange('qq')}
+              className={clsx(
+                'rounded-lg px-2.5 py-1 text-xs font-medium transition-all border',
+                platform === 'qq'
+                  ? (darkMode ? 'bg-emerald-600/80 text-white border-emerald-500' : 'bg-emerald-500 text-white border-emerald-400')
+                  : (darkMode ? 'bg-[#27273a] text-zinc-400 border-[#3a3a5a] hover:bg-[#3a3a5a]' : 'bg-white/80 text-emerald-700 border-green-200 hover:bg-green-50')
+              )}
+            >
+              QQ音乐
+            </button>
+          </div>
 
         {/* 搜索框 - 米白底+浅绿边框，深绿放大镜，浅绿搜索按钮 */}
         <div className="flex items-center gap-2">
@@ -345,37 +346,37 @@ export default function Home() {
       )}
 
       {/* 猜你喜欢 - 深青绿标题，去掉紫色 */}
-      <div className="glass-card p-4 mb-4 animate-scale-in relative overflow-hidden">
-        <div className="absolute bottom-0 left-0 opacity-20">
-          <svg width="60" height="60" viewBox="0 0 40 40" fill="none" className="text-emerald-500">
-            <path d="M0,20 Q10,10 20,20 Q30,30 40,20" stroke="currentColor" strokeWidth="0.8" />
-            <path d="M0,25 Q10,15 20,25 Q30,35 40,25" stroke="currentColor" strokeWidth="0.6" />
-          </svg>
-        </div>
-        <div className="absolute top-2 right-2 opacity-15">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" className="text-emerald-500">
-            <path d="M12 22C6 16 2 12 2 8c0-2.2 1.8-4 4-4 2 0 4 1 5 3 1-2 3-3 5-3 2.2 0 4 1.8 4 4 0 4-4 8-10 14z" />
-          </svg>
-        </div>
-        <div className="flex items-center justify-between mb-3 relative z-10">
-          <div className={clsx('flex items-center gap-2', darkMode ? 'text-emerald-400' : 'text-emerald-700')}>
-            <Sparkles className="h-5 w-5" />
-            <h2 className="font-semibold">猜你喜欢</h2>
-            {smartRecommend.length > 0 && (
-              <span className="text-xs text-emerald-400/70">{smartRecommend.length}首</span>
+      <div className="glass-card p-4 mb-4 relative overflow-hidden">
+          <div className="absolute bottom-0 left-0 opacity-20">
+            <svg width="60" height="60" viewBox="0 0 40 40" fill="none" className="text-emerald-500">
+              <path d="M0,20 Q10,10 20,20 Q30,30 40,20" stroke="currentColor" strokeWidth="0.8" />
+              <path d="M0,25 Q10,15 20,25 Q30,35 40,25" stroke="currentColor" strokeWidth="0.6" />
+            </svg>
+          </div>
+          <div className="absolute top-2 right-2 opacity-15">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" className="text-emerald-500">
+              <path d="M12 22C6 16 2 12 2 8c0-2.2 1.8-4 4-4 2 0 4 1 5 3 1-2 3-3 5-3 2.2 0 4 1.8 4 4 0 4-4 8-10 14z" />
+            </svg>
+          </div>
+          <div className="flex items-center justify-between mb-3 relative z-10">
+            <div className={clsx('flex items-center gap-2', darkMode ? 'text-emerald-400' : 'text-emerald-700')}>
+              <Sparkles className="h-5 w-5" />
+              <h2 className="font-semibold">猜你喜欢</h2>
+              {smartRecommend.length > 0 && (
+                <span className="text-xs text-emerald-400/70">{smartRecommend.length}首</span>
+              )}
+            </div>
+            {(favorites.length > 0 || history.length > 0) && (
+              <button
+                onClick={() => { usePlayerStore.setState({ smartRecommend: [] }); loadSmartRecommend() }}
+                disabled={smartRecommendLoading}
+                className="flex items-center gap-1 text-xs text-emerald-400/70 hover:text-emerald-600 disabled:opacity-50"
+              >
+                <RefreshCw className={clsx('h-3.5 w-3.5', smartRecommendLoading && 'animate-spin')} />
+                换一批
+              </button>
             )}
           </div>
-          {(favorites.length > 0 || history.length > 0) && (
-            <button
-              onClick={() => { usePlayerStore.setState({ smartRecommend: [] }); loadSmartRecommend() }}
-              disabled={smartRecommendLoading}
-              className="flex items-center gap-1 text-xs text-emerald-400/70 hover:text-emerald-600 disabled:opacity-50"
-            >
-              <RefreshCw className={clsx('h-3.5 w-3.5', smartRecommendLoading && 'animate-spin')} />
-              换一批
-            </button>
-          )}
-        </div>
         {favorites.length === 0 && history.length === 0 ? (
           <div className={clsx('text-center py-8', darkMode ? 'text-zinc-500' : 'text-emerald-400/60')}>
             <Music className="h-10 w-10 mx-auto mb-2 opacity-50" />
@@ -411,7 +412,7 @@ export default function Home() {
       </div>
 
       {/* 音乐漫游 - 深青绿标题，去掉蓝色/橙色 */}
-      <div className="glass-card p-4 animate-scale-in relative overflow-hidden" style={{ animationDelay: '0.1s' }}>
+      <div className="glass-card p-4 relative overflow-hidden">
         <div className="absolute bottom-0 right-0 opacity-20">
           <svg width="60" height="60" viewBox="0 0 40 40" fill="none" className="text-emerald-500">
             <path d="M40,20 Q30,10 20,20 Q10,30 0,20" stroke="currentColor" strokeWidth="0.8" />

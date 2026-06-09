@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import { usePlayerStore } from '@/store/playerStore'
 import { showToast } from '@/store/toastStore'
@@ -219,7 +220,8 @@ export default function Settings() {
   const searchHistory = usePlayerStore((s) => s.searchHistory)
   const clearSearchHistory = usePlayerStore((s) => s.clearSearchHistory)
 
-  const [themeColor, setThemeColor] = useState<ThemeColor>('green')
+  const themeColor = usePlayerStore((s) => s.themeColor)
+  const setThemeColor = usePlayerStore((s) => s.setThemeColor)
 
   const displayModeOptions: SettingOption[] = [
     { value: 'lyrics', label: '歌词' },

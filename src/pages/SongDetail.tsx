@@ -1,304 +1,175 @@
-import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { ArrowLeft, Heart, Play, Pause, SkipBack, SkipForward, Volume2, Share2, MoreHorizontal } from 'lucide-react'
 import { usePlayerStore } from '@/store/playerStore'
-import { showToast } from '@/store/toastStore'
 import { clsx } from 'clsx'
-import {
-  Play,
-  Heart,
-  Plus,
-  Share2,
-  Music,
-  Clock,
-  Disc,
-  Album,
-  ExternalLink
-} from 'lucide-react'
-import { Decorations } from '@/components/Decorations'
-import type { Song } from '@/types'
-
-function RelatedSongRow({ song, onPlay, onAdd }: { song: Song; onPlay: () => void; onAdd: () => void }) {
-  const darkMode = usePlayerStore((s) => s.darkMode)
-  const isFavorite = usePlayerStore((s) => s.isFavorite(song.id, song.platform))
-  const toggleFavorite = usePlayerStore((s) => s.toggleFavorite)
-
-  return (
-    <div className={clsx(
-      'flex items-center gap-3 px-4 py-3 rounded-xl transition-all cursor-pointer',
-      darkMode ? 'hover:bg-[#2a2a4a]/50' : 'hover:bg-white/60'
-    )}
-    onClick={onPlay}
-    >
-      {song.picUrl ? (
-        <img
-          src={song.picUrl}
-          alt=""
-          className="w-10 h-10 rounded-lg object-cover"
-        />
-      ) : (
-        <div className={clsx('w-10 h-10 rounded-lg flex items-center justify-center', darkMode ? 'bg-zinc-700' : 'bg-zinc-200')}>
-          <Music className="h-5 w-5 text-zinc-400" />
-        </div>
-      )}
-      <div className="flex-1 min-w-0">
-        <p className={clsx('text-sm font-medium truncate', darkMode ? 'text-white' : 'text-zinc-800')}>
-          {song.name}
-        </p>
-        <p className={clsx('text-xs truncate', darkMode ? 'text-zinc-500' : 'text-zinc-500')}>
-          {song.artists}
-        </p>
-      </div>
-      <div className="flex items-center gap-1">
-        <button
-          onClick={(e) => { e.stopPropagation(); toggleFavorite(song) }}
-          className={clsx(
-            'p-1.5 rounded-full transition-all',
-            isFavorite ? 'text-red-500' : darkMode ? 'text-zinc-500 hover:text-red-400' : 'text-zinc-400 hover:text-red-500'
-          )}
-        >
-          <Heart className="h-4 w-4" fill={isFavorite ? 'currentColor' : 'none'} />
-        </button>
-        <button
-          onClick={(e) => { e.stopPropagation(); onAdd() }}
-          className={clsx(
-            'p-1.5 rounded-full transition-all',
-            darkMode ? 'text-zinc-500 hover:text-green-400' : 'text-zinc-400 hover:text-green-600'
-          )}
-        >
-          <Plus className="h-4 w-4" />
-        </button>
-      </div>
-    </div>
-  )
-}
+import { useState, useEffect } from 'react'
 
 export default function SongDetail() {
-  const { platform, id } = useParams<{ platform: string; id: string }>()
+  const { platform, id } = useParams()
   const navigate = useNavigate()
   const darkMode = usePlayerStore((s) => s.darkMode)
-  const playlist = usePlayerStore((s) => s.playlist)
-  const playSong = usePlayerStore((s) => s.playSong)
+  const isPlaying = usePlayerStore((s) => s.isPlaying)
+  const togglePlay = usePlayerStore((s) => s.togglePlay)
+  const nextSong = usePlayerStore((s) => s.nextSong)
+  const prevSong = usePlayerStore((s) => s.prevSong)
   const toggleFavorite = usePlayerStore((s) => s.toggleFavorite)
-  const addToPlayNext = usePlayerStore((s) => s.addToPlayNext)
-  const isFavorite = usePlayerStore((s) => s.isFavorite)
-  const addSongToPlaylist = usePlayerStore((s) => s.addSongToPlaylist)
-  const savedPlaylists = usePlayerStore((s) => s.savedPlaylists)
+  const favorites = usePlayerStore((s) => s.favorites)
+  const currentSong = usePlayerStore((s) => s.currentSong)
+  const currentTime = usePlayerStore((s) => s.currentTime)
+  const duration = usePlayerStore((s) => s.duration)
+  const volume = usePlayerStore((s) => s.volume)
+  const setVolume = usePlayerStore((s) => s.setVolume)
 
-  const [currentSong, setCurrentSong] = useState<Song | null>(null)
-  const [relatedSongs, setRelatedSongs] = useState<Song[]>([])
-  const [showAddToPlaylist, setShowAddToPlaylist] = useState(false)
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false)
 
-  useEffect(() => {
-    const song = playlist.find((s) => s.id === Number(id) && s.platform === platform)
-    if (song) {
-      setCurrentSong(song)
-      // Find related songs by same artist
-      const artist = song.artists.split(/[/、,，]/)[0].trim()
-      const related = playlist.filter(
-        (s) => s.artists.includes(artist) && s.id !== song.id
-      ).slice(0, 6)
-      setRelatedSongs(related)
-    } else {
-      navigate('/')
-    }
-  }, [id, platform, playlist, navigate])
-
-  const handlePlay = () => {
-    if (!currentSong) return
-    const index = playlist.findIndex((s) => s.id === currentSong.id)
-    if (index >= 0) {
-      playSong(index)
-    }
+  const song = currentSong || {
+    id: parseInt(id || '1'),
+    name: '晴天',
+    artists: '周杰伦',
+    album: '叶惠美',
+    picUrl: 'https://neeko-copilot.bytedance.net/api/text_to_image?prompt=music%20album%20cover%20sunny%20day%20blue%20sky%20clouds&image_size=square',
+    platform: (platform || 'netease') as 'netease' | 'qq',
+    duration: 269000,
   }
 
-  const handleShare = () => {
-    if (!currentSong) return
-    const shareUrl = `${window.location.origin}/music-play/song/${currentSong.platform}/${currentSong.id}`
-    navigator.clipboard.writeText(shareUrl)
-    showToast('链接已复制到剪贴板', 'success')
-  }
+  const isFav = favorites.some(f => f.id === song.id && f.platform === song.platform)
 
-  const handleAddToPlaylist = (playlistId: string) => {
-    if (!currentSong) return
-    addSongToPlaylist(playlistId, currentSong)
-    setShowAddToPlaylist(false)
-    showToast(`已添加到歌单`, 'success')
-  }
-
-  if (!currentSong) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className={clsx(darkMode ? 'text-zinc-400' : 'text-zinc-500')}>歌曲不存在</p>
-      </div>
-    )
-  }
-
-  const formatDuration = (ms: number) => {
-    if (!ms) return '--:--'
-    const seconds = Math.floor(ms / 1000)
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60000)
+    const secs = Math.floor((seconds % 60000) / 1000)
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (!target.closest('.volume-container')) {
+        setShowVolumeSlider(false)
+      }
+    }
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [])
+
   return (
-    <div className="min-h-screen relative">
-      <Decorations />
-      <div className="relative z-10 max-w-md mx-auto px-4 py-6 space-y-6">
-        <div className="glass-card p-6 text-center animate-scale-in">
-          <div className="relative mb-6">
-            {currentSong.picUrl ? (
-              <div className="relative inline-block">
-                <img
-                  src={currentSong.picUrl}
-                  alt={currentSong.name}
-                  className="w-40 h-40 rounded-2xl object-cover shadow-xl animate-float"
-                />
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/20 to-transparent" />
-              </div>
-            ) : (
-              <div className={clsx(
-                'w-40 h-40 rounded-2xl mx-auto flex items-center justify-center shadow-xl',
-                darkMode ? 'bg-zinc-700' : 'bg-zinc-200'
-              )}>
-                <Music className={clsx('h-16 w-16', darkMode ? 'text-zinc-500' : 'text-zinc-300')} />
-              </div>
-            )}
-          </div>
-          <h1 className={clsx('text-xl font-bold mb-2', darkMode ? 'text-white' : 'text-zinc-800')}>
-            {currentSong.name}
-          </h1>
-          <p className={clsx('text-sm mb-1', darkMode ? 'text-green-400' : 'text-green-600')}>
-            {currentSong.artists}
-          </p>
-          <p className={clsx('text-xs', darkMode ? 'text-zinc-500' : 'text-zinc-400')}>
-            {currentSong.album} · {currentSong.platform === 'netease' ? '网易云音乐' : 'QQ音乐'} · {formatDuration(currentSong.duration || 0)}
-          </p>
-        </div>
-
-        <div className="glass-card p-4 animate-scale-in" style={{ animationDelay: '0.1s' }}>
-          <div className="flex items-center justify-center gap-3">
-            <button
-              onClick={handlePlay}
-              className="flex-1 flex items-center justify-center gap-2 btn-primary"
-            >
-              <Play className="h-5 w-5" />
-              <span>播放</span>
-            </button>
-            <button
-              onClick={() => toggleFavorite(currentSong)}
-              className={clsx(
-                'p-3 rounded-full transition-all',
-                isFavorite(currentSong.id, currentSong.platform)
-                  ? 'text-red-500 scale-110'
-                  : darkMode ? 'text-zinc-400 hover:text-red-400' : 'text-zinc-400 hover:text-red-500'
-              )}
-            >
-              <Heart className="h-6 w-6" fill={isFavorite(currentSong.id, currentSong.platform) ? 'currentColor' : 'none'} />
-            </button>
-            <button
-              onClick={() => addToPlayNext(currentSong)}
-              className={clsx(
-                'p-3 rounded-full transition-all',
-                darkMode ? 'text-zinc-400 hover:text-green-400' : 'text-zinc-400 hover:text-green-600'
-              )}
-            >
-              <Plus className="h-6 w-6" />
-            </button>
-            <div className="relative">
-              <button
-                onClick={() => setShowAddToPlaylist(!showAddToPlaylist)}
-                className={clsx(
-                  'p-3 rounded-full transition-all',
-                  darkMode ? 'text-zinc-400 hover:text-green-400' : 'text-zinc-400 hover:text-green-600'
-                )}
-              >
-                <Album className="h-6 w-6" />
-              </button>
-              {showAddToPlaylist && (
-                <div className={clsx(
-                  'absolute top-full right-0 mt-1 w-40 rounded-xl overflow-hidden z-20',
-                  darkMode ? 'bg-[#27273a]' : 'bg-white',
-                  'border border-green-200/30 shadow-xl'
-                )}>
-                  {savedPlaylists.map((pl) => (
-                    <button
-                      key={pl.id}
-                      onClick={() => handleAddToPlaylist(pl.id)}
-                      className={clsx(
-                        'w-full px-4 py-2 text-left text-sm transition-colors',
-                        darkMode ? 'hover:bg-[#3a3a4a] text-zinc-300' : 'hover:bg-green-50 text-zinc-700'
-                      )}
-                    >
-                      {pl.name}
-                    </button>
-                  ))}
-                  {savedPlaylists.length === 0 && (
-                    <p className={clsx('px-4 py-2 text-sm text-center', darkMode ? 'text-zinc-500' : 'text-zinc-400')}>
-                      暂无歌单
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-            <button
-              onClick={handleShare}
-              className={clsx(
-                'p-3 rounded-full transition-all',
-                darkMode ? 'text-zinc-400 hover:text-green-400' : 'text-zinc-400 hover:text-green-600'
-              )}
-            >
-              <Share2 className="h-6 w-6" />
-            </button>
-          </div>
-        </div>
-
-        <div className="glass-card p-4 animate-scale-in" style={{ animationDelay: '0.2s' }}>
-          <div className={clsx('flex items-center gap-2 mb-4', darkMode ? 'text-green-400' : 'text-green-600')}>
-            <Disc className="h-5 w-5" />
-            <h2 className="font-semibold">歌曲信息</h2>
-          </div>
-          <div className="space-y-3">
-            <div className={clsx('flex items-center justify-between py-2', darkMode ? 'border-b border-[#2a2a4a]' : 'border-b border-green-200/50')}>
-              <span className={clsx('text-sm', darkMode ? 'text-zinc-500' : 'text-zinc-500')}>歌曲名</span>
-              <span className={clsx('text-sm', darkMode ? 'text-white' : 'text-zinc-800')}>{currentSong.name}</span>
-            </div>
-            <div className={clsx('flex items-center justify-between py-2', darkMode ? 'border-b border-[#2a2a4a]' : 'border-b border-green-200/50')}>
-              <span className={clsx('text-sm', darkMode ? 'text-zinc-500' : 'text-zinc-500')}>歌手</span>
-              <span className={clsx('text-sm', darkMode ? 'text-white' : 'text-zinc-800')}>{currentSong.artists}</span>
-            </div>
-            <div className={clsx('flex items-center justify-between py-2', darkMode ? 'border-b border-[#2a2a4a]' : 'border-b border-green-200/50')}>
-              <span className={clsx('text-sm', darkMode ? 'text-zinc-500' : 'text-zinc-500')}>专辑</span>
-              <span className={clsx('text-sm', darkMode ? 'text-white' : 'text-zinc-800')}>{currentSong.album}</span>
-            </div>
-            <div className={clsx('flex items-center justify-between py-2')}>
-              <span className={clsx('text-sm', darkMode ? 'text-zinc-500' : 'text-zinc-500')}>时长</span>
-              <span className={clsx('text-sm', darkMode ? 'text-white' : 'text-zinc-800')}>{formatDuration(currentSong.duration || 0)}</span>
-            </div>
-          </div>
-        </div>
-
-        {relatedSongs.length > 0 && (
-          <div className="glass-card overflow-hidden animate-scale-in" style={{ animationDelay: '0.3s' }}>
-            <div className={clsx('flex items-center gap-2 px-4 py-3 border-b border-green-200/20', darkMode ? 'text-green-400' : 'text-green-600')}>
-              <Music className="h-5 w-5" />
-              <h2 className="font-semibold">相关推荐</h2>
-            </div>
-            <div className="space-y-1">
-              {relatedSongs.map((song) => (
-                <RelatedSongRow
-                  key={`${song.id}-${song.platform}`}
-                  song={song}
-                  onPlay={() => {
-                    const index = playlist.findIndex((s) => s.id === song.id)
-                    if (index >= 0) playSong(index)
-                  }}
-                  onAdd={() => addToPlayNext(song)}
-                />
-              ))}
-            </div>
-          </div>
+    <div className="px-4 pb-4">
+      <button
+        onClick={() => navigate(-1)}
+        className={clsx(
+          'flex items-center gap-2 mb-4 text-sm transition-colors',
+          darkMode ? 'text-zinc-400 hover:text-emerald-400' : 'text-emerald-600 hover:text-emerald-700'
         )}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        返回
+      </button>
+
+      <div className="flex flex-col items-center mb-6">
+        <div className={clsx(
+          'w-64 h-64 rounded-2xl overflow-hidden mb-4 shadow-2xl',
+          darkMode ? 'shadow-zinc-800/50' : 'shadow-emerald-200/50'
+        )}>
+          <img src={song.picUrl} alt={song.name} className="w-full h-full object-cover" />
+        </div>
+        <h1 className={clsx('text-xl font-bold mb-1 text-center', darkMode ? 'text-white' : 'text-emerald-800')}>
+          {song.name}
+        </h1>
+        <p className={clsx('text-sm text-center', darkMode ? 'text-zinc-400' : 'text-emerald-600')}>
+          {song.artists} - {song.album}
+        </p>
+      </div>
+
+      <div className="mb-4">
+        <div className={clsx(
+          'h-1 rounded-full cursor-pointer relative',
+          darkMode ? 'bg-[#3a3a5a]' : 'bg-green-200/60'
+        )}
+          onClick={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect()
+            const percent = (e.clientX - rect.left) / rect.width
+            const newTime = percent * duration
+            usePlayerStore.getState().setCurrentTime(newTime)
+          }}
+        >
+          <div className={clsx('h-full rounded-full transition-all', darkMode ? 'bg-emerald-500' : 'bg-emerald-500')}
+            style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
+          />
+        </div>
+        <div className="flex justify-between mt-1">
+          <span className={clsx('text-xs', darkMode ? 'text-zinc-500' : 'text-emerald-500/70')}>
+            {formatTime(currentTime)}
+          </span>
+          <span className={clsx('text-xs', darkMode ? 'text-zinc-500' : 'text-emerald-500/70')}>
+            {formatTime(duration)}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-center gap-6 mb-6">
+        <button onClick={prevSong} className={clsx(
+          'p-3 rounded-full transition-all',
+          darkMode ? 'text-zinc-400 hover:text-emerald-400' : 'text-emerald-600 hover:text-emerald-700'
+        )}>
+          <SkipBack className="h-6 w-6" />
+        </button>
+        <button onClick={togglePlay} className={clsx(
+          'p-5 rounded-full transition-all shadow-lg',
+          darkMode ? 'bg-emerald-600 text-white hover:bg-emerald-500' : 'bg-emerald-500 text-white hover:bg-emerald-400'
+        )}>
+          {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8 ml-1" />}
+        </button>
+        <button onClick={nextSong} className={clsx(
+          'p-3 rounded-full transition-all',
+          darkMode ? 'text-zinc-400 hover:text-emerald-400' : 'text-emerald-600 hover:text-emerald-700'
+        )}>
+          <SkipForward className="h-6 w-6" />
+        </button>
+      </div>
+
+      <div className="flex items-center justify-center gap-8">
+        <button onClick={() => currentSong && toggleFavorite(currentSong)} className={clsx(
+          'flex flex-col items-center gap-1 transition-all',
+          isFav ? 'text-red-500' : darkMode ? 'text-zinc-400 hover:text-red-400' : 'text-emerald-600 hover:text-red-500'
+        )}>
+          <Heart className={clsx('h-5 w-5', isFav && 'fill-current')} />
+          <span className="text-xs">喜欢</span>
+        </button>
+        <div className="relative volume-container">
+          <button onClick={() => setShowVolumeSlider(!showVolumeSlider)} className={clsx(
+            'flex flex-col items-center gap-1 transition-all',
+            darkMode ? 'text-zinc-400 hover:text-emerald-400' : 'text-emerald-600 hover:text-emerald-700'
+          )}>
+            <Volume2 className="h-5 w-5" />
+            <span className="text-xs">音量</span>
+          </button>
+          {showVolumeSlider && (
+            <div className={clsx(
+              'absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-2 rounded-lg',
+              darkMode ? 'bg-[#27273a]' : 'bg-white/90'
+            )}>
+              <input
+                type="range" min="0" max="1" step="0.01" value={volume}
+                onChange={(e) => setVolume(parseFloat(e.target.value))}
+                className="w-24 h-1 rounded-full appearance-none cursor-pointer"
+                style={{ background: darkMode ? '#3a3a5a' : '#d1fae5' }}
+              />
+            </div>
+          )}
+        </div>
+        <button className={clsx(
+          'flex flex-col items-center gap-1 transition-all',
+          darkMode ? 'text-zinc-400 hover:text-emerald-400' : 'text-emerald-600 hover:text-emerald-700'
+        )}>
+          <Share2 className="h-5 w-5" />
+          <span className="text-xs">分享</span>
+        </button>
+        <button className={clsx(
+          'flex flex-col items-center gap-1 transition-all',
+          darkMode ? 'text-zinc-400 hover:text-emerald-400' : 'text-emerald-600 hover:text-emerald-700'
+        )}>
+          <MoreHorizontal className="h-5 w-5" />
+          <span className="text-xs">更多</span>
+        </button>
       </div>
     </div>
   )
