@@ -14,8 +14,8 @@ function BottomNav() {
   const darkMode = usePlayerStore((s) => s.darkMode)
 
   const tabs = [
-    { path: '/', icon: Home, label: '首页' },
-    { path: '/profile', icon: User, label: '我的' },
+    { path: '/home', icon: Home, label: '首页' },
+    { path: '/home/profile', icon: User, label: '我的' },
   ]
 
   return (
@@ -217,9 +217,9 @@ export default function Layout() {
   }
 
   // 子页面（设置等）
-  const isSubPage = location.pathname.startsWith('/settings') ||
-    location.pathname.startsWith('/playlist/') ||
-    location.pathname.startsWith('/song/')
+  const isSubPage = location.pathname.startsWith('/home/settings') ||
+    location.pathname.startsWith('/home/playlist/') ||
+    location.pathname.startsWith('/home/song/')
 
   if (isSubPage) {
     return (
@@ -267,11 +267,16 @@ export default function Layout() {
         darkMode ? 'border-[#2a2a4a]' : 'border-emerald-200/40'
       )}>
         <div className={clsx('flex items-center gap-1.5', darkMode ? 'text-white' : 'text-emerald-800')}>
-          {location.pathname !== '/profile' && (
-            <Music2 className="h-6 w-6" />
+          {location.pathname !== '/home/profile' && (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-emerald-600 shrink-0">
+              <path d="M12 4V16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <circle cx="12" cy="2" r="3" fill="currentColor" />
+              <path d="M12 16C12 20 8 22 5 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <path d="M12 16C12 20 16 22 19 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
           )}
           <h1 className="text-lg font-semibold">
-            {location.pathname === '/profile' ? '个人主页' : '音瓶'}
+            {location.pathname === '/home/profile' ? '个人主页' : '音瓶'}
           </h1>
         </div>
         <div className="flex items-center gap-1">
@@ -306,7 +311,7 @@ function TopBarActions() {
 
   return (
     <>
-      <button onClick={() => navigate('/settings')} className={btnClass} title="设置">
+      <button onClick={() => navigate('/home/settings')} className={btnClass} title="设置">
         <Settings className="h-5 w-5" />
       </button>
       <button onClick={toggleDarkMode} className={btnClass} title={darkMode ? '浅色模式' : '深色模式'}>
@@ -322,15 +327,15 @@ function SubPageTitle() {
   const darkMode = usePlayerStore((s) => s.darkMode)
 
   const pageTitles: Record<string, string> = {
-    '/settings': '设置',
+    '/home/settings': '设置',
   }
 
   const getTitle = () => {
     for (const [path, title] of Object.entries(pageTitles)) {
       if (location.pathname.startsWith(path)) return title
     }
-    if (location.pathname.startsWith('/playlist/')) return '歌单详情'
-    if (location.pathname.startsWith('/song/')) return '歌曲详情'
+    if (location.pathname.startsWith('/home/playlist/')) return '歌单详情'
+    if (location.pathname.startsWith('/home/song/')) return '歌曲详情'
     return '音瓶'
   }
 

@@ -1,4 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="100" fill="#ea580c"/>
-  <text x="256" y="320" text-anchor="middle" font-family="sans-serif" font-size="280" font-weight="bold" fill="white">音</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <path 
+    d="M55 15 L55 75 C55 82 48 87 40 87 C30 87 22 80 22 70 C22 58 30 50 40 50 C44 50 48 53 50 57 L52 45 C48 38 55 30 55 30 Z" 
+    fill="#479943"
+    stroke="#479943"
+    strokeWidth="2"
+    strokeLinecap="round"
+  />
+  <path 
+    d="M55 15 L55 85 L75 85 L75 30 C75 30 55 42 55 42 Z" 
+    fill="#479943"
+    stroke="#479943"
+    strokeWidth="2"
+    strokeLinecap="round"
+  />
+  <path 
+    d="M35 65 C35 65 48 55 48 55 L48 48 C48 45 45 43 42 43 C39 43 37 45 37 48 C37 51 39 53 42 53 C43 53 44 52 44 51 L44 55 C44 57 42 59 39 59 C36 59 34 57 34 54 C34 51 36 49 39 49" 
+    fill="#479943"
+    stroke="#479943"
+    strokeWidth="2"
+    strokeLinecap="round"
+  />
+  <path 
+    d="M48 38 L52 38 L52 42 C52 48 48 50 45 50" 
+    fill="none"
+    stroke="#479943"
+    strokeWidth="2"
+    strokeLinecap="round"
+  />
+  <circle cx="50" cy="36" r="3" fill="#479943" />
 </svg>
