@@ -1,9 +1,50 @@
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { usePlayerStore } from '@/store/playerStore'
 import { SongRow, CollapsibleSection } from '@/components/PlaylistPanel'
-import { Search, Loader2, Sparkles, Compass, RefreshCw, History, X, Music, FolderOpen, ImageIcon } from 'lucide-react'
+import { Search, Loader2, Sparkles, Compass, RefreshCw, History, X, Music, FolderOpen, ImageIcon, TrendingUp, SlidersHorizontal } from 'lucide-react'
 import { clsx } from 'clsx'
 import type { MusicPlatform } from '@/types'
+
+const HOT_KEYWORDS = ['周杰伦', '邓紫棋', '薛之谦', '陈奕迅', '林俊杰', '李荣浩', '毛不易', '华晨宇']
+
+const SUGGESTION_LIST = [
+  { name: '晴天', artist: '周杰伦' },
+  { name: '七里香', artist: '周杰伦' },
+  { name: '稻香', artist: '周杰伦' },
+  { name: '青花瓷', artist: '周杰伦' },
+  { name: '夜曲', artist: '周杰伦' },
+  { name: '光年之外', artist: '邓紫棋' },
+  { name: '泡沫', artist: '邓紫棋' },
+  { name: '演员', artist: '薛之谦' },
+  { name: '绅士', artist: '薛之谦' },
+  { name: '认真的雪', artist: '薛之谦' },
+  { name: '孤勇者', artist: '陈奕迅' },
+  { name: '十年', artist: '陈奕迅' },
+  { name: '富士山下', artist: '陈奕迅' },
+  { name: '江南', artist: '林俊杰' },
+  { name: '修炼爱情', artist: '林俊杰' },
+  { name: '可惜没如果', artist: '林俊杰' },
+  { name: '李白', artist: '李荣浩' },
+  { name: '模特', artist: '李荣浩' },
+  { name: '消愁', artist: '毛不易' },
+  { name: '像我这样的人', artist: '毛不易' },
+  { name: '烟火里的尘埃', artist: '华晨宇' },
+  { name: '好想爱这个世界啊', artist: '华晨宇' },
+  { name: '起风了', artist: '买辣椒也用券' },
+  { name: '平凡之路', artist: '朴树' },
+  { name: '后来', artist: '刘若英' },
+  { name: '小幸运', artist: '田馥甄' },
+  { name: '告白气球', artist: '周杰伦' },
+  { name: '说好不哭', artist: '周杰伦' },
+  { name: 'Mojito', artist: '周杰伦' },
+  { name: '红玫瑰', artist: '陈奕迅' },
+  { name: '匆匆那年', artist: '王菲' },
+  { name: '漂洋过海来看你', artist: '刘明湘' },
+]
+
+type SortOption = 'relevance' | 'popularity' | 'time'
+type PlatformFilter = 'all' | 'netease' | 'qq'
+type SearchTab = 'songs' | 'artists' | 'albums' | 'playlists'
 
 
 export default function Home() {
@@ -47,8 +88,48 @@ export default function Home() {
   const [searchInputFocused, setSearchInputFocused] = useState(false)
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({})
   const [showOcrResult, setShowOcrResult] = useState(false)
+  const [sortBy, setSortBy] = useState<SortOption>('relevance')
+  const [platformFilter, setPlatformFilter] = useState<PlatformFilter>('all')
+  const [activeTab, setActiveTab] = useState<SearchTab>('songs')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const ocrInputRef = useRef<HTMLInputElement>(null)
+  const searchContainerRef = useRef<HTMLDivElement>(null)
+
+  // Search suggestions based on input prefix
+  const suggestions = useMemo(() => {
+    if (!inputValue.trim()) return []
+    const prefix = inputValue.trim().toLowerCase()
+    return SUGGESTION_LIST.filter(
+      (s) => s.name.toLowerCase().startsWith(prefix) || s.artist.toLowerCase().startsWith(prefix)
+    ).slice(0, 8)
+  }, [inputValue])
+
+  // Filtered and sorted search results
+  const filteredResults = useMemo(() => {
+    let results = [...playlist]
+    // Platform filter
+    if (platformFilter !== 'all') {
+      results = results.filter((s) => s.platform === platformFilter)
+    }
+    // Sort
+    if (sortBy === 'popularity') {
+      results.sort((a, b) => (b.id % 1000) - (a.id % 1000))
+    } else if (sortBy === 'time') {
+      results.sort((a, b) => b.duration - a.duration)
+    }
+    return results
+  }, [playlist, platformFilter, sortBy])
+
+  // Click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
+        setSearchInputFocused(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   useEffect(() => {
     if (smartRecommend.length === 0 && (favorites.length > 0 || history.length > 0)) {
@@ -60,7 +141,21 @@ export default function Home() {
     if (!inputValue.trim()) return
     setSearchKeyword(inputValue)
     search(inputValue)
+    setSortBy('relevance')
+    setPlatformFilter('all')
+    setActiveTab('songs')
+    setSearchInputFocused(false)
   }, [inputValue, setSearchKeyword, search])
+
+  const triggerSearch = useCallback((keyword: string) => {
+    setInputValue(keyword)
+    setSearchKeyword(keyword)
+    search(keyword)
+    setSortBy('relevance')
+    setPlatformFilter('all')
+    setActiveTab('songs')
+    setSearchInputFocused(false)
+  }, [setSearchKeyword, search])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleSearch()
@@ -78,6 +173,21 @@ export default function Home() {
 
   const isFav = (songId: number, p?: string) => favorites.some((s) => s.id === songId && (p === undefined || s.platform === p))
   const toggleSection = (key: string) => setCollapsedSections((prev) => ({ ...prev, [key]: !prev[key] }))
+
+  const highlightMatch = (text: string, query: string, isDark: boolean) => {
+    if (!query) return text
+    const lowerText = text.toLowerCase()
+    const lowerQuery = query.toLowerCase()
+    const idx = lowerText.indexOf(lowerQuery)
+    if (idx === -1) return text
+    return (
+      <>
+        {text.slice(0, idx)}
+        <span className="text-emerald-500 font-medium">{text.slice(idx, idx + query.length)}</span>
+        {text.slice(idx + query.length)}
+      </>
+    )
+  }
 
   const playOcrSong = useCallback((index: number) => {
     const song = ocrSongs[index]
@@ -132,12 +242,12 @@ export default function Home() {
           </div>
 
         {/* 搜索框 - 米白底+浅绿边框，深绿放大镜，浅绿搜索按钮 */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" ref={searchContainerRef}>
           <div className="relative flex-1">
             <Search className={clsx(
-                'absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transition-all duration-300',
-                searchInputFocused 
-                  ? 'text-emerald-500 scale-110' 
+                'absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transition-all duration-300 z-10',
+                searchInputFocused
+                  ? 'text-emerald-500 scale-110'
                   : 'text-emerald-600/60'
               )} />
             <input
@@ -145,7 +255,6 @@ export default function Home() {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onFocus={() => setSearchInputFocused(true)}
-              onBlur={() => setTimeout(() => setSearchInputFocused(false), 150)}
               onKeyDown={handleKeyDown}
               placeholder={`在${platform === 'netease' ? '网易云音乐' : 'QQ音乐'}搜索...`}
               className={clsx(
@@ -155,14 +264,48 @@ export default function Home() {
                   : 'bg-white/80 text-emerald-900 border border-green-200/60 placeholder:text-emerald-300 focus:border-emerald-400/60 focus:shadow-[0_0_0_3px_rgba(115,153,104,0.1)]'
               )}
             />
+
+            {/* 搜索建议下拉 - 当输入有内容时 */}
+            {searchInputFocused && inputValue.trim() && suggestions.length > 0 && (
+              <div className={clsx(
+                'absolute top-full left-0 right-0 mt-1 z-50 glass-card rounded-xl overflow-hidden animate-fade-in',
+                darkMode ? 'border border-[#3a3a5a]' : 'border border-green-200/60'
+              )}>
+                <div className={clsx('px-3 py-2 border-b', darkMode ? 'border-[#3a3a5a]' : 'border-green-100')}>
+                  <p className={clsx('text-xs font-medium', darkMode ? 'text-zinc-400' : 'text-emerald-600/70')}>搜索建议</p>
+                </div>
+                <div className="max-h-64 overflow-y-auto scrollbar-thin">
+                  {suggestions.map((s, i) => (
+                    <button
+                      key={`${s.name}-${s.artist}-${i}`}
+                      onMouseDown={(e) => { e.preventDefault(); triggerSearch(s.name + ' ' + s.artist) }}
+                      className={clsx(
+                        'w-full flex items-center gap-2 px-3 py-2 text-left transition-colors',
+                        darkMode ? 'hover:bg-[#3a3a5a]' : 'hover:bg-green-50/80'
+                      )}
+                    >
+                      <Search className="h-3.5 w-3.5 flex-shrink-0 text-emerald-400/60" />
+                      <div className="min-w-0 flex-1">
+                        <span className={clsx('text-sm', darkMode ? 'text-zinc-200' : 'text-emerald-900')}>
+                          {highlightMatch(s.name, inputValue.trim(), darkMode)}
+                        </span>
+                        <span className={clsx('text-xs ml-1.5', darkMode ? 'text-zinc-500' : 'text-emerald-400/70')}>
+                          {highlightMatch(s.artist, inputValue.trim(), darkMode)}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
           <button
             onClick={handleSearch}
             disabled={isSearching}
             className={clsx(
               'flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300 disabled:opacity-50',
-              darkMode 
-                ? 'bg-emerald-600/80 text-white hover:bg-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20' 
+              darkMode
+                ? 'bg-emerald-600/80 text-white hover:bg-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20'
                 : 'bg-gradient-to-br from-emerald-500 to-emerald-400 text-white hover:from-emerald-400 hover:to-emerald-300 hover:shadow-lg hover:shadow-emerald-500/25'
             )}
           >
@@ -170,50 +313,82 @@ export default function Home() {
           </button>
         </div>
 
-        {/* 搜索历史 */}
-        {searchInputFocused && !inputValue.trim() && searchHistory.length > 0 && (
+        {/* 搜索历史 + 热门搜索 - 当输入框聚焦且为空时 */}
+        {searchInputFocused && !inputValue.trim() && (
           <div className={clsx(
-            'mt-2 rounded-xl p-3 animate-fade-in',
+            'mt-2 rounded-xl p-3 animate-fade-in z-50',
             darkMode ? 'bg-[#27273a]' : 'bg-white/80'
           )}>
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-1.5">
-                <History className="h-3.5 w-3.5 text-emerald-500/60" />
-                <p className={clsx('text-xs font-medium', darkMode ? 'text-zinc-400' : 'text-emerald-600/70')}>搜索历史</p>
-              </div>
-              <button
-                onMouseDown={(e) => { e.preventDefault(); clearSearchHistory() }}
-                className={clsx(
-                  'text-xs font-medium transition-colors',
-                  darkMode ? 'text-zinc-500 hover:text-zinc-300' : 'text-emerald-400 hover:text-emerald-600'
-                )}
-              >
-                清空
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {searchHistory.map((keyword) => (
-                <div
-                  key={keyword}
-                  className={clsx(
-                    'group flex items-center gap-1 rounded-full px-2.5 py-1 transition-colors',
-                    darkMode ? 'bg-[#1e1e3a] hover:bg-[#3a3a5a]' : 'bg-green-50/80 hover:bg-green-100'
-                  )}
-                >
+            {/* 搜索历史 */}
+            {searchHistory.length > 0 && (
+              <>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-1.5">
+                    <History className="h-3.5 w-3.5 text-emerald-500/60" />
+                    <p className={clsx('text-xs font-medium', darkMode ? 'text-zinc-400' : 'text-emerald-600/70')}>搜索历史</p>
+                  </div>
                   <button
-                    onMouseDown={(e) => { e.preventDefault(); setInputValue(keyword); setSearchKeyword(keyword); search(keyword) }}
-                    className={clsx('text-xs truncate max-w-[120px]', darkMode ? 'text-zinc-300' : 'text-emerald-700')}
+                    onMouseDown={(e) => { e.preventDefault(); clearSearchHistory() }}
+                    className={clsx(
+                      'text-xs font-medium transition-colors',
+                      darkMode ? 'text-zinc-500 hover:text-zinc-300' : 'text-emerald-400 hover:text-emerald-600'
+                    )}
                   >
-                    {keyword}
-                  </button>
-                  <button
-                    onMouseDown={(e) => { e.preventDefault(); removeSearchHistoryItem(keyword) }}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity text-emerald-400 hover:text-emerald-600"
-                  >
-                    <X className="h-3 w-3" />
+                    清空
                   </button>
                 </div>
-              ))}
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {searchHistory.map((keyword) => (
+                    <div
+                      key={keyword}
+                      className={clsx(
+                        'group flex items-center gap-1 rounded-full px-2.5 py-1 transition-colors',
+                        darkMode ? 'bg-[#1e1e3a] hover:bg-[#3a3a5a]' : 'bg-green-50/80 hover:bg-green-100'
+                      )}
+                    >
+                      <button
+                        onMouseDown={(e) => { e.preventDefault(); triggerSearch(keyword) }}
+                        className={clsx('text-xs truncate max-w-[120px]', darkMode ? 'text-zinc-300' : 'text-emerald-700')}
+                      >
+                        {keyword}
+                      </button>
+                      <button
+                        onMouseDown={(e) => { e.preventDefault(); removeSearchHistoryItem(keyword) }}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-emerald-400 hover:text-emerald-600"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+            {/* 热门搜索 */}
+            <div>
+              <div className="flex items-center gap-1.5 mb-2">
+                <TrendingUp className="h-3.5 w-3.5 text-emerald-500/60" />
+                <p className={clsx('text-xs font-medium', darkMode ? 'text-zinc-400' : 'text-emerald-600/70')}>热门搜索</p>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {HOT_KEYWORDS.map((keyword, i) => (
+                  <button
+                    key={keyword}
+                    onMouseDown={(e) => { e.preventDefault(); triggerSearch(keyword) }}
+                    className={clsx(
+                      'flex items-center gap-1 rounded-full px-2.5 py-1 text-xs transition-colors',
+                      darkMode
+                        ? 'bg-[#1e1e3a] hover:bg-[#3a3a5a] text-zinc-300'
+                        : 'bg-green-50/80 hover:bg-green-100 text-emerald-700'
+                    )}
+                  >
+                    <span className={clsx(
+                      'w-4 text-center text-[10px] font-bold',
+                      i < 3 ? 'text-emerald-500' : (darkMode ? 'text-zinc-500' : 'text-emerald-400')
+                    )}>{i + 1}</span>
+                    {keyword}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -317,31 +492,117 @@ export default function Home() {
       {playlist.length > 0 && searchKeyword && (
         <div className="glass-card p-3 mb-4 animate-fade-in">
           <div className={clsx('flex items-center justify-between mb-2', darkMode ? 'text-zinc-400' : 'text-emerald-600/70')}>
-            <p className="text-xs font-medium">搜索结果 · {playlist.length}首</p>
+            <p className="text-xs font-medium">搜索结果 · {filteredResults.length}首</p>
             <button
-              onClick={() => { usePlayerStore.setState({ searchKeyword: '', playlist: [] }); setInputValue('') }}
+              onClick={() => { usePlayerStore.setState({ searchKeyword: '', playlist: [] }); setInputValue(''); setSortBy('relevance'); setPlatformFilter('all'); setActiveTab('songs') }}
               className="text-xs hover:text-emerald-500 transition-colors flex items-center gap-1"
             >
               <X className="h-3 w-3" />清除搜索
             </button>
           </div>
-          <div className="max-h-64 overflow-y-auto scrollbar-thin">
-            {playlist.map((song, index) => (
-              <SongRow
-                key={`${song.platform}-${song.mid || song.id}`}
-                song={song}
-                index={index}
-                isActive={currentSongIndex === index}
-                onPlay={() => playSong(index)}
-                onFavorite={() => toggleFavorite(song)}
-                onAddNext={() => addToPlayNext(song)}
-                onAddToPlaylist={() => {}}
-                isFav={isFav(song.id, song.platform)}
-                platformTag
-                darkMode={darkMode}
-              />
+
+          {/* 搜索结果 Tabs */}
+          <div className={clsx('flex gap-1 mb-2 border-b pb-2', darkMode ? 'border-[#3a3a5a]' : 'border-green-100')}>
+            {([
+              { key: 'songs' as SearchTab, label: '歌曲' },
+              { key: 'artists' as SearchTab, label: '歌手' },
+              { key: 'albums' as SearchTab, label: '专辑' },
+              { key: 'playlists' as SearchTab, label: '歌单' },
+            ]).map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={clsx(
+                  'px-3 py-1 rounded-xl text-xs font-medium transition-all',
+                  activeTab === tab.key
+                    ? (darkMode ? 'bg-emerald-600/80 text-white' : 'bg-emerald-500 text-white')
+                    : (darkMode ? 'text-zinc-400 hover:bg-[#3a3a5a]' : 'text-emerald-600/70 hover:bg-green-50')
+                )}
+              >
+                {tab.label}
+              </button>
             ))}
           </div>
+
+          {/* 筛选/排序栏 - 仅在歌曲 tab 显示 */}
+          {activeTab === 'songs' && (
+            <div className="flex items-center justify-between mb-2 gap-2">
+              {/* 排序按钮 */}
+              <div className="flex gap-1">
+                {([
+                  { key: 'relevance' as SortOption, label: '相关度' },
+                  { key: 'popularity' as SortOption, label: '热度' },
+                  { key: 'time' as SortOption, label: '时间' },
+                ]).map((opt) => (
+                  <button
+                    key={opt.key}
+                    onClick={() => setSortBy(opt.key)}
+                    className={clsx(
+                      'px-2.5 py-0.5 rounded-xl text-[11px] font-medium transition-all',
+                      sortBy === opt.key
+                        ? (darkMode ? 'bg-emerald-600/80 text-white' : 'bg-emerald-500 text-white')
+                        : (darkMode ? 'text-zinc-400 border border-[#3a3a5a] hover:bg-[#3a3a5a]' : 'text-emerald-600/70 border border-green-200 hover:bg-green-50')
+                    )}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+              {/* 平台筛选 */}
+              <div className="flex gap-1">
+                {([
+                  { key: 'all' as PlatformFilter, label: '全部' },
+                  { key: 'netease' as PlatformFilter, label: '网易云' },
+                  { key: 'qq' as PlatformFilter, label: 'QQ音乐' },
+                ]).map((opt) => (
+                  <button
+                    key={opt.key}
+                    onClick={() => setPlatformFilter(opt.key)}
+                    className={clsx(
+                      'px-2 py-0.5 rounded-xl text-[11px] font-medium transition-all',
+                      platformFilter === opt.key
+                        ? (darkMode ? 'bg-emerald-600/80 text-white' : 'bg-emerald-500 text-white')
+                        : (darkMode ? 'text-zinc-400 border border-[#3a3a5a] hover:bg-[#3a3a5a]' : 'text-emerald-600/70 border border-green-200 hover:bg-green-50')
+                    )}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Tab 内容 */}
+          {activeTab === 'songs' ? (
+            <div className="max-h-64 overflow-y-auto scrollbar-thin">
+              {filteredResults.length > 0 ? filteredResults.map((song, index) => (
+                <SongRow
+                  key={`${song.platform}-${song.mid || song.id}`}
+                  song={song}
+                  index={index}
+                  isActive={currentSongIndex === index}
+                  onPlay={() => playSong(index)}
+                  onFavorite={() => toggleFavorite(song)}
+                  onAddNext={() => addToPlayNext(song)}
+                  onAddToPlaylist={() => {}}
+                  isFav={isFav(song.id, song.platform)}
+                  platformTag
+                  darkMode={darkMode}
+                />
+              )) : (
+                <div className={clsx('text-center py-6', darkMode ? 'text-zinc-500' : 'text-emerald-400/60')}>
+                  <p className="text-xs">当前筛选无结果</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className={clsx('text-center py-8', darkMode ? 'text-zinc-500' : 'text-emerald-400/60')}>
+              <Music className="h-8 w-8 mx-auto mb-2 opacity-50" />
+              <p className="text-xs">
+                {activeTab === 'artists' ? '暂无相关歌手' : activeTab === 'albums' ? '暂无相关专辑' : '暂无相关歌单'}
+              </p>
+            </div>
+          )}
         </div>
       )}
 

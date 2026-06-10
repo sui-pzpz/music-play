@@ -1,7 +1,8 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { usePlayerStore } from '@/store/playerStore'
 import { SongRow, PlaylistTabContent } from '@/components/PlaylistPanel'
-import { Heart, ListMusic, Clock, Trash2, User, Music } from 'lucide-react'
+import { Heart, ListMusic, Clock, Trash2, User, Music, LogOut } from 'lucide-react'
 import { clsx } from 'clsx'
 
 type ProfileTab = 'favorites' | 'playlists' | 'history'
@@ -25,8 +26,16 @@ export default function Profile() {
   const darkMode = usePlayerStore((s) => s.darkMode)
 
   const [activeTab, setActiveTab] = useState<ProfileTab>('favorites')
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
+
+  const navigate = useNavigate()
 
   const isFav = (songId: number, platform?: string) => favorites.some((s) => s.id === songId && (platform === undefined || s.platform === platform))
+
+  const handleLogout = () => {
+    localStorage.removeItem('auth_token')
+    navigate('/login', { replace: true })
+  }
 
   const tabs: { key: ProfileTab; label: string; icon: typeof Heart; count: number }[] = [
     { key: 'favorites', label: '收藏', icon: Heart, count: favorites.length },
@@ -45,14 +54,70 @@ export default function Profile() {
           )}>
             <User className={clsx('h-7 w-7', darkMode ? 'text-emerald-400' : 'text-emerald-600')} />
           </div>
-          <div>
+          <div className="flex-1">
             <h2 className={clsx('text-lg font-semibold', darkMode ? 'text-white' : 'text-emerald-800')}>我的音乐</h2>
             <p className="text-xs text-emerald-400/70 mt-0.5">
               {favorites.length} 首收藏 · {savedPlaylists.length} 个歌单 · {history.length} 首听过
             </p>
           </div>
+          <button
+            onClick={() => setShowLogoutModal(true)}
+            className={clsx(
+              'p-2 rounded-xl transition-all duration-300',
+              darkMode
+                ? 'hover:bg-[#2a2a4a] text-zinc-400 hover:text-red-400'
+                : 'hover:bg-emerald-50 text-emerald-400 hover:text-red-500'
+            )}
+            title="退出登录"
+          >
+            <LogOut className="h-5 w-5" />
+          </button>
         </div>
       </div>
+
+      {/* 退出登录确认弹窗 */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in">
+          <div className={clsx(
+            'rounded-2xl p-6 w-80 shadow-2xl',
+            darkMode ? 'bg-[#1e1e3a]' : 'bg-white'
+          )}>
+            <div className="text-center mb-5">
+              <div className={clsx(
+                'w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center',
+                darkMode ? 'bg-red-900/30' : 'bg-red-50'
+              )}>
+                <LogOut className={clsx('h-7 w-7', darkMode ? 'text-red-400' : 'text-red-500')} />
+              </div>
+              <h3 className={clsx('text-lg font-semibold mb-1', darkMode ? 'text-white' : 'text-emerald-800')}>
+                退出登录
+              </h3>
+              <p className={clsx('text-sm', darkMode ? 'text-zinc-400' : 'text-emerald-500')}>
+                确定要退出当前账号吗？
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className={clsx(
+                  'flex-1 py-2.5 rounded-xl text-sm font-medium transition-all duration-300',
+                  darkMode
+                    ? 'bg-[#2a2a4a] text-zinc-300 hover:bg-[#3a3a5a]'
+                    : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                )}
+              >
+                取消
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex-1 py-2.5 rounded-xl text-sm font-medium bg-gradient-to-r from-red-500 to-red-400 text-white hover:from-red-400 hover:to-red-300 hover:shadow-lg hover:shadow-red-500/25 active:scale-[0.98] transition-all duration-300"
+              >
+                退出
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Tab 切换 - 米白底+浅绿边框，选中浅绿填充，浅绿图标 */}
       <div className="flex gap-1 mb-4">

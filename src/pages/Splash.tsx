@@ -3,6 +3,24 @@ import { useNavigate } from 'react-router-dom'
 import gsap from 'gsap'
 import { DecorationElements } from '@/components/DecorationElements'
 
+function isTokenValid(): boolean {
+  try {
+    const token = localStorage.getItem('auth_token')
+    if (!token) return false
+    // Try to parse as JWT to check expiry
+    const parts = token.split('.')
+    if (parts.length === 3) {
+      const payload = JSON.parse(atob(parts[1]))
+      if (payload.exp && payload.exp * 1000 > Date.now()) return true
+      return false
+    }
+    // If not JWT format, treat as valid if present
+    return true
+  } catch {
+    return false
+  }
+}
+
 export default function Splash() {
   const [countdown, setCountdown] = useState(3)
   const logoRef = useRef<HTMLDivElement>(null)
@@ -16,7 +34,19 @@ export default function Splash() {
     navigate('/login', { replace: true })
   }, [navigate])
 
+  const goToHome = useCallback(() => {
+    if (hasNavigated.current) return
+    hasNavigated.current = true
+    navigate('/home', { replace: true })
+  }, [navigate])
+
   useEffect(() => {
+    // Check token on mount
+    if (isTokenValid()) {
+      goToHome()
+      return
+    }
+
     if (logoRef.current) {
       gsap.to(logoRef.current, {
         keyframes: [
@@ -38,9 +68,12 @@ export default function Splash() {
         ease: 'back.out(1.2)'
       })
     }
-  }, [])
+  }, [goToHome])
 
   useEffect(() => {
+    // If already navigated to home, skip countdown
+    if (hasNavigated.current) return
+
     const timer = setInterval(() => {
       setCountdown(prev => {
         if (prev <= 1) {
@@ -58,11 +91,11 @@ export default function Splash() {
   return (
     <div 
       className="relative min-h-screen w-full overflow-hidden flex items-center justify-center bg-gradient-to-b from-green-50 via-amber-50 to-orange-50"
-      onClick={goToLogin}
+      onClick={hasNavigated.current ? undefined : goToLogin}
     >
-      <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-8 w-full max-w-sm mx-4 shadow-xl">
+      <div ref={cardRef} className="bg-white/90 backdrop-blur-xl rounded-2xl p-8 w-full max-w-sm mx-4 shadow-xl">
         <div className="text-center">
-          <div className="mb-6">
+          <div className="mb-6" ref={logoRef}>
             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" className="mx-auto text-green-600">
               <path d="M12 4V16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               <circle cx="12" cy="2" r="3" fill="currentColor" />

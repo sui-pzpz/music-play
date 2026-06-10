@@ -2,12 +2,25 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DecorationElements } from '@/components/DecorationElements'
 
-type LoginMode = 'code' | 'password'
+type LoginMode = 'code' | 'password' | 'register' | 'reset'
+
+function getPasswordStrength(pwd: string): { level: 'weak' | 'medium' | 'strong'; label: string } {
+  if (!pwd) return { level: 'weak', label: '' }
+  let score = 0
+  if (pwd.length >= 8) score++
+  if (/\d/.test(pwd)) score++
+  if (/[a-zA-Z]/.test(pwd)) score++
+  if (/[^a-zA-Z0-9]/.test(pwd)) score++
+  if (score <= 1) return { level: 'weak', label: '弱' }
+  if (score <= 2) return { level: 'medium', label: '中' }
+  return { level: 'strong', label: '强' }
+}
 
 export default function Login() {
   const [loginMode, setLoginMode] = useState<LoginMode>('code')
   const [phone, setPhone] = useState('')
-  const [verificationCode, setVerificationCode] = useState('123456')
+  const generateCode = () => String(Math.floor(100000 + Math.random() * 900000))
+  const [verificationCode, setVerificationCode] = useState(generateCode)
   const [account, setAccount] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -19,6 +32,22 @@ export default function Login() {
   const [lockSeconds, setLockSeconds] = useState(0)
   const [lockMessage, setLockMessage] = useState('')
   const lockTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // 注册模式状态
+  const [regPassword, setRegPassword] = useState('')
+  const [regConfirmPassword, setRegConfirmPassword] = useState('')
+  const [showRegPassword, setShowRegPassword] = useState(false)
+  const [showRegConfirmPassword, setShowRegConfirmPassword] = useState(false)
+  const [regPhone, setRegPhone] = useState('')
+  const [regCode, setRegCode] = useState('')
+
+  // 重置密码模式状态
+  const [resetPhone, setResetPhone] = useState('')
+  const [resetCode, setResetCode] = useState('')
+  const [resetPassword, setResetPassword] = useState('')
+  const [resetConfirmPassword, setResetConfirmPassword] = useState('')
+  const [showResetPassword, setShowResetPassword] = useState(false)
+  const [showResetConfirmPassword, setShowResetConfirmPassword] = useState(false)
 
   const navigate = useNavigate()
 
@@ -82,6 +111,33 @@ export default function Login() {
         : 'border-green-200/60 hover:border-green-200'
     }`
 
+  const strengthColor = (level: 'weak' | 'medium' | 'strong') => {
+    if (level === 'weak') return 'bg-red-400'
+    if (level === 'medium') return 'bg-amber-400'
+    return 'bg-emerald-500'
+  }
+
+  const strengthTextColor = (level: 'weak' | 'medium' | 'strong') => {
+    if (level === 'weak') return 'text-red-500'
+    if (level === 'medium') return 'text-amber-500'
+    return 'text-emerald-600'
+  }
+
+  const PasswordStrengthIndicator = ({ password }: { password: string }) => {
+    const { level, label } = getPasswordStrength(password)
+    if (!password) return null
+    return (
+      <div className="flex items-center gap-2 mt-1.5">
+        <div className="flex gap-1 flex-1">
+          <div className={`h-1.5 flex-1 rounded-full ${level === 'weak' || level === 'medium' || level === 'strong' ? strengthColor(level) : 'bg-gray-200'}`} />
+          <div className={`h-1.5 flex-1 rounded-full ${level === 'medium' || level === 'strong' ? strengthColor(level) : 'bg-gray-200'}`} />
+          <div className={`h-1.5 flex-1 rounded-full ${level === 'strong' ? strengthColor(level) : 'bg-gray-200'}`} />
+        </div>
+        <span className={`text-xs font-medium ${strengthTextColor(level)}`}>{label}</span>
+      </div>
+    )
+  }
+
   return (
     <div
       className="relative min-h-screen w-full overflow-hidden"
@@ -105,29 +161,47 @@ export default function Login() {
           </div>
 
           <div className="glass-card p-6">
-            {/* 登录模式切换 */}
-            <div className="flex mb-6 bg-emerald-50/60 rounded-xl p-1">
-              <button
-                onClick={() => setLoginMode('code')}
-                className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 ${
-                  loginMode === 'code'
-                    ? 'bg-white text-emerald-700 shadow-sm'
-                    : 'text-emerald-400 hover:text-emerald-600'
-                }`}
-              >
-                验证码登录
-              </button>
-              <button
-                onClick={() => setLoginMode('password')}
-                className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 ${
-                  loginMode === 'password'
-                    ? 'bg-white text-emerald-700 shadow-sm'
-                    : 'text-emerald-400 hover:text-emerald-600'
-                }`}
-              >
-                密码登录
-              </button>
-            </div>
+            {/* 登录模式切换 - only show for login modes */}
+            {(loginMode === 'code' || loginMode === 'password') && (
+              <div className="flex mb-6 bg-emerald-50/60 rounded-xl p-1">
+                <button
+                  onClick={() => setLoginMode('code')}
+                  className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 ${
+                    loginMode === 'code'
+                      ? 'bg-white text-emerald-700 shadow-sm'
+                      : 'text-emerald-400 hover:text-emerald-600'
+                  }`}
+                >
+                  验证码登录
+                </button>
+                <button
+                  onClick={() => setLoginMode('password')}
+                  className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 ${
+                    loginMode === 'password'
+                      ? 'bg-white text-emerald-700 shadow-sm'
+                      : 'text-emerald-400 hover:text-emerald-600'
+                  }`}
+                >
+                  密码登录
+                </button>
+              </div>
+            )}
+
+            {/* 注册模式标题 */}
+            {loginMode === 'register' && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-emerald-700">注册账号</h2>
+                <p className="text-xs text-emerald-400 mt-1">创建你的音乐账号</p>
+              </div>
+            )}
+
+            {/* 重置密码模式标题 */}
+            {loginMode === 'reset' && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-emerald-700">重置密码</h2>
+                <p className="text-xs text-emerald-400 mt-1">通过手机验证码重置密码</p>
+              </div>
+            )}
 
             {/* 验证码登录模式 */}
             {loginMode === 'code' && (
@@ -182,7 +256,7 @@ export default function Login() {
                     />
                   </div>
 
-                  <button className="px-4 py-3 rounded-xl border border-green-200 text-emerald-700 text-sm font-medium hover:bg-emerald-50 hover:border-emerald-400/50 transition-all duration-300 whitespace-nowrap">
+                  <button onClick={() => setVerificationCode(generateCode)} className="px-4 py-3 rounded-xl border border-green-200 text-emerald-700 text-sm font-medium hover:bg-emerald-50 hover:border-emerald-400/50 transition-all duration-300 whitespace-nowrap">
                     获取验证码
                   </button>
                 </div>
@@ -253,13 +327,240 @@ export default function Login() {
                 )}
 
                 <div className="flex items-center justify-end mb-4 text-sm">
-                  <span className="text-emerald-500 cursor-pointer hover:text-emerald-700 transition-colors">忘记密码？</span>
+                  <span
+                    className="text-emerald-500 cursor-pointer hover:text-emerald-700 transition-colors"
+                    onClick={() => setLoginMode('reset')}
+                  >
+                    忘记密码？
+                  </span>
                 </div>
               </>
             )}
 
+            {/* 注册模式 */}
+            {loginMode === 'register' && (
+              <>
+                {/* 手机号 */}
+                <div className="flex items-center gap-2 mb-4">
+                  <div
+                    className={`flex items-center justify-center px-3 py-3 rounded-xl border transition-all duration-300 cursor-pointer ${
+                      focusedField === 'regPhone'
+                        ? 'border-emerald-400 shadow-[0_0_0_2px_rgba(115,153,104,0.2)]'
+                        : 'border-green-200/60 hover:border-green-200'
+                    }`}
+                  >
+                    <span className="text-emerald-700 text-sm font-medium">+86</span>
+                  </div>
+                  <div className="flex-1">
+                    <input
+                      type="tel"
+                      value={regPhone}
+                      onChange={(e) => setRegPhone(e.target.value.slice(0, 11))}
+                      onFocus={() => setFocusedField('regPhone')}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="请输入手机号"
+                      className={inputClass('regPhone')}
+                    />
+                  </div>
+                </div>
+
+                {/* 验证码 */}
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={regCode}
+                      onChange={(e) => setRegCode(e.target.value)}
+                      onFocus={() => setFocusedField('regCode')}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="请输入验证码"
+                      className={inputClass('regCode')}
+                    />
+                  </div>
+                  <button onClick={() => setVerificationCode(generateCode)} className="px-4 py-3 rounded-xl border border-green-200 text-emerald-700 text-sm font-medium hover:bg-emerald-50 hover:border-emerald-400/50 transition-all duration-300 whitespace-nowrap">
+                    获取验证码
+                  </button>
+                </div>
+
+                {/* 密码 */}
+                <div className="mb-1 relative">
+                  <input
+                    type={showRegPassword ? 'text' : 'password'}
+                    value={regPassword}
+                    onChange={(e) => setRegPassword(e.target.value)}
+                    onFocus={() => setFocusedField('regPassword')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="请设置密码（8-16位）"
+                    maxLength={16}
+                    className={`${inputClass('regPassword')} pr-10`}
+                  />
+                  <button
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-emerald-100/50 transition-colors"
+                    onClick={() => setShowRegPassword(!showRegPassword)}
+                  >
+                    {showRegPassword ? (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-emerald-400">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="1.5" />
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5" />
+                      </svg>
+                    ) : (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-emerald-300">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                        <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                <PasswordStrengthIndicator password={regPassword} />
+
+                {/* 确认密码 */}
+                <div className="mt-4 mb-1 relative">
+                  <input
+                    type={showRegConfirmPassword ? 'text' : 'password'}
+                    value={regConfirmPassword}
+                    onChange={(e) => setRegConfirmPassword(e.target.value)}
+                    onFocus={() => setFocusedField('regConfirmPassword')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="请确认密码"
+                    maxLength={16}
+                    className={`${inputClass('regConfirmPassword')} pr-10`}
+                  />
+                  <button
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-emerald-100/50 transition-colors"
+                    onClick={() => setShowRegConfirmPassword(!showRegConfirmPassword)}
+                  >
+                    {showRegConfirmPassword ? (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-emerald-400">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="1.5" />
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5" />
+                      </svg>
+                    ) : (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-emerald-300">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                        <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                {regConfirmPassword && regConfirmPassword !== regPassword && (
+                  <p className="text-xs text-red-500 mt-1">两次密码输入不一致</p>
+                )}
+              </>
+            )}
+
+            {/* 重置密码模式 */}
+            {loginMode === 'reset' && (
+              <>
+                {/* 手机号 */}
+                <div className="flex items-center gap-2 mb-4">
+                  <div
+                    className={`flex items-center justify-center px-3 py-3 rounded-xl border transition-all duration-300 cursor-pointer ${
+                      focusedField === 'resetPhone'
+                        ? 'border-emerald-400 shadow-[0_0_0_2px_rgba(115,153,104,0.2)]'
+                        : 'border-green-200/60 hover:border-green-200'
+                    }`}
+                  >
+                    <span className="text-emerald-700 text-sm font-medium">+86</span>
+                  </div>
+                  <div className="flex-1">
+                    <input
+                      type="tel"
+                      value={resetPhone}
+                      onChange={(e) => setResetPhone(e.target.value.slice(0, 11))}
+                      onFocus={() => setFocusedField('resetPhone')}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="请输入手机号"
+                      className={inputClass('resetPhone')}
+                    />
+                  </div>
+                </div>
+
+                {/* 验证码 */}
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={resetCode}
+                      onChange={(e) => setResetCode(e.target.value)}
+                      onFocus={() => setFocusedField('resetCode')}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="请输入验证码"
+                      className={inputClass('resetCode')}
+                    />
+                  </div>
+                  <button onClick={() => setVerificationCode(generateCode)} className="px-4 py-3 rounded-xl border border-green-200 text-emerald-700 text-sm font-medium hover:bg-emerald-50 hover:border-emerald-400/50 transition-all duration-300 whitespace-nowrap">
+                    获取验证码
+                  </button>
+                </div>
+
+                {/* 新密码 */}
+                <div className="mb-1 relative">
+                  <input
+                    type={showResetPassword ? 'text' : 'password'}
+                    value={resetPassword}
+                    onChange={(e) => setResetPassword(e.target.value)}
+                    onFocus={() => setFocusedField('resetPassword')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="请设置新密码（8-16位）"
+                    maxLength={16}
+                    className={`${inputClass('resetPassword')} pr-10`}
+                  />
+                  <button
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-emerald-100/50 transition-colors"
+                    onClick={() => setShowResetPassword(!showResetPassword)}
+                  >
+                    {showResetPassword ? (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-emerald-400">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="1.5" />
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5" />
+                      </svg>
+                    ) : (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-emerald-300">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                        <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                <PasswordStrengthIndicator password={resetPassword} />
+
+                {/* 确认新密码 */}
+                <div className="mt-4 mb-1 relative">
+                  <input
+                    type={showResetConfirmPassword ? 'text' : 'password'}
+                    value={resetConfirmPassword}
+                    onChange={(e) => setResetConfirmPassword(e.target.value)}
+                    onFocus={() => setFocusedField('resetConfirmPassword')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="请确认新密码"
+                    maxLength={16}
+                    className={`${inputClass('resetConfirmPassword')} pr-10`}
+                  />
+                  <button
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-emerald-100/50 transition-colors"
+                    onClick={() => setShowResetConfirmPassword(!showResetConfirmPassword)}
+                  >
+                    {showResetConfirmPassword ? (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-emerald-400">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="1.5" />
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5" />
+                      </svg>
+                    ) : (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-emerald-300">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                        <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                {resetConfirmPassword && resetConfirmPassword !== resetPassword && (
+                  <p className="text-xs text-red-500 mt-1">两次密码输入不一致</p>
+                )}
+              </>
+            )}
+
             {/* 协议勾选 */}
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-6 mt-4">
               <button
                 onClick={() => setIsChecked(!isChecked)}
                 className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 ${
@@ -276,13 +577,13 @@ export default function Login() {
               </button>
               <span className="text-xs text-emerald-500">
                 我已阅读并同意
-                <span className="text-emerald-700 ml-0.5 cursor-pointer hover:underline">服务协议</span>
+                <span className="text-emerald-700 ml-0.5 cursor-pointer hover:underline" onClick={() => navigate('/agreement?type=service')}>服务协议</span>
                 和
-                <span className="text-emerald-700 ml-0.5 cursor-pointer hover:underline">隐私政策</span>
+                <span className="text-emerald-700 ml-0.5 cursor-pointer hover:underline" onClick={() => navigate('/agreement?type=privacy')}>隐私政策</span>
               </span>
             </div>
 
-            {/* 登录按钮 */}
+            {/* 主按钮 */}
             <button
               onClick={loginMode === 'password' ? handlePasswordLogin : undefined}
               disabled={loginMode === 'password' && lockSeconds > 0}
@@ -294,19 +595,59 @@ export default function Login() {
             >
               {loginMode === 'password' && lockSeconds > 0
                 ? `锁定中 ${formatLockTime(lockSeconds)}`
-                : '登录'}
+                : loginMode === 'register'
+                  ? '注册'
+                  : loginMode === 'reset'
+                    ? '重置密码'
+                    : '登录'}
             </button>
+
+            {/* 底部链接 */}
+            {loginMode === 'register' && (
+              <div className="mt-4 text-center">
+                <span
+                  className="text-sm text-emerald-500 cursor-pointer hover:text-emerald-700 transition-colors"
+                  onClick={() => setLoginMode('code')}
+                >
+                  已有账号？去登录
+                </span>
+              </div>
+            )}
+            {loginMode === 'reset' && (
+              <div className="mt-4 text-center">
+                <span
+                  className="text-sm text-emerald-500 cursor-pointer hover:text-emerald-700 transition-colors"
+                  onClick={() => setLoginMode('password')}
+                >
+                  返回登录
+                </span>
+              </div>
+            )}
           </div>
 
-          {/* 游客登入 */}
-          <div className="mt-6">
-            <button
-              onClick={goToHome}
-              className="w-full py-3.5 rounded-xl bg-emerald-100/60 text-emerald-700 font-medium text-base hover:bg-emerald-100 hover:shadow-md hover:shadow-emerald-500/15 active:scale-[0.98] transition-all duration-300"
-            >
-              游客登入
-            </button>
-          </div>
+          {/* 游客登入 - only show in login modes */}
+          {(loginMode === 'code' || loginMode === 'password') && (
+            <div className="mt-6">
+              <button
+                onClick={goToHome}
+                className="w-full py-3.5 rounded-xl bg-emerald-100/60 text-emerald-700 font-medium text-base hover:bg-emerald-100 hover:shadow-md hover:shadow-emerald-500/15 active:scale-[0.98] transition-all duration-300"
+              >
+                游客登入
+              </button>
+            </div>
+          )}
+
+          {/* 注册链接 - only show in login modes */}
+          {(loginMode === 'code' || loginMode === 'password') && (
+            <div className="mt-4 text-center">
+              <span
+                className="text-sm text-emerald-500 cursor-pointer hover:text-emerald-700 transition-colors"
+                onClick={() => setLoginMode('register')}
+              >
+                还没有账号？立即注册
+              </span>
+            </div>
+          )}
 
 
         </div>
