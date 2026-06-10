@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Splash from "@/pages/Splash";
 import Login from "@/pages/Login";
 import Home from "@/pages/Home";
@@ -12,7 +12,7 @@ import ToastContainer from "@/components/ToastContainer";
 export default function App() {
   return (
     <ErrorBoundary>
-      <Router basename="/music-play">
+      <Router>
         <Routes>
           <Route path="/" element={<Splash />} />
           <Route path="/login" element={<Login />} />
