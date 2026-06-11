@@ -23,3 +23,8 @@ assets
 *.njsproj
 *.sln
 *.sw?
+
+# Java/Maven build artifacts
+backend/target/
+*.class
+*.jar
