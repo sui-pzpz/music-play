@@ -7,7 +7,7 @@ import { showToast } from '@/store/toastStore'
 
 export type PlayMode = 'sequential' | 'loop' | 'single' | 'shuffle'
 export type DisplayMode = 'lyrics' | 'vinyl'
-export type ThemeColor = 'green' | 'orange' | 'blue' | 'purple'
+export type ThemeColor = 'green' | 'blue' | 'yellow' | 'purple'
 
 // 从 localStorage 读取收藏列表
 function loadFavorites(): Song[] {
@@ -246,6 +246,7 @@ interface PlayerStore {
   addPlaylistToPlayNext: (id: string) => void
   clearSearchHistory: () => void
   removeSearchHistoryItem: (keyword: string) => void
+  removeSmartRecommend: (index: number) => void
 }
 
 export const usePlayerStore = create<PlayerStore>((set, get) => ({
@@ -1462,13 +1463,36 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     saveSearchHistory(newHistory)
   },
 
+  removeSmartRecommend: (index: number) => {
+    const { smartRecommend } = get()
+    if (index < 0 || index >= smartRecommend.length) return
+    const newRecommend = smartRecommend.filter((_, i) => i !== index)
+    set({ smartRecommend: newRecommend })
+  },
+
   setThemeColor: (color: ThemeColor) => {
     set({ themeColor: color })
     try {
       localStorage.setItem('music_themeColor', color)
     } catch { /* ignore */ }
+    // 设置 data-theme 属性到 html 元素
+    if (color === 'green') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', color)
+    }
   },
 }))
+
+// 初始化主题
+;(function initTheme() {
+  try {
+    const saved = localStorage.getItem('music_themeColor') as ThemeColor
+    if (saved && saved !== 'green') {
+      document.documentElement.setAttribute('data-theme', saved)
+    }
+  } catch { /* ignore */ }
+})()
 
 // 页面卸载时清理 ObjectURL 并保存播放进度
 window.addEventListener('beforeunload', () => {

@@ -23,7 +23,7 @@ import { Decorations } from '@/components/Decorations'
 
 type PlayMode = 'sequential' | 'loop' | 'single' | 'shuffle'
 type DisplayMode = 'lyrics' | 'vinyl'
-type ThemeColor = 'green' | 'orange' | 'blue' | 'purple'
+type ThemeColor = 'green' | 'yellow' | 'blue' | 'purple'
 
 interface SettingOption {
   value: string | boolean | number
@@ -242,7 +242,7 @@ export default function Settings() {
 
   const themeColorOptions: SettingOption[] = [
     { value: 'green', label: '绿色' },
-    { value: 'orange', label: '橙色' },
+    { value: 'yellow', label: '黄色' },
     { value: 'blue', label: '蓝色' },
     { value: 'purple', label: '紫色' },
   ]
@@ -326,21 +326,33 @@ export default function Settings() {
           </SettingRow>
           <SettingRow label="主题色">
             <div className="flex gap-2">
-              {themeColorOptions.map((opt) => (
-                <button
-                  key={String(opt.value)}
-                  onClick={() => setThemeColor(opt.value as ThemeColor)}
-                  className={clsx(
-                    'w-8 h-8 rounded-full transition-all',
-                    themeColor === opt.value && 'ring-2 ring-offset-2',
-                    opt.value === 'green' && 'bg-green-500',
-                    opt.value === 'orange' && 'bg-emerald-500',
-                    opt.value === 'blue' && 'bg-blue-500',
-                    opt.value === 'purple' && 'bg-purple-500',
-                    themeColor === opt.value && (opt.value === 'green' ? 'ring-green-400' : opt.value === 'orange' ? 'ring-emerald-400' : opt.value === 'blue' ? 'ring-blue-400' : 'ring-purple-400')
-                  )}
-                />
-              ))}
+              {themeColorOptions.map((opt) => {
+                const colorMap: Record<string, string> = {
+                  green: '#22c55e',
+                  yellow: '#f59e0b',
+                  blue: '#3b82f6',
+                  purple: '#8b5cf6',
+                }
+                const ringColorMap: Record<string, string> = {
+                  green: '#86efac',
+                  yellow: '#fcd34d',
+                  blue: '#93c5fd',
+                  purple: '#c4b5fd',
+                }
+                const value = String(opt.value)
+                const isSelected = themeColor === value
+                return (
+                  <button
+                    key={value}
+                    onClick={() => setThemeColor(value as ThemeColor)}
+                    className="w-8 h-8 rounded-full transition-all ring-offset-2"
+                    style={{
+                      backgroundColor: colorMap[value],
+                      boxShadow: isSelected ? `0 0 0 2px ${ringColorMap[value]}` : undefined,
+                    }}
+                  />
+                )
+              })}
             </div>
           </SettingRow>
         </div>

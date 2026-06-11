@@ -223,7 +223,7 @@ export default function Layout() {
 
   if (isSubPage) {
     return (
-      <div className={clsx('min-h-screen relative', darkMode ? 'bg-[#1a1a2e]' : 'bg-gradient-to-b from-[#f4f8f2] to-[#FAF6F0]')}>
+      <div className={clsx('min-h-screen relative', darkMode ? 'bg-[#1a1a2e]' : 'green-gradient-bg')}>
         <div className={clsx(
           'fixed inset-0 pointer-events-none overflow-hidden z-0',
           darkMode ? '' : 'green-gradient-bg animate-breathing'
@@ -252,7 +252,7 @@ export default function Layout() {
 
   // 主页和个人主页
   return (
-    <div className={clsx('min-h-screen relative', darkMode ? 'bg-[#1a1a2e]' : 'bg-gradient-to-b from-[#f4f8f2] to-[#FAF6F0]')}>
+    <div className={clsx('min-h-screen relative', darkMode ? 'bg-[#1a1a2e]' : 'green-gradient-bg')}>
       <div className={clsx(
         'fixed inset-0 pointer-events-none overflow-hidden z-0',
         darkMode ? '' : 'green-gradient-bg animate-breathing'

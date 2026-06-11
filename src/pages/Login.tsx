@@ -49,10 +49,65 @@ export default function Login() {
   const [showResetPassword, setShowResetPassword] = useState(false)
   const [showResetConfirmPassword, setShowResetConfirmPassword] = useState(false)
 
+  // 验证码交互状态
+  const [codeInput, setCodeInput] = useState('')
+  const [codeCountdown, setCodeCountdown] = useState(0)
+  const [codeExpireAt, setCodeExpireAt] = useState(0)
+  const [codeVisible, setCodeVisible] = useState(false)
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const expireRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
   const navigate = useNavigate()
 
   const goToHome = () => {
     navigate('/home', { replace: true })
+  }
+
+  // 验证码倒计时
+  useEffect(() => {
+    if (codeCountdown <= 0) {
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current)
+        countdownRef.current = null
+      }
+      return
+    }
+    countdownRef.current = setInterval(() => {
+      setCodeCountdown(prev => {
+        if (prev <= 1) return 0
+        return prev - 1
+      })
+    }, 1000)
+    return () => {
+      if (countdownRef.current) clearInterval(countdownRef.current)
+    }
+  }, [codeCountdown > 0])
+
+  // 验证码过期检查
+  useEffect(() => {
+    if (codeExpireAt <= 0) return
+    expireRef.current = setInterval(() => {
+      if (Date.now() >= codeExpireAt) {
+        setCodeVisible(false)
+        setCodeExpireAt(0)
+        if (expireRef.current) {
+          clearInterval(expireRef.current)
+          expireRef.current = null
+        }
+      }
+    }, 1000)
+    return () => {
+      if (expireRef.current) clearInterval(expireRef.current)
+    }
+  }, [codeExpireAt > 0])
+
+  // 获取验证码
+  const handleGetCode = () => {
+    if (codeCountdown > 0) return
+    setVerificationCode(generateCode())
+    setCodeCountdown(60)
+    setCodeExpireAt(Date.now() + 5 * 60 * 1000)
+    setCodeVisible(true)
   }
 
   // 锁定倒计时
@@ -141,8 +196,30 @@ export default function Login() {
   return (
     <div
       className="relative min-h-screen w-full overflow-hidden"
-      style={{ background: 'linear-gradient(180deg, #f4f8f2 0%, #faf6f0 30%, #f5f1eb 70%, #f0ede6 100%)' }}
+      style={{ background: 'var(--theme-bg-gradient)' }}
     >
+      {/* 验证码通知条 */}
+      {codeVisible && (
+        <div className="fixed top-0 left-0 right-0 z-50 animate-slide-down">
+          <div className="mx-auto max-w-sm px-4 pt-3">
+            <div className="flex items-center justify-between px-4 py-3 rounded-2xl bg-white/80 backdrop-blur-xl border border-emerald-200/50 shadow-lg shadow-emerald-500/10">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-emerald-600">验证码：</span>
+                <span className="text-xl font-bold tracking-[0.2em] text-emerald-700">{verificationCode}</span>
+              </div>
+              <button
+                onClick={() => setCodeVisible(false)}
+                className="p-1 rounded-full hover:bg-emerald-100/50 transition-colors"
+              >
+                <svg width="16" height="16" viewBox="0 0 14 14" fill="none" className="text-emerald-400">
+                  <path d="M7 7L1 1M7 7L13 13M7 7L1 13M7 7L13 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <DecorationElements />
 
       <div className="flex flex-col items-center min-h-screen px-6 pt-20 pb-8">
@@ -244,11 +321,11 @@ export default function Login() {
                 </div>
 
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="flex-1 relative">
+                  <div className="flex-1">
                     <input
                       type="text"
-                      value={verificationCode}
-                      onChange={(e) => setVerificationCode(e.target.value)}
+                      value={codeInput}
+                      onChange={(e) => setCodeInput(e.target.value)}
                       onFocus={() => setFocusedField('code')}
                       onBlur={() => setFocusedField(null)}
                       placeholder="请输入验证码"
@@ -256,8 +333,16 @@ export default function Login() {
                     />
                   </div>
 
-                  <button onClick={() => setVerificationCode(generateCode)} className="px-4 py-3 rounded-xl border border-green-200 text-emerald-700 text-sm font-medium hover:bg-emerald-50 hover:border-emerald-400/50 transition-all duration-300 whitespace-nowrap">
-                    获取验证码
+                  <button
+                    onClick={handleGetCode}
+                    disabled={codeCountdown > 0}
+                    className={`px-4 py-3 rounded-xl border text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                      codeCountdown > 0
+                        ? 'border-emerald-200/60 text-emerald-300 bg-emerald-50/30 cursor-not-allowed'
+                        : 'border-green-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-400/50'
+                    }`}
+                  >
+                    {codeCountdown > 0 ? `${codeCountdown}s` : '获取验证码'}
                   </button>
                 </div>
               </>
@@ -377,8 +462,16 @@ export default function Login() {
                       className={inputClass('regCode')}
                     />
                   </div>
-                  <button onClick={() => setVerificationCode(generateCode)} className="px-4 py-3 rounded-xl border border-green-200 text-emerald-700 text-sm font-medium hover:bg-emerald-50 hover:border-emerald-400/50 transition-all duration-300 whitespace-nowrap">
-                    获取验证码
+                  <button
+                    onClick={handleGetCode}
+                    disabled={codeCountdown > 0}
+                    className={`px-4 py-3 rounded-xl border text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                      codeCountdown > 0
+                        ? 'border-emerald-200/60 text-emerald-300 bg-emerald-50/30 cursor-not-allowed'
+                        : 'border-green-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-400/50'
+                    }`}
+                  >
+                    {codeCountdown > 0 ? `${codeCountdown}s` : '获取验证码'}
                   </button>
                 </div>
 
@@ -488,8 +581,16 @@ export default function Login() {
                       className={inputClass('resetCode')}
                     />
                   </div>
-                  <button onClick={() => setVerificationCode(generateCode)} className="px-4 py-3 rounded-xl border border-green-200 text-emerald-700 text-sm font-medium hover:bg-emerald-50 hover:border-emerald-400/50 transition-all duration-300 whitespace-nowrap">
-                    获取验证码
+                  <button
+                    onClick={handleGetCode}
+                    disabled={codeCountdown > 0}
+                    className={`px-4 py-3 rounded-xl border text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                      codeCountdown > 0
+                        ? 'border-emerald-200/60 text-emerald-300 bg-emerald-50/30 cursor-not-allowed'
+                        : 'border-green-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-400/50'
+                    }`}
+                  >
+                    {codeCountdown > 0 ? `${codeCountdown}s` : '获取验证码'}
                   </button>
                 </div>
 

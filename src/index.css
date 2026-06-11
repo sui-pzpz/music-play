@@ -13,8 +13,8 @@
     height: 100%;
     width: 100%;
     overflow: auto;
-    background: linear-gradient(180deg, #f4f8f2 0%, #faf6f0 30%, #f5f1eb 70%, #f0ede6 100%);
-    color: #3a4f34;
+    background: var(--theme-bg-gradient, linear-gradient(180deg, #f4f8f2 0%, #faf6f0 30%, #f5f1eb 70%, #f0ede6 100%));
+    color: var(--theme-text, #3a4f34);
   }
 
   body {
@@ -22,22 +22,206 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-}
+
+  /* 绿色主题（默认） */
+  :root {
+    --theme-primary: #10b981;
+    --theme-primary-light: #34d399;
+    --theme-primary-rgb: 16, 185, 129;
+    --theme-text: #3a4f34;
+    --theme-text-secondary: #6b7c65;
+    --theme-border: rgba(200, 223, 192, 0.45);
+    --theme-card-bg: rgba(255, 255, 255, 0.85);
+    --theme-card-border: rgba(200, 223, 192, 0.45);
+    --theme-btn-from: #10b981;
+    --theme-btn-to: #34d399;
+    --theme-highlight: #10b981;
+    --theme-bg-gradient: linear-gradient(180deg, #f4f8f2 0%, #faf6f0 30%, #f5f1eb 70%, #f0ede6 100%);
+    --theme-scrollbar-from: #c8dfc0;
+    --theme-scrollbar-to: #a8c99b;
+    --theme-input-border: rgba(200, 223, 192, 0.6);
+    --theme-input-focus-border: #10b981;
+    --theme-input-bg: rgba(255, 255, 255, 0.8);
+    --theme-input-text: #3a4f34;
+    --theme-input-placeholder: #a8c99b;
+    --theme-glass-shadow: rgba(115, 153, 104, 0.08);
+    --theme-glass-shadow-2: rgba(115, 153, 104, 0.04);
+    --theme-glass-hover-shadow: rgba(115, 153, 104, 0.12);
+    --theme-glass-hover-shadow-2: rgba(115, 153, 104, 0.08);
+    --theme-glass-hover-border: rgba(115, 153, 104, 0.3);
+    --theme-focus-ring: rgba(115, 153, 104, 0.2);
+    --theme-selection-bg: rgba(115, 153, 104, 0.3);
+    --theme-range-from: #739968;
+    --theme-range-to: #8bb07e;
+    --theme-range-shadow: rgba(115, 153, 104, 0.3);
+    --theme-skeleton-from: #e8f0e4;
+    --theme-skeleton-mid: #f4f8f2;
+    --theme-skeleton-to: #e8f0e4;
+    --theme-emerald-50: #ecfdf5;
+    --theme-emerald-100: #d1fae5;
+    --theme-emerald-200: #a7f3d0;
+    --theme-emerald-300: #6ee7b7;
+    --theme-emerald-400: #34d399;
+    --theme-emerald-500: #10b981;
+    --theme-emerald-600: #059669;
+    --theme-emerald-700: #047857;
+    --theme-emerald-800: #065f46;
+    --theme-emerald-900: #064e3b;
+  }
+
+  /* 蓝色主题 */
+  [data-theme="blue"] {
+    --theme-primary: #0ea5e9;
+    --theme-primary-light: #38bdf8;
+    --theme-primary-rgb: 14, 165, 233;
+    --theme-text: #1e3a5f;
+    --theme-text-secondary: #5a7a9a;
+    --theme-border: rgba(180, 210, 240, 0.45);
+    --theme-card-bg: rgba(255, 255, 255, 0.88);
+    --theme-card-border: rgba(180, 210, 240, 0.45);
+    --theme-btn-from: #0ea5e9;
+    --theme-btn-to: #38bdf8;
+    --theme-highlight: #0ea5e9;
+    --theme-bg-gradient: linear-gradient(180deg, #e8f4fd 0%, #f0f7fc 30%, #edf4f8 70%, #e8eff5 100%);
+    --theme-scrollbar-from: #b4d2f0;
+    --theme-scrollbar-to: #8ab8e0;
+    --theme-input-border: rgba(180, 210, 240, 0.6);
+    --theme-input-focus-border: #0ea5e9;
+    --theme-input-bg: rgba(255, 255, 255, 0.85);
+    --theme-input-text: #1e3a5f;
+    --theme-input-placeholder: #93c5fd;
+    --theme-glass-shadow: rgba(14, 165, 233, 0.08);
+    --theme-glass-shadow-2: rgba(14, 165, 233, 0.04);
+    --theme-glass-hover-shadow: rgba(14, 165, 233, 0.12);
+    --theme-glass-hover-shadow-2: rgba(14, 165, 233, 0.08);
+    --theme-glass-hover-border: rgba(14, 165, 233, 0.3);
+    --theme-focus-ring: rgba(14, 165, 233, 0.2);
+    --theme-selection-bg: rgba(14, 165, 233, 0.3);
+    --theme-range-from: #3b82f6;
+    --theme-range-to: #60a5fa;
+    --theme-range-shadow: rgba(14, 165, 233, 0.3);
+    --theme-skeleton-from: #dbeafe;
+    --theme-skeleton-mid: #eff6ff;
+    --theme-skeleton-to: #dbeafe;
+    --theme-emerald-50: #eff6ff;
+    --theme-emerald-100: #dbeafe;
+    --theme-emerald-200: #bfdbfe;
+    --theme-emerald-300: #93c5fd;
+    --theme-emerald-400: #60a5fa;
+    --theme-emerald-500: #3b82f6;
+    --theme-emerald-600: #2563eb;
+    --theme-emerald-700: #1d4ed8;
+    --theme-emerald-800: #1e40af;
+    --theme-emerald-900: #1e3a8a;
+  }
+
+  /* 黄色主题 */
+  [data-theme="yellow"] {
+    --theme-primary: #f59e0b;
+    --theme-primary-light: #fbbf24;
+    --theme-primary-rgb: 245, 158, 11;
+    --theme-text: #5c4a1e;
+    --theme-text-secondary: #8a7a50;
+    --theme-border: rgba(230, 210, 160, 0.45);
+    --theme-card-bg: rgba(255, 255, 255, 0.88);
+    --theme-card-border: rgba(230, 210, 160, 0.45);
+    --theme-btn-from: #f59e0b;
+    --theme-btn-to: #fbbf24;
+    --theme-highlight: #f59e0b;
+    --theme-bg-gradient: linear-gradient(180deg, #fef9e7 0%, #fdf3d7 30%, #faecd0 70%, #f7e5c0 100%);
+    --theme-scrollbar-from: #e6d2a0;
+    --theme-scrollbar-to: #d4bc80;
+    --theme-input-border: rgba(230, 210, 160, 0.6);
+    --theme-input-focus-border: #f59e0b;
+    --theme-input-bg: rgba(255, 255, 255, 0.85);
+    --theme-input-text: #5c4a1e;
+    --theme-input-placeholder: #d4a84b;
+    --theme-glass-shadow: rgba(245, 158, 11, 0.08);
+    --theme-glass-shadow-2: rgba(245, 158, 11, 0.04);
+    --theme-glass-hover-shadow: rgba(245, 158, 11, 0.12);
+    --theme-glass-hover-shadow-2: rgba(245, 158, 11, 0.08);
+    --theme-glass-hover-border: rgba(245, 158, 11, 0.3);
+    --theme-focus-ring: rgba(245, 158, 11, 0.2);
+    --theme-selection-bg: rgba(245, 158, 11, 0.3);
+    --theme-range-from: #d97706;
+    --theme-range-to: #f59e0b;
+    --theme-range-shadow: rgba(245, 158, 11, 0.3);
+    --theme-skeleton-from: #fef3c7;
+    --theme-skeleton-mid: #fffbeb;
+    --theme-skeleton-to: #fef3c7;
+    --theme-emerald-50: #fffbeb;
+    --theme-emerald-100: #fef3c7;
+    --theme-emerald-200: #fde68a;
+    --theme-emerald-300: #fcd34d;
+    --theme-emerald-400: #fbbf24;
+    --theme-emerald-500: #f59e0b;
+    --theme-emerald-600: #d97706;
+    --theme-emerald-700: #b45309;
+    --theme-emerald-800: #92400e;
+    --theme-emerald-900: #78350f;
+  }
+
+  /* 紫色主题 */
+  [data-theme="purple"] {
+    --theme-primary: #8b5cf6;
+    --theme-primary-light: #a78bfa;
+    --theme-primary-rgb: 139, 92, 246;
+    --theme-text: #ffffff;
+    --theme-text-secondary: #d4c8e0;
+    --theme-border: rgba(180, 160, 210, 0.45);
+    --theme-card-bg: rgba(255, 255, 255, 0.75);
+    --theme-card-border: rgba(180, 160, 210, 0.45);
+    --theme-btn-from: #8b5cf6;
+    --theme-btn-to: #a78bfa;
+    --theme-highlight: #8b5cf6;
+    --theme-bg-gradient: linear-gradient(180deg, #f3eef8 0%, #ede5f5 30%, #e8ddf0 70%, #e2d5ea 100%);
+    --theme-scrollbar-from: #c8b0e0;
+    --theme-scrollbar-to: #b090d0;
+    --theme-input-border: rgba(180, 160, 210, 0.6);
+    --theme-input-focus-border: #8b5cf6;
+    --theme-input-bg: rgba(255, 255, 255, 0.7);
+    --theme-input-text: #4c1d95;
+    --theme-input-placeholder: #c4b5fd;
+    --theme-glass-shadow: rgba(139, 92, 246, 0.08);
+    --theme-glass-shadow-2: rgba(139, 92, 246, 0.04);
+    --theme-glass-hover-shadow: rgba(139, 92, 246, 0.12);
+    --theme-glass-hover-shadow-2: rgba(139, 92, 246, 0.08);
+    --theme-glass-hover-border: rgba(139, 92, 246, 0.3);
+    --theme-focus-ring: rgba(139, 92, 246, 0.2);
+    --theme-selection-bg: rgba(139, 92, 246, 0.3);
+    --theme-range-from: #7c3aed;
+    --theme-range-to: #8b5cf6;
+    --theme-range-shadow: rgba(139, 92, 246, 0.3);
+    --theme-skeleton-from: #ede9fe;
+    --theme-skeleton-mid: #f5f3ff;
+    --theme-skeleton-to: #ede9fe;
+    --theme-emerald-50: #f5f3ff;
+    --theme-emerald-100: #ede9fe;
+    --theme-emerald-200: #ddd6fe;
+    --theme-emerald-300: #c4b5fd;
+    --theme-emerald-400: #a78bfa;
+    --theme-emerald-500: #8b5cf6;
+    --theme-emerald-600: #7c3aed;
+    --theme-emerald-700: #6d28d9;
+    --theme-emerald-800: #5b21b6;
+    --theme-emerald-900: #4c1d95;
+  }
 
 @layer components {
   .glass-card {
-    background: rgba(255, 255, 255, 0.85);
+    background: var(--theme-card-bg);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(200, 223, 192, 0.45);
+    border: 1px solid var(--theme-card-border);
     border-radius: 24px;
-    box-shadow: 
-      0 8px 32px rgba(115, 153, 104, 0.08), 
-      0 2px 8px rgba(115, 153, 104, 0.04),
+    box-shadow:
+      0 8px 32px var(--theme-glass-shadow),
+      0 2px 8px var(--theme-glass-shadow-2),
       inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                 box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                border-color 0.3s ease;
+                border-color 0.3s ease,
+                background-color 300ms ease-in-out;
     position: relative;
     overflow: hidden;
   }
@@ -55,11 +239,11 @@
 
   .glass-card:hover {
     transform: translateY(-4px) scale(1.01);
-    box-shadow: 
-      0 16px 48px rgba(115, 153, 104, 0.12), 
-      0 4px 16px rgba(115, 153, 104, 0.08),
-      0 0 0 1px rgba(115, 153, 104, 0.1);
-    border-color: rgba(115, 153, 104, 0.3);
+    box-shadow:
+      0 16px 48px var(--theme-glass-hover-shadow),
+      0 4px 16px var(--theme-glass-hover-shadow-2),
+      0 0 0 1px var(--theme-glass-hover-border);
+    border-color: var(--theme-glass-hover-border);
   }
 
   .glass-card:active {
@@ -68,11 +252,13 @@
   }
 
   .green-gradient-bg {
-    background: linear-gradient(180deg, #f4f8f2 0%, #e8f0e4 25%, #eef5eb 55%, #FAF6F0 100%);
+    background: var(--theme-bg-gradient);
   }
 
   .btn-primary {
-    @apply px-4 py-2 rounded-btn bg-gradient-to-r from-emerald-500 via-emerald-400 to-green-500 text-white font-medium transition-all duration-300 hover:scale-[1.03] hover:shadow-lg hover:shadow-emerald-500/20 active:scale-[0.97];
+    @apply px-4 py-2 rounded-btn text-white font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97];
+    background: linear-gradient(to right, var(--theme-btn-from), var(--theme-btn-to));
+    box-shadow: 0 4px 14px rgba(var(--theme-primary-rgb), 0.2);
     position: relative;
     overflow: hidden;
   }
@@ -93,13 +279,25 @@
   }
 
   .btn-secondary {
-    @apply px-4 py-2 rounded-btn bg-white/80 text-emerald-800 font-medium transition-all duration-300 hover:bg-white hover:shadow-md active:scale-[0.97];
-    border: 1px solid rgba(200, 223, 192, 0.5);
+    @apply px-4 py-2 rounded-btn font-medium transition-all duration-300 hover:bg-white hover:shadow-md active:scale-[0.97];
+    background: var(--theme-card-bg);
+    color: var(--theme-text);
+    border: 1px solid var(--theme-border);
   }
 
   .input-field {
-    @apply w-full px-4 py-2 rounded-btn bg-white/60 border border-emerald-200/50 text-emerald-900 placeholder:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400/40 focus:border-emerald-300 transition-all duration-300;
+    @apply w-full px-4 py-2 rounded-btn placeholder:text-opacity-60 focus:outline-none transition-all duration-300;
+    background: var(--theme-input-bg);
+    border: 1px solid var(--theme-input-border);
+    color: var(--theme-input-text);
     backdrop-filter: blur(12px);
+  }
+  .input-field::placeholder {
+    color: var(--theme-input-placeholder);
+  }
+  .input-field:focus {
+    border-color: var(--theme-input-focus-border);
+    box-shadow: 0 0 0 3px var(--theme-focus-ring);
   }
 
   .icon-btn {
@@ -108,11 +306,17 @@
   }
 
   .tab-active {
-    @apply text-emerald-700 border-b-2 border-emerald-500 font-medium;
+    color: var(--theme-primary);
+    border-bottom: 2px solid var(--theme-primary);
+    font-weight: 500;
   }
 
   .tab-inactive {
-    @apply text-emerald-400 hover:text-emerald-600 transition-colors;
+    color: var(--theme-text-secondary);
+    transition: color 0.2s;
+  }
+  .tab-inactive:hover {
+    color: var(--theme-primary);
   }
 
   .ripple-effect {
@@ -121,26 +325,27 @@
   }
 
   .search-glass {
-    background: rgba(255, 255, 255, 0.85);
+    background: var(--theme-card-bg);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(200, 223, 192, 0.4);
+    border: 1px solid var(--theme-border);
     border-radius: 20px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .search-glass:focus-within {
-    box-shadow: 
-      0 0 0 3px rgba(115, 153, 104, 0.1),
-      0 8px 32px rgba(115, 153, 104, 0.12);
-    border-color: rgba(115, 153, 104, 0.3);
+    box-shadow:
+      0 0 0 3px var(--theme-focus-ring),
+      0 8px 32px var(--theme-glass-hover-shadow);
+    border-color: var(--theme-glass-hover-border);
   }
+}
 }
 
 @layer utilities {
   .text-shadow-glow {
-    text-shadow: 
-      0 0 20px rgba(115, 153, 104, 0.2), 
-      0 0 40px rgba(115, 153, 104, 0.1);
+    text-shadow:
+      0 0 20px rgba(var(--theme-primary-rgb), 0.2),
+      0 0 40px rgba(var(--theme-primary-rgb), 0.1);
   }
 
   .text-shadow-soft {
@@ -149,7 +354,7 @@
 
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: rgba(200, 223, 192, 0.8) transparent;
+    scrollbar-color: var(--theme-scrollbar-from) transparent;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
@@ -161,13 +366,13 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #c8dfc0, #a8c99b);
+    background: linear-gradient(180deg, var(--theme-scrollbar-from), var(--theme-scrollbar-to));
     border-radius: 9999px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #a8c99b, #8bb07e);
+    background: linear-gradient(180deg, var(--theme-scrollbar-to), var(--theme-primary));
   }
 
   .animate-vinyl-spin {
@@ -262,14 +467,14 @@
 
   @keyframes pulse-glow {
     0%, 100% {
-      box-shadow: 
-        0 0 20px rgba(115, 153, 104, 0.15),
-        0 0 40px rgba(115, 153, 104, 0.08);
+      box-shadow:
+        0 0 20px rgba(var(--theme-primary-rgb), 0.15),
+        0 0 40px rgba(var(--theme-primary-rgb), 0.08);
     }
     50% {
-      box-shadow: 
-        0 0 32px rgba(115, 153, 104, 0.25),
-        0 0 64px rgba(115, 153, 104, 0.12);
+      box-shadow:
+        0 0 32px rgba(var(--theme-primary-rgb), 0.25),
+        0 0 64px rgba(var(--theme-primary-rgb), 0.12);
     }
   }
 
@@ -382,7 +587,7 @@
   }
 
   .skeleton {
-    background: linear-gradient(90deg, #e8f0e4 25%, #f4f8f2 50%, #e8f0e4 75%);
+    background: linear-gradient(90deg, var(--theme-skeleton-from) 25%, var(--theme-skeleton-mid) 50%, var(--theme-skeleton-to) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s ease-in-out infinite;
   }
@@ -411,12 +616,12 @@ input[type="range"]::-webkit-slider-thumb {
   height: 16px;
   width: 16px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #739968, #8bb07e);
+  background: linear-gradient(135deg, var(--theme-range-from), var(--theme-range-to));
   margin-top: -6px;
   opacity: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
-    0 2px 8px rgba(115, 153, 104, 0.3),
+  box-shadow:
+    0 2px 8px var(--theme-range-shadow),
     inset 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
@@ -430,11 +635,11 @@ input[type="range"]::-moz-range-thumb {
   height: 16px;
   width: 16px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #739968, #8bb07e);
+  background: linear-gradient(135deg, var(--theme-range-from), var(--theme-range-to));
   border: none;
   opacity: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(115, 153, 104, 0.3);
+  box-shadow: 0 2px 8px var(--theme-range-shadow);
 }
 
 input[type="range"]:hover::-moz-range-thumb,
@@ -445,20 +650,20 @@ input[type="range"]:active::-moz-range-thumb {
 button:focus-visible,
 a:focus-visible,
 [role="button"]:focus-visible {
-  outline: 2px solid #739968;
+  outline: 2px solid var(--theme-primary);
   outline-offset: 4px;
   border-radius: inherit;
 }
 
 input:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #739968;
+  outline: 2px solid var(--theme-primary);
   outline-offset: 2px;
 }
 
 ::selection {
-  background-color: rgba(115, 153, 104, 0.3);
-  color: #3a4f34;
+  background-color: var(--theme-selection-bg);
+  color: var(--theme-text);
 }
 
 .dark {
@@ -723,3 +928,418 @@ textarea:focus-visible {
   background-color: rgba(139, 176, 126, 0.3);
   color: #e4e4e7;
 }
+
+/* ============================================================
+   主题色映射（必须在 @layer 之外，优先级高于 Tailwind utilities）
+   让 emerald/green 工具类在各主题下映射到对应颜色
+   ============================================================ */
+
+/* --- 蓝色主题 --- */
+[data-theme="blue"] .text-emerald-300 { color: var(--theme-emerald-300) !important; }
+[data-theme="blue"] .text-emerald-400 { color: var(--theme-emerald-400) !important; }
+[data-theme="blue"] .text-emerald-500 { color: var(--theme-emerald-500) !important; }
+[data-theme="blue"] .text-emerald-600 { color: var(--theme-emerald-600) !important; }
+[data-theme="blue"] .text-emerald-700 { color: var(--theme-emerald-700) !important; }
+[data-theme="blue"] .text-emerald-800 { color: var(--theme-emerald-800) !important; }
+[data-theme="blue"] .text-emerald-900 { color: var(--theme-emerald-900) !important; }
+[data-theme="blue"] .bg-emerald-50 { background-color: var(--theme-emerald-50) !important; }
+[data-theme="blue"] .bg-emerald-100 { background-color: var(--theme-emerald-100) !important; }
+[data-theme="blue"] .bg-emerald-200 { background-color: var(--theme-emerald-200) !important; }
+[data-theme="blue"] .bg-emerald-400 { background-color: var(--theme-emerald-400) !important; }
+[data-theme="blue"] .bg-emerald-500 { background-color: var(--theme-emerald-500) !important; }
+[data-theme="blue"] .bg-emerald-600 { background-color: var(--theme-emerald-600) !important; }
+[data-theme="blue"] .border-emerald-200 { border-color: var(--theme-emerald-200) !important; }
+[data-theme="blue"] .border-emerald-400 { border-color: var(--theme-emerald-400) !important; }
+[data-theme="blue"] .border-emerald-500 { border-color: var(--theme-emerald-500) !important; }
+[data-theme="blue"] .from-emerald-500 { --tw-gradient-from: var(--theme-emerald-500) !important; }
+[data-theme="blue"] .to-emerald-400 { --tw-gradient-to: var(--theme-emerald-400) !important; }
+[data-theme="blue"] .from-emerald-600 { --tw-gradient-from: var(--theme-emerald-600) !important; }
+[data-theme="blue"] .bg-emerald-300\/50 { background-color: color-mix(in srgb, var(--theme-emerald-300) 50%, transparent) !important; }
+[data-theme="blue"] .shadow-emerald-600\/30 { --tw-shadow-color: rgba(var(--theme-emerald-600-rgb), 0.3) !important; }
+[data-theme="blue"] .shadow-emerald-500\/25 { --tw-shadow-color: rgba(var(--theme-primary-rgb), 0.25) !important; }
+[data-theme="blue"] .shadow-emerald-500\/20 { --tw-shadow-color: rgba(var(--theme-primary-rgb), 0.2) !important; }
+[data-theme="blue"] .ring-emerald-400 { --tw-ring-color: var(--theme-emerald-400) !important; }
+[data-theme="blue"] .text-emerald-400\/60 { color: color-mix(in srgb, var(--theme-emerald-400) 60%, transparent) !important; }
+[data-theme="blue"] .text-emerald-400\/70 { color: color-mix(in srgb, var(--theme-emerald-400) 70%, transparent) !important; }
+[data-theme="blue"] .placeholder\:text-emerald-300::placeholder { color: var(--theme-emerald-300) !important; }
+[data-theme="blue"] .text-emerald-600\/60 { color: color-mix(in srgb, var(--theme-emerald-600) 60%, transparent) !important; }
+[data-theme="blue"] .text-emerald-600\/70 { color: color-mix(in srgb, var(--theme-emerald-600) 70%, transparent) !important; }
+[data-theme="blue"] .text-emerald-500\/60 { color: color-mix(in srgb, var(--theme-emerald-500) 60%, transparent) !important; }
+[data-theme="blue"] .text-emerald-500\/70 { color: color-mix(in srgb, var(--theme-emerald-500) 70%, transparent) !important; }
+/* green -> 同 emerald 映射 */
+[data-theme="blue"] .text-green-600 { color: var(--theme-emerald-600) !important; }
+[data-theme="blue"] .text-green-700 { color: var(--theme-emerald-700) !important; }
+[data-theme="blue"] .text-green-500 { color: var(--theme-emerald-500) !important; }
+[data-theme="blue"] .text-green-400 { color: var(--theme-emerald-400) !important; }
+[data-theme="blue"] .text-green-800 { color: var(--theme-emerald-800) !important; }
+[data-theme="blue"] .text-green-500\/70 { color: color-mix(in srgb, var(--theme-emerald-500) 70%, transparent) !important; }
+[data-theme="blue"] .bg-green-50 { background-color: var(--theme-emerald-50) !important; }
+[data-theme="blue"] .bg-green-100 { background-color: var(--theme-emerald-100) !important; }
+[data-theme="blue"] .bg-green-500 { background-color: var(--theme-emerald-500) !important; }
+[data-theme="blue"] .bg-green-600 { background-color: var(--theme-emerald-600) !important; }
+[data-theme="blue"] .border-green-200 { border-color: var(--theme-emerald-200) !important; }
+[data-theme="blue"] .border-green-100 { border-color: var(--theme-emerald-100) !important; }
+[data-theme="blue"] .border-green-200\/30 { border-color: color-mix(in srgb, var(--theme-emerald-200) 30%, transparent) !important; }
+[data-theme="blue"] .border-green-200\/40 { border-color: color-mix(in srgb, var(--theme-emerald-200) 40%, transparent) !important; }
+[data-theme="blue"] .border-green-200\/60 { border-color: color-mix(in srgb, var(--theme-emerald-200) 60%, transparent) !important; }
+[data-theme="blue"] .hover\:bg-green-50:hover { background-color: var(--theme-emerald-50) !important; }
+[data-theme="blue"] .hover\:bg-green-100:hover { background-color: var(--theme-emerald-100) !important; }
+[data-theme="blue"] .ring-green-200 { --tw-ring-color: var(--theme-emerald-200) !important; }
+[data-theme="blue"] .ring-green-400 { --tw-ring-color: var(--theme-emerald-400) !important; }
+[data-theme="blue"] .text-emerald-300\/60 { color: color-mix(in srgb, var(--theme-emerald-300) 60%, transparent) !important; }
+[data-theme="blue"] .text-emerald-800\/80 { color: color-mix(in srgb, var(--theme-emerald-800) 80%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-300 { background-color: var(--theme-emerald-300) !important; }
+[data-theme="blue"] .bg-emerald-800 { background-color: var(--theme-emerald-800) !important; }
+[data-theme="blue"] .bg-emerald-900\/20 { background-color: color-mix(in srgb, var(--theme-emerald-900) 20%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-900\/50 { background-color: color-mix(in srgb, var(--theme-emerald-900) 50%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-900\/95 { background-color: color-mix(in srgb, var(--theme-emerald-900) 95%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-50\/50 { background-color: color-mix(in srgb, var(--theme-emerald-50) 50%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-200\/30 { background-color: color-mix(in srgb, var(--theme-emerald-200) 30%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-400\/10 { background-color: color-mix(in srgb, var(--theme-emerald-400) 10%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-500\/10 { background-color: color-mix(in srgb, var(--theme-emerald-500) 10%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-600\/20 { background-color: color-mix(in srgb, var(--theme-emerald-600) 20%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-600\/30 { background-color: color-mix(in srgb, var(--theme-emerald-600) 30%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-600\/40 { background-color: color-mix(in srgb, var(--theme-emerald-600) 40%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-600\/60 { background-color: color-mix(in srgb, var(--theme-emerald-600) 60%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-600\/80 { background-color: color-mix(in srgb, var(--theme-emerald-600) 80%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-800\/50 { background-color: color-mix(in srgb, var(--theme-emerald-800) 50%, transparent) !important; }
+[data-theme="blue"] .border-emerald-200\/40 { border-color: color-mix(in srgb, var(--theme-emerald-200) 40%, transparent) !important; }
+[data-theme="blue"] .border-emerald-400\/60 { border-color: color-mix(in srgb, var(--theme-emerald-400) 60%, transparent) !important; }
+[data-theme="blue"] .border-emerald-500\/20 { border-color: color-mix(in srgb, var(--theme-emerald-500) 20%, transparent) !important; }
+[data-theme="blue"] .border-emerald-500\/30 { border-color: color-mix(in srgb, var(--theme-emerald-500) 30%, transparent) !important; }
+[data-theme="blue"] .border-emerald-500\/50 { border-color: color-mix(in srgb, var(--theme-emerald-500) 50%, transparent) !important; }
+[data-theme="blue"] .to-emerald-600 { --tw-gradient-to: var(--theme-emerald-600) !important; }
+[data-theme="blue"] .shadow-emerald-200\/50 { --tw-shadow-color: color-mix(in srgb, var(--theme-emerald-200) 50%, transparent) !important; }
+[data-theme="blue"] .shadow-emerald-600\/25 { --tw-shadow-color: color-mix(in srgb, var(--theme-emerald-600) 25%, transparent) !important; }
+[data-theme="blue"] .shadow-emerald-700\/50 { --tw-shadow-color: color-mix(in srgb, var(--theme-emerald-700) 50%, transparent) !important; }
+[data-theme="blue"] .ring-emerald-200 { --tw-ring-color: var(--theme-emerald-200) !important; }
+[data-theme="blue"] .ring-emerald-300 { --tw-ring-color: var(--theme-emerald-300) !important; }
+[data-theme="blue"] .focus\:border-emerald-400\/60:focus { border-color: color-mix(in srgb, var(--theme-emerald-400) 60%, transparent) !important; }
+[data-theme="blue"] .focus\:border-emerald-500\/50:focus { border-color: color-mix(in srgb, var(--theme-emerald-500) 50%, transparent) !important; }
+[data-theme="blue"] .hover\:text-emerald-400:hover { color: var(--theme-emerald-400) !important; }
+[data-theme="blue"] .hover\:text-emerald-500:hover { color: var(--theme-emerald-500) !important; }
+[data-theme="blue"] .hover\:text-emerald-600:hover { color: var(--theme-emerald-600) !important; }
+[data-theme="blue"] .hover\:text-emerald-700:hover { color: var(--theme-emerald-700) !important; }
+[data-theme="blue"] .hover\:bg-emerald-50:hover { background-color: var(--theme-emerald-50) !important; }
+[data-theme="blue"] .hover\:bg-emerald-50\/50:hover { background-color: color-mix(in srgb, var(--theme-emerald-50) 50%, transparent) !important; }
+[data-theme="blue"] .hover\:bg-emerald-100:hover { background-color: var(--theme-emerald-100) !important; }
+[data-theme="blue"] .hover\:bg-emerald-200:hover { background-color: var(--theme-emerald-200) !important; }
+[data-theme="blue"] .hover\:bg-emerald-400:hover { background-color: var(--theme-emerald-400) !important; }
+[data-theme="blue"] .hover\:bg-emerald-500:hover { background-color: var(--theme-emerald-500) !important; }
+[data-theme="blue"] .hover\:bg-emerald-600:hover { background-color: var(--theme-emerald-600) !important; }
+[data-theme="blue"] .hover\:bg-emerald-600\/30:hover { background-color: color-mix(in srgb, var(--theme-emerald-600) 30%, transparent) !important; }
+[data-theme="blue"] .hover\:bg-emerald-600\/40:hover { background-color: color-mix(in srgb, var(--theme-emerald-600) 40%, transparent) !important; }
+[data-theme="blue"] .hover\:bg-emerald-600\/60:hover { background-color: color-mix(in srgb, var(--theme-emerald-600) 60%, transparent) !important; }
+[data-theme="blue"] .hover\:bg-emerald-800\/50:hover { background-color: color-mix(in srgb, var(--theme-emerald-800) 50%, transparent) !important; }
+[data-theme="blue"] .hover\:border-emerald-400:hover { border-color: var(--theme-emerald-400) !important; }
+[data-theme="blue"] .hover\:shadow-emerald-500\/25:hover { --tw-shadow-color: color-mix(in srgb, var(--theme-emerald-500) 25%, transparent) !important; }
+[data-theme="blue"] .hover\:shadow-emerald-500\/30:hover { --tw-shadow-color: color-mix(in srgb, var(--theme-emerald-500) 30%, transparent) !important; }
+[data-theme="blue"] .text-green-300 { color: var(--theme-emerald-300) !important; }
+[data-theme="blue"] .bg-green-200 { background-color: var(--theme-emerald-200) !important; }
+[data-theme="blue"] .bg-green-200\/30 { background-color: color-mix(in srgb, var(--theme-emerald-200) 30%, transparent) !important; }
+[data-theme="blue"] .bg-green-200\/60 { background-color: color-mix(in srgb, var(--theme-emerald-200) 60%, transparent) !important; }
+[data-theme="blue"] .bg-green-50\/50 { background-color: color-mix(in srgb, var(--theme-emerald-50) 50%, transparent) !important; }
+[data-theme="blue"] .bg-green-50\/80 { background-color: color-mix(in srgb, var(--theme-emerald-50) 80%, transparent) !important; }
+[data-theme="blue"] .bg-green-100\/50 { background-color: color-mix(in srgb, var(--theme-emerald-100) 50%, transparent) !important; }
+[data-theme="blue"] .bg-green-900\/30 { background-color: color-mix(in srgb, var(--theme-emerald-900) 30%, transparent) !important; }
+[data-theme="blue"] .border-green-100 { border-color: var(--theme-emerald-100) !important; }
+[data-theme="blue"] .border-green-200\/20 { border-color: color-mix(in srgb, var(--theme-emerald-200) 20%, transparent) !important; }
+[data-theme="blue"] .from-green-400 { --tw-gradient-from: var(--theme-emerald-400) !important; }
+[data-theme="blue"] .from-green-500 { --tw-gradient-from: var(--theme-emerald-500) !important; }
+[data-theme="blue"] .to-green-600 { --tw-gradient-to: var(--theme-emerald-600) !important; }
+[data-theme="blue"] .to-green-700 { --tw-gradient-to: var(--theme-emerald-700) !important; }
+[data-theme="blue"] .hover\:text-green-300:hover { color: var(--theme-emerald-300) !important; }
+[data-theme="blue"] .hover\:text-green-400:hover { color: var(--theme-emerald-400) !important; }
+[data-theme="blue"] .hover\:text-green-500:hover { color: var(--theme-emerald-500) !important; }
+[data-theme="blue"] .hover\:text-green-600:hover { color: var(--theme-emerald-600) !important; }
+[data-theme="blue"] .hover\:bg-green-50\/50:hover { background-color: color-mix(in srgb, var(--theme-emerald-50) 50%, transparent) !important; }
+[data-theme="blue"] .hover\:bg-green-50\/80:hover { background-color: color-mix(in srgb, var(--theme-emerald-50) 80%, transparent) !important; }
+[data-theme="blue"] .hover\:bg-green-100\/50:hover { background-color: color-mix(in srgb, var(--theme-emerald-100) 50%, transparent) !important; }
+[data-theme="blue"] .hover\:border-green-200:hover { border-color: var(--theme-emerald-200) !important; }
+
+/* --- 黄色主题 --- */
+[data-theme="yellow"] .text-emerald-300 { color: var(--theme-emerald-300) !important; }
+[data-theme="yellow"] .text-emerald-400 { color: var(--theme-emerald-400) !important; }
+[data-theme="yellow"] .text-emerald-500 { color: var(--theme-emerald-500) !important; }
+[data-theme="yellow"] .text-emerald-600 { color: var(--theme-emerald-600) !important; }
+[data-theme="yellow"] .text-emerald-700 { color: var(--theme-emerald-700) !important; }
+[data-theme="yellow"] .text-emerald-800 { color: var(--theme-emerald-800) !important; }
+[data-theme="yellow"] .text-emerald-900 { color: var(--theme-emerald-900) !important; }
+[data-theme="yellow"] .bg-emerald-50 { background-color: var(--theme-emerald-50) !important; }
+[data-theme="yellow"] .bg-emerald-100 { background-color: var(--theme-emerald-100) !important; }
+[data-theme="yellow"] .bg-emerald-200 { background-color: var(--theme-emerald-200) !important; }
+[data-theme="yellow"] .bg-emerald-400 { background-color: var(--theme-emerald-400) !important; }
+[data-theme="yellow"] .bg-emerald-500 { background-color: var(--theme-emerald-500) !important; }
+[data-theme="yellow"] .bg-emerald-600 { background-color: var(--theme-emerald-600) !important; }
+[data-theme="yellow"] .border-emerald-200 { border-color: var(--theme-emerald-200) !important; }
+[data-theme="yellow"] .border-emerald-400 { border-color: var(--theme-emerald-400) !important; }
+[data-theme="yellow"] .border-emerald-500 { border-color: var(--theme-emerald-500) !important; }
+[data-theme="yellow"] .from-emerald-500 { --tw-gradient-from: var(--theme-emerald-500) !important; }
+[data-theme="yellow"] .to-emerald-400 { --tw-gradient-to: var(--theme-emerald-400) !important; }
+[data-theme="yellow"] .from-emerald-600 { --tw-gradient-from: var(--theme-emerald-600) !important; }
+[data-theme="yellow"] .bg-emerald-300\/50 { background-color: color-mix(in srgb, var(--theme-emerald-300) 50%, transparent) !important; }
+[data-theme="yellow"] .shadow-emerald-600\/30 { --tw-shadow-color: rgba(var(--theme-emerald-600-rgb), 0.3) !important; }
+[data-theme="yellow"] .shadow-emerald-500\/25 { --tw-shadow-color: rgba(var(--theme-primary-rgb), 0.25) !important; }
+[data-theme="yellow"] .shadow-emerald-500\/20 { --tw-shadow-color: rgba(var(--theme-primary-rgb), 0.2) !important; }
+[data-theme="yellow"] .ring-emerald-400 { --tw-ring-color: var(--theme-emerald-400) !important; }
+[data-theme="yellow"] .text-emerald-400\/60 { color: color-mix(in srgb, var(--theme-emerald-400) 60%, transparent) !important; }
+[data-theme="yellow"] .text-emerald-400\/70 { color: color-mix(in srgb, var(--theme-emerald-400) 70%, transparent) !important; }
+[data-theme="yellow"] .placeholder\:text-emerald-300::placeholder { color: var(--theme-emerald-300) !important; }
+[data-theme="yellow"] .text-emerald-600\/60 { color: color-mix(in srgb, var(--theme-emerald-600) 60%, transparent) !important; }
+[data-theme="yellow"] .text-emerald-600\/70 { color: color-mix(in srgb, var(--theme-emerald-600) 70%, transparent) !important; }
+[data-theme="yellow"] .text-emerald-500\/60 { color: color-mix(in srgb, var(--theme-emerald-500) 60%, transparent) !important; }
+[data-theme="yellow"] .text-emerald-500\/70 { color: color-mix(in srgb, var(--theme-emerald-500) 70%, transparent) !important; }
+[data-theme="yellow"] .text-green-600 { color: var(--theme-emerald-600) !important; }
+[data-theme="yellow"] .text-green-700 { color: var(--theme-emerald-700) !important; }
+[data-theme="yellow"] .text-green-500 { color: var(--theme-emerald-500) !important; }
+[data-theme="yellow"] .text-green-400 { color: var(--theme-emerald-400) !important; }
+[data-theme="yellow"] .text-green-800 { color: var(--theme-emerald-800) !important; }
+[data-theme="yellow"] .text-green-500\/70 { color: color-mix(in srgb, var(--theme-emerald-500) 70%, transparent) !important; }
+[data-theme="yellow"] .bg-green-50 { background-color: var(--theme-emerald-50) !important; }
+[data-theme="yellow"] .bg-green-100 { background-color: var(--theme-emerald-100) !important; }
+[data-theme="yellow"] .bg-green-500 { background-color: var(--theme-emerald-500) !important; }
+[data-theme="yellow"] .bg-green-600 { background-color: var(--theme-emerald-600) !important; }
+[data-theme="yellow"] .border-green-200 { border-color: var(--theme-emerald-200) !important; }
+[data-theme="yellow"] .border-green-100 { border-color: var(--theme-emerald-100) !important; }
+[data-theme="yellow"] .border-green-200\/30 { border-color: color-mix(in srgb, var(--theme-emerald-200) 30%, transparent) !important; }
+[data-theme="yellow"] .border-green-200\/40 { border-color: color-mix(in srgb, var(--theme-emerald-200) 40%, transparent) !important; }
+[data-theme="yellow"] .border-green-200\/60 { border-color: color-mix(in srgb, var(--theme-emerald-200) 60%, transparent) !important; }
+[data-theme="yellow"] .hover\:bg-green-50:hover { background-color: var(--theme-emerald-50) !important; }
+[data-theme="yellow"] .hover\:bg-green-100:hover { background-color: var(--theme-emerald-100) !important; }
+[data-theme="yellow"] .ring-green-200 { --tw-ring-color: var(--theme-emerald-200) !important; }
+[data-theme="yellow"] .ring-green-400 { --tw-ring-color: var(--theme-emerald-400) !important; }
+[data-theme="yellow"] .text-emerald-300\/60 { color: color-mix(in srgb, var(--theme-emerald-300) 60%, transparent) !important; }
+[data-theme="yellow"] .text-emerald-800\/80 { color: color-mix(in srgb, var(--theme-emerald-800) 80%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-300 { background-color: var(--theme-emerald-300) !important; }
+[data-theme="yellow"] .bg-emerald-800 { background-color: var(--theme-emerald-800) !important; }
+[data-theme="yellow"] .bg-emerald-900\/20 { background-color: color-mix(in srgb, var(--theme-emerald-900) 20%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-900\/50 { background-color: color-mix(in srgb, var(--theme-emerald-900) 50%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-900\/95 { background-color: color-mix(in srgb, var(--theme-emerald-900) 95%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-50\/50 { background-color: color-mix(in srgb, var(--theme-emerald-50) 50%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-200\/30 { background-color: color-mix(in srgb, var(--theme-emerald-200) 30%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-400\/10 { background-color: color-mix(in srgb, var(--theme-emerald-400) 10%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-500\/10 { background-color: color-mix(in srgb, var(--theme-emerald-500) 10%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-600\/20 { background-color: color-mix(in srgb, var(--theme-emerald-600) 20%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-600\/30 { background-color: color-mix(in srgb, var(--theme-emerald-600) 30%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-600\/40 { background-color: color-mix(in srgb, var(--theme-emerald-600) 40%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-600\/60 { background-color: color-mix(in srgb, var(--theme-emerald-600) 60%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-600\/80 { background-color: color-mix(in srgb, var(--theme-emerald-600) 80%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-800\/50 { background-color: color-mix(in srgb, var(--theme-emerald-800) 50%, transparent) !important; }
+[data-theme="yellow"] .border-emerald-200\/40 { border-color: color-mix(in srgb, var(--theme-emerald-200) 40%, transparent) !important; }
+[data-theme="yellow"] .border-emerald-400\/60 { border-color: color-mix(in srgb, var(--theme-emerald-400) 60%, transparent) !important; }
+[data-theme="yellow"] .border-emerald-500\/20 { border-color: color-mix(in srgb, var(--theme-emerald-500) 20%, transparent) !important; }
+[data-theme="yellow"] .border-emerald-500\/30 { border-color: color-mix(in srgb, var(--theme-emerald-500) 30%, transparent) !important; }
+[data-theme="yellow"] .border-emerald-500\/50 { border-color: color-mix(in srgb, var(--theme-emerald-500) 50%, transparent) !important; }
+[data-theme="yellow"] .to-emerald-600 { --tw-gradient-to: var(--theme-emerald-600) !important; }
+[data-theme="yellow"] .shadow-emerald-200\/50 { --tw-shadow-color: color-mix(in srgb, var(--theme-emerald-200) 50%, transparent) !important; }
+[data-theme="yellow"] .shadow-emerald-600\/25 { --tw-shadow-color: color-mix(in srgb, var(--theme-emerald-600) 25%, transparent) !important; }
+[data-theme="yellow"] .shadow-emerald-700\/50 { --tw-shadow-color: color-mix(in srgb, var(--theme-emerald-700) 50%, transparent) !important; }
+[data-theme="yellow"] .ring-emerald-200 { --tw-ring-color: var(--theme-emerald-200) !important; }
+[data-theme="yellow"] .ring-emerald-300 { --tw-ring-color: var(--theme-emerald-300) !important; }
+[data-theme="yellow"] .focus\:border-emerald-400\/60:focus { border-color: color-mix(in srgb, var(--theme-emerald-400) 60%, transparent) !important; }
+[data-theme="yellow"] .focus\:border-emerald-500\/50:focus { border-color: color-mix(in srgb, var(--theme-emerald-500) 50%, transparent) !important; }
+[data-theme="yellow"] .hover\:text-emerald-400:hover { color: var(--theme-emerald-400) !important; }
+[data-theme="yellow"] .hover\:text-emerald-500:hover { color: var(--theme-emerald-500) !important; }
+[data-theme="yellow"] .hover\:text-emerald-600:hover { color: var(--theme-emerald-600) !important; }
+[data-theme="yellow"] .hover\:text-emerald-700:hover { color: var(--theme-emerald-700) !important; }
+[data-theme="yellow"] .hover\:bg-emerald-50:hover { background-color: var(--theme-emerald-50) !important; }
+[data-theme="yellow"] .hover\:bg-emerald-50\/50:hover { background-color: color-mix(in srgb, var(--theme-emerald-50) 50%, transparent) !important; }
+[data-theme="yellow"] .hover\:bg-emerald-100:hover { background-color: var(--theme-emerald-100) !important; }
+[data-theme="yellow"] .hover\:bg-emerald-200:hover { background-color: var(--theme-emerald-200) !important; }
+[data-theme="yellow"] .hover\:bg-emerald-400:hover { background-color: var(--theme-emerald-400) !important; }
+[data-theme="yellow"] .hover\:bg-emerald-500:hover { background-color: var(--theme-emerald-500) !important; }
+[data-theme="yellow"] .hover\:bg-emerald-600:hover { background-color: var(--theme-emerald-600) !important; }
+[data-theme="yellow"] .hover\:bg-emerald-600\/30:hover { background-color: color-mix(in srgb, var(--theme-emerald-600) 30%, transparent) !important; }
+[data-theme="yellow"] .hover\:bg-emerald-600\/40:hover { background-color: color-mix(in srgb, var(--theme-emerald-600) 40%, transparent) !important; }
+[data-theme="yellow"] .hover\:bg-emerald-600\/60:hover { background-color: color-mix(in srgb, var(--theme-emerald-600) 60%, transparent) !important; }
+[data-theme="yellow"] .hover\:bg-emerald-800\/50:hover { background-color: color-mix(in srgb, var(--theme-emerald-800) 50%, transparent) !important; }
+[data-theme="yellow"] .hover\:border-emerald-400:hover { border-color: var(--theme-emerald-400) !important; }
+[data-theme="yellow"] .hover\:shadow-emerald-500\/25:hover { --tw-shadow-color: color-mix(in srgb, var(--theme-emerald-500) 25%, transparent) !important; }
+[data-theme="yellow"] .hover\:shadow-emerald-500\/30:hover { --tw-shadow-color: color-mix(in srgb, var(--theme-emerald-500) 30%, transparent) !important; }
+[data-theme="yellow"] .text-green-300 { color: var(--theme-emerald-300) !important; }
+[data-theme="yellow"] .bg-green-200 { background-color: var(--theme-emerald-200) !important; }
+[data-theme="yellow"] .bg-green-200\/30 { background-color: color-mix(in srgb, var(--theme-emerald-200) 30%, transparent) !important; }
+[data-theme="yellow"] .bg-green-200\/60 { background-color: color-mix(in srgb, var(--theme-emerald-200) 60%, transparent) !important; }
+[data-theme="yellow"] .bg-green-50\/50 { background-color: color-mix(in srgb, var(--theme-emerald-50) 50%, transparent) !important; }
+[data-theme="yellow"] .bg-green-50\/80 { background-color: color-mix(in srgb, var(--theme-emerald-50) 80%, transparent) !important; }
+[data-theme="yellow"] .bg-green-100\/50 { background-color: color-mix(in srgb, var(--theme-emerald-100) 50%, transparent) !important; }
+[data-theme="yellow"] .bg-green-900\/30 { background-color: color-mix(in srgb, var(--theme-emerald-900) 30%, transparent) !important; }
+[data-theme="yellow"] .border-green-100 { border-color: var(--theme-emerald-100) !important; }
+[data-theme="yellow"] .border-green-200\/20 { border-color: color-mix(in srgb, var(--theme-emerald-200) 20%, transparent) !important; }
+[data-theme="yellow"] .from-green-400 { --tw-gradient-from: var(--theme-emerald-400) !important; }
+[data-theme="yellow"] .from-green-500 { --tw-gradient-from: var(--theme-emerald-500) !important; }
+[data-theme="yellow"] .to-green-600 { --tw-gradient-to: var(--theme-emerald-600) !important; }
+[data-theme="yellow"] .to-green-700 { --tw-gradient-to: var(--theme-emerald-700) !important; }
+[data-theme="yellow"] .hover\:text-green-300:hover { color: var(--theme-emerald-300) !important; }
+[data-theme="yellow"] .hover\:text-green-400:hover { color: var(--theme-emerald-400) !important; }
+[data-theme="yellow"] .hover\:text-green-500:hover { color: var(--theme-emerald-500) !important; }
+[data-theme="yellow"] .hover\:text-green-600:hover { color: var(--theme-emerald-600) !important; }
+[data-theme="yellow"] .hover\:bg-green-50\/50:hover { background-color: color-mix(in srgb, var(--theme-emerald-50) 50%, transparent) !important; }
+[data-theme="yellow"] .hover\:bg-green-50\/80:hover { background-color: color-mix(in srgb, var(--theme-emerald-50) 80%, transparent) !important; }
+[data-theme="yellow"] .hover\:bg-green-100\/50:hover { background-color: color-mix(in srgb, var(--theme-emerald-100) 50%, transparent) !important; }
+[data-theme="yellow"] .hover\:border-green-200:hover { border-color: var(--theme-emerald-200) !important; }
+
+/* --- 紫色主题 --- */
+[data-theme="purple"] .text-emerald-300 { color: var(--theme-emerald-300) !important; }
+[data-theme="purple"] .text-emerald-400 { color: var(--theme-emerald-400) !important; }
+[data-theme="purple"] .text-emerald-500 { color: var(--theme-emerald-500) !important; }
+[data-theme="purple"] .text-emerald-600 { color: var(--theme-emerald-600) !important; }
+[data-theme="purple"] .text-emerald-700 { color: var(--theme-emerald-700) !important; }
+[data-theme="purple"] .text-emerald-800 { color: var(--theme-emerald-800) !important; }
+[data-theme="purple"] .text-emerald-900 { color: var(--theme-emerald-900) !important; }
+[data-theme="purple"] .bg-emerald-50 { background-color: var(--theme-emerald-50) !important; }
+[data-theme="purple"] .bg-emerald-100 { background-color: var(--theme-emerald-100) !important; }
+[data-theme="purple"] .bg-emerald-200 { background-color: var(--theme-emerald-200) !important; }
+[data-theme="purple"] .bg-emerald-400 { background-color: var(--theme-emerald-400) !important; }
+[data-theme="purple"] .bg-emerald-500 { background-color: var(--theme-emerald-500) !important; }
+[data-theme="purple"] .bg-emerald-600 { background-color: var(--theme-emerald-600) !important; }
+[data-theme="purple"] .border-emerald-200 { border-color: var(--theme-emerald-200) !important; }
+[data-theme="purple"] .border-emerald-400 { border-color: var(--theme-emerald-400) !important; }
+[data-theme="purple"] .border-emerald-500 { border-color: var(--theme-emerald-500) !important; }
+[data-theme="purple"] .from-emerald-500 { --tw-gradient-from: var(--theme-emerald-500) !important; }
+[data-theme="purple"] .to-emerald-400 { --tw-gradient-to: var(--theme-emerald-400) !important; }
+[data-theme="purple"] .from-emerald-600 { --tw-gradient-from: var(--theme-emerald-600) !important; }
+[data-theme="purple"] .bg-emerald-300\/50 { background-color: color-mix(in srgb, var(--theme-emerald-300) 50%, transparent) !important; }
+[data-theme="purple"] .shadow-emerald-600\/30 { --tw-shadow-color: rgba(var(--theme-emerald-600-rgb), 0.3) !important; }
+[data-theme="purple"] .shadow-emerald-500\/25 { --tw-shadow-color: rgba(var(--theme-primary-rgb), 0.25) !important; }
+[data-theme="purple"] .shadow-emerald-500\/20 { --tw-shadow-color: rgba(var(--theme-primary-rgb), 0.2) !important; }
+[data-theme="purple"] .ring-emerald-400 { --tw-ring-color: var(--theme-emerald-400) !important; }
+[data-theme="purple"] .text-emerald-400\/60 { color: color-mix(in srgb, var(--theme-emerald-400) 60%, transparent) !important; }
+[data-theme="purple"] .text-emerald-400\/70 { color: color-mix(in srgb, var(--theme-emerald-400) 70%, transparent) !important; }
+[data-theme="purple"] .placeholder\:text-emerald-300::placeholder { color: var(--theme-emerald-300) !important; }
+[data-theme="purple"] .text-emerald-600\/60 { color: color-mix(in srgb, var(--theme-emerald-600) 60%, transparent) !important; }
+[data-theme="purple"] .text-emerald-600\/70 { color: color-mix(in srgb, var(--theme-emerald-600) 70%, transparent) !important; }
+[data-theme="purple"] .text-emerald-500\/60 { color: color-mix(in srgb, var(--theme-emerald-500) 60%, transparent) !important; }
+[data-theme="purple"] .text-emerald-500\/70 { color: color-mix(in srgb, var(--theme-emerald-500) 70%, transparent) !important; }
+[data-theme="purple"] .text-green-600 { color: var(--theme-emerald-600) !important; }
+[data-theme="purple"] .text-green-700 { color: var(--theme-emerald-700) !important; }
+[data-theme="purple"] .text-green-500 { color: var(--theme-emerald-500) !important; }
+[data-theme="purple"] .text-green-400 { color: var(--theme-emerald-400) !important; }
+[data-theme="purple"] .text-green-800 { color: var(--theme-emerald-800) !important; }
+[data-theme="purple"] .text-green-500\/70 { color: color-mix(in srgb, var(--theme-emerald-500) 70%, transparent) !important; }
+[data-theme="purple"] .bg-green-50 { background-color: var(--theme-emerald-50) !important; }
+[data-theme="purple"] .bg-green-100 { background-color: var(--theme-emerald-100) !important; }
+[data-theme="purple"] .bg-green-500 { background-color: var(--theme-emerald-500) !important; }
+[data-theme="purple"] .bg-green-600 { background-color: var(--theme-emerald-600) !important; }
+[data-theme="purple"] .border-green-200 { border-color: var(--theme-emerald-200) !important; }
+[data-theme="purple"] .border-green-100 { border-color: var(--theme-emerald-100) !important; }
+[data-theme="purple"] .border-green-200\/30 { border-color: color-mix(in srgb, var(--theme-emerald-200) 30%, transparent) !important; }
+[data-theme="purple"] .border-green-200\/40 { border-color: color-mix(in srgb, var(--theme-emerald-200) 40%, transparent) !important; }
+[data-theme="purple"] .border-green-200\/60 { border-color: color-mix(in srgb, var(--theme-emerald-200) 60%, transparent) !important; }
+[data-theme="purple"] .hover\:bg-green-50:hover { background-color: var(--theme-emerald-50) !important; }
+[data-theme="purple"] .hover\:bg-green-100:hover { background-color: var(--theme-emerald-100) !important; }
+[data-theme="purple"] .ring-green-200 { --tw-ring-color: var(--theme-emerald-200) !important; }
+[data-theme="purple"] .ring-green-400 { --tw-ring-color: var(--theme-emerald-400) !important; }
+[data-theme="purple"] .text-emerald-300\/60 { color: color-mix(in srgb, var(--theme-emerald-300) 60%, transparent) !important; }
+[data-theme="purple"] .text-emerald-800\/80 { color: color-mix(in srgb, var(--theme-emerald-800) 80%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-300 { background-color: var(--theme-emerald-300) !important; }
+[data-theme="purple"] .bg-emerald-800 { background-color: var(--theme-emerald-800) !important; }
+[data-theme="purple"] .bg-emerald-900\/20 { background-color: color-mix(in srgb, var(--theme-emerald-900) 20%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-900\/50 { background-color: color-mix(in srgb, var(--theme-emerald-900) 50%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-900\/95 { background-color: color-mix(in srgb, var(--theme-emerald-900) 95%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-50\/50 { background-color: color-mix(in srgb, var(--theme-emerald-50) 50%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-200\/30 { background-color: color-mix(in srgb, var(--theme-emerald-200) 30%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-400\/10 { background-color: color-mix(in srgb, var(--theme-emerald-400) 10%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-500\/10 { background-color: color-mix(in srgb, var(--theme-emerald-500) 10%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-600\/20 { background-color: color-mix(in srgb, var(--theme-emerald-600) 20%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-600\/30 { background-color: color-mix(in srgb, var(--theme-emerald-600) 30%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-600\/40 { background-color: color-mix(in srgb, var(--theme-emerald-600) 40%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-600\/60 { background-color: color-mix(in srgb, var(--theme-emerald-600) 60%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-600\/80 { background-color: color-mix(in srgb, var(--theme-emerald-600) 80%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-800\/50 { background-color: color-mix(in srgb, var(--theme-emerald-800) 50%, transparent) !important; }
+[data-theme="purple"] .border-emerald-200\/40 { border-color: color-mix(in srgb, var(--theme-emerald-200) 40%, transparent) !important; }
+[data-theme="purple"] .border-emerald-400\/60 { border-color: color-mix(in srgb, var(--theme-emerald-400) 60%, transparent) !important; }
+[data-theme="purple"] .border-emerald-500\/20 { border-color: color-mix(in srgb, var(--theme-emerald-500) 20%, transparent) !important; }
+[data-theme="purple"] .border-emerald-500\/30 { border-color: color-mix(in srgb, var(--theme-emerald-500) 30%, transparent) !important; }
+[data-theme="purple"] .border-emerald-500\/50 { border-color: color-mix(in srgb, var(--theme-emerald-500) 50%, transparent) !important; }
+[data-theme="purple"] .to-emerald-600 { --tw-gradient-to: var(--theme-emerald-600) !important; }
+[data-theme="purple"] .shadow-emerald-200\/50 { --tw-shadow-color: color-mix(in srgb, var(--theme-emerald-200) 50%, transparent) !important; }
+[data-theme="purple"] .shadow-emerald-600\/25 { --tw-shadow-color: color-mix(in srgb, var(--theme-emerald-600) 25%, transparent) !important; }
+[data-theme="purple"] .shadow-emerald-700\/50 { --tw-shadow-color: color-mix(in srgb, var(--theme-emerald-700) 50%, transparent) !important; }
+[data-theme="purple"] .ring-emerald-200 { --tw-ring-color: var(--theme-emerald-200) !important; }
+[data-theme="purple"] .ring-emerald-300 { --tw-ring-color: var(--theme-emerald-300) !important; }
+[data-theme="purple"] .focus\:border-emerald-400\/60:focus { border-color: color-mix(in srgb, var(--theme-emerald-400) 60%, transparent) !important; }
+[data-theme="purple"] .focus\:border-emerald-500\/50:focus { border-color: color-mix(in srgb, var(--theme-emerald-500) 50%, transparent) !important; }
+[data-theme="purple"] .hover\:text-emerald-400:hover { color: var(--theme-emerald-400) !important; }
+[data-theme="purple"] .hover\:text-emerald-500:hover { color: var(--theme-emerald-500) !important; }
+[data-theme="purple"] .hover\:text-emerald-600:hover { color: var(--theme-emerald-600) !important; }
+[data-theme="purple"] .hover\:text-emerald-700:hover { color: var(--theme-emerald-700) !important; }
+[data-theme="purple"] .hover\:bg-emerald-50:hover { background-color: var(--theme-emerald-50) !important; }
+[data-theme="purple"] .hover\:bg-emerald-50\/50:hover { background-color: color-mix(in srgb, var(--theme-emerald-50) 50%, transparent) !important; }
+[data-theme="purple"] .hover\:bg-emerald-100:hover { background-color: var(--theme-emerald-100) !important; }
+[data-theme="purple"] .hover\:bg-emerald-200:hover { background-color: var(--theme-emerald-200) !important; }
+[data-theme="purple"] .hover\:bg-emerald-400:hover { background-color: var(--theme-emerald-400) !important; }
+[data-theme="purple"] .hover\:bg-emerald-500:hover { background-color: var(--theme-emerald-500) !important; }
+[data-theme="purple"] .hover\:bg-emerald-600:hover { background-color: var(--theme-emerald-600) !important; }
+[data-theme="purple"] .hover\:bg-emerald-600\/30:hover { background-color: color-mix(in srgb, var(--theme-emerald-600) 30%, transparent) !important; }
+[data-theme="purple"] .hover\:bg-emerald-600\/40:hover { background-color: color-mix(in srgb, var(--theme-emerald-600) 40%, transparent) !important; }
+[data-theme="purple"] .hover\:bg-emerald-600\/60:hover { background-color: color-mix(in srgb, var(--theme-emerald-600) 60%, transparent) !important; }
+[data-theme="purple"] .hover\:bg-emerald-800\/50:hover { background-color: color-mix(in srgb, var(--theme-emerald-800) 50%, transparent) !important; }
+[data-theme="purple"] .hover\:border-emerald-400:hover { border-color: var(--theme-emerald-400) !important; }
+[data-theme="purple"] .hover\:shadow-emerald-500\/25:hover { --tw-shadow-color: color-mix(in srgb, var(--theme-emerald-500) 25%, transparent) !important; }
+[data-theme="purple"] .hover\:shadow-emerald-500\/30:hover { --tw-shadow-color: color-mix(in srgb, var(--theme-emerald-500) 30%, transparent) !important; }
+[data-theme="purple"] .text-green-300 { color: var(--theme-emerald-300) !important; }
+[data-theme="purple"] .bg-green-200 { background-color: var(--theme-emerald-200) !important; }
+[data-theme="purple"] .bg-green-200\/30 { background-color: color-mix(in srgb, var(--theme-emerald-200) 30%, transparent) !important; }
+[data-theme="purple"] .bg-green-200\/60 { background-color: color-mix(in srgb, var(--theme-emerald-200) 60%, transparent) !important; }
+[data-theme="purple"] .bg-green-50\/50 { background-color: color-mix(in srgb, var(--theme-emerald-50) 50%, transparent) !important; }
+[data-theme="purple"] .bg-green-50\/80 { background-color: color-mix(in srgb, var(--theme-emerald-50) 80%, transparent) !important; }
+[data-theme="purple"] .bg-green-100\/50 { background-color: color-mix(in srgb, var(--theme-emerald-100) 50%, transparent) !important; }
+[data-theme="purple"] .bg-green-900\/30 { background-color: color-mix(in srgb, var(--theme-emerald-900) 30%, transparent) !important; }
+[data-theme="purple"] .border-green-100 { border-color: var(--theme-emerald-100) !important; }
+[data-theme="purple"] .border-green-200\/20 { border-color: color-mix(in srgb, var(--theme-emerald-200) 20%, transparent) !important; }
+[data-theme="purple"] .from-green-400 { --tw-gradient-from: var(--theme-emerald-400) !important; }
+[data-theme="purple"] .from-green-500 { --tw-gradient-from: var(--theme-emerald-500) !important; }
+[data-theme="purple"] .to-green-600 { --tw-gradient-to: var(--theme-emerald-600) !important; }
+[data-theme="purple"] .to-green-700 { --tw-gradient-to: var(--theme-emerald-700) !important; }
+[data-theme="purple"] .hover\:text-green-300:hover { color: var(--theme-emerald-300) !important; }
+[data-theme="purple"] .hover\:text-green-400:hover { color: var(--theme-emerald-400) !important; }
+[data-theme="purple"] .hover\:text-green-500:hover { color: var(--theme-emerald-500) !important; }
+[data-theme="purple"] .hover\:text-green-600:hover { color: var(--theme-emerald-600) !important; }
+[data-theme="purple"] .hover\:bg-green-50\/50:hover { background-color: color-mix(in srgb, var(--theme-emerald-50) 50%, transparent) !important; }
+[data-theme="purple"] .hover\:bg-green-50\/80:hover { background-color: color-mix(in srgb, var(--theme-emerald-50) 80%, transparent) !important; }
+[data-theme="purple"] .hover\:bg-green-100\/50:hover { background-color: color-mix(in srgb, var(--theme-emerald-100) 50%, transparent) !important; }
+[data-theme="purple"] .hover\:border-green-200:hover { border-color: var(--theme-emerald-200) !important; }
+
+/* --- 带透明度的 emerald 类名映射（三主题通用） --- */
+[data-theme="blue"] .border-emerald-200\/50 { border-color: color-mix(in srgb, var(--theme-emerald-200) 50%, transparent) !important; }
+[data-theme="blue"] .border-emerald-200\/60 { border-color: color-mix(in srgb, var(--theme-emerald-200) 60%, transparent) !important; }
+[data-theme="blue"] .border-emerald-400\/50 { border-color: color-mix(in srgb, var(--theme-emerald-400) 50%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-50\/30 { background-color: color-mix(in srgb, var(--theme-emerald-50) 30%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-50\/60 { background-color: color-mix(in srgb, var(--theme-emerald-50) 60%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-100\/50 { background-color: color-mix(in srgb, var(--theme-emerald-100) 50%, transparent) !important; }
+[data-theme="blue"] .bg-emerald-100\/60 { background-color: color-mix(in srgb, var(--theme-emerald-100) 60%, transparent) !important; }
+[data-theme="blue"] .hover\:bg-emerald-100\/50:hover { background-color: color-mix(in srgb, var(--theme-emerald-100) 50%, transparent) !important; }
+[data-theme="blue"] .hover\:border-emerald-400\/50:hover { border-color: color-mix(in srgb, var(--theme-emerald-400) 50%, transparent) !important; }
+[data-theme="blue"] .shadow-emerald-500\/10 { --tw-shadow-color: rgba(var(--theme-primary-rgb), 0.1) !important; }
+[data-theme="blue"] .shadow-emerald-500\/15 { --tw-shadow-color: rgba(var(--theme-primary-rgb), 0.15) !important; }
+[data-theme="blue"] .hover\:from-emerald-400:hover { --tw-gradient-from: var(--theme-emerald-400) !important; }
+[data-theme="blue"] .hover\:to-emerald-300:hover { --tw-gradient-to: var(--theme-emerald-300) !important; }
+
+[data-theme="yellow"] .border-emerald-200\/50 { border-color: color-mix(in srgb, var(--theme-emerald-200) 50%, transparent) !important; }
+[data-theme="yellow"] .border-emerald-200\/60 { border-color: color-mix(in srgb, var(--theme-emerald-200) 60%, transparent) !important; }
+[data-theme="yellow"] .border-emerald-400\/50 { border-color: color-mix(in srgb, var(--theme-emerald-400) 50%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-50\/30 { background-color: color-mix(in srgb, var(--theme-emerald-50) 30%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-50\/60 { background-color: color-mix(in srgb, var(--theme-emerald-50) 60%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-100\/50 { background-color: color-mix(in srgb, var(--theme-emerald-100) 50%, transparent) !important; }
+[data-theme="yellow"] .bg-emerald-100\/60 { background-color: color-mix(in srgb, var(--theme-emerald-100) 60%, transparent) !important; }
+[data-theme="yellow"] .hover\:bg-emerald-100\/50:hover { background-color: color-mix(in srgb, var(--theme-emerald-100) 50%, transparent) !important; }
+[data-theme="yellow"] .hover\:border-emerald-400\/50:hover { border-color: color-mix(in srgb, var(--theme-emerald-400) 50%, transparent) !important; }
+[data-theme="yellow"] .shadow-emerald-500\/10 { --tw-shadow-color: rgba(var(--theme-primary-rgb), 0.1) !important; }
+[data-theme="yellow"] .shadow-emerald-500\/15 { --tw-shadow-color: rgba(var(--theme-primary-rgb), 0.15) !important; }
+[data-theme="yellow"] .hover\:from-emerald-400:hover { --tw-gradient-from: var(--theme-emerald-400) !important; }
+[data-theme="yellow"] .hover\:to-emerald-300:hover { --tw-gradient-to: var(--theme-emerald-300) !important; }
+
+[data-theme="purple"] .border-emerald-200\/50 { border-color: color-mix(in srgb, var(--theme-emerald-200) 50%, transparent) !important; }
+[data-theme="purple"] .border-emerald-200\/60 { border-color: color-mix(in srgb, var(--theme-emerald-200) 60%, transparent) !important; }
+[data-theme="purple"] .border-emerald-400\/50 { border-color: color-mix(in srgb, var(--theme-emerald-400) 50%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-50\/30 { background-color: color-mix(in srgb, var(--theme-emerald-50) 30%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-50\/60 { background-color: color-mix(in srgb, var(--theme-emerald-50) 60%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-100\/50 { background-color: color-mix(in srgb, var(--theme-emerald-100) 50%, transparent) !important; }
+[data-theme="purple"] .bg-emerald-100\/60 { background-color: color-mix(in srgb, var(--theme-emerald-100) 60%, transparent) !important; }
+[data-theme="purple"] .hover\:bg-emerald-100\/50:hover { background-color: color-mix(in srgb, var(--theme-emerald-100) 50%, transparent) !important; }
+[data-theme="purple"] .hover\:border-emerald-400\/50:hover { border-color: color-mix(in srgb, var(--theme-emerald-400) 50%, transparent) !important; }
+[data-theme="purple"] .shadow-emerald-500\/10 { --tw-shadow-color: rgba(var(--theme-primary-rgb), 0.1) !important; }
+[data-theme="purple"] .shadow-emerald-500\/15 { --tw-shadow-color: rgba(var(--theme-primary-rgb), 0.15) !important; }
+[data-theme="purple"] .hover\:from-emerald-400:hover { --tw-gradient-from: var(--theme-emerald-400) !important; }
+[data-theme="purple"] .hover\:to-emerald-300:hover { --tw-gradient-to: var(--theme-emerald-300) !important; }

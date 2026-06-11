@@ -516,6 +516,7 @@ export default function PlaylistPanel() {
   const searchHistory = usePlayerStore((s) => s.searchHistory)
   const clearSearchHistory = usePlayerStore((s) => s.clearSearchHistory)
   const removeSearchHistoryItem = usePlayerStore((s) => s.removeSearchHistoryItem)
+  const removeSmartRecommend = usePlayerStore((s) => s.removeSmartRecommend)
 
   const [inputValue, setInputValue] = useState('')
   const [searchInputFocused, setSearchInputFocused] = useState(false)
@@ -926,6 +927,7 @@ export default function PlaylistPanel() {
                     onFavorite={() => toggleFavorite(song)}
                     onAddNext={() => addToPlayNext(song)}
                     onAddToPlaylist={() => {}}
+                    onDelete={() => removeSmartRecommend(index)}
                     isFav={isFav(song.id, song.platform)}
                     compact
                     darkMode={darkMode}

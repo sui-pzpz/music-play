@@ -1,0 +1,270 @@
+[2m12:08:06[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to resolve import "./ThemeSelector" from "src/components/Layout.tsx". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mD:/AI/m/src/components/Layout.tsx[39m:10:30
+[33m  25 |  import Player from "@/pages/Player";
+  26 |  import { Decorations } from "./Decorations";
+  27 |  import { ThemeSelector } from "./ThemeSelector";
+     |                                 ^
+  28 |  function BottomNav() {
+  29 |    _s();[39m
+      at TransformPluginContext._formatLog (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:42658:41)
+      at TransformPluginContext.error (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:42655:16)
+      at normalizeUrl (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:40634:23)
+      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+      at async file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:40753:37
+      at async Promise.all (index 12)
+      at async TransformPluginContext.transform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:40680:7)
+      at async EnvironmentPluginContainer.transform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:42453:18)
+      at async loadAndTransform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:35845:27)
+      at async viteTransformMiddleware (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:37369:24)
+[2m12:15:46[22m [31m[1m[vite][22m[39m [31mInternal server error: [postcss] D:/AI/m/src/index.css:407:1: Unexpected }[39m
+  Plugin: [35mvite:css[39m
+  File: [36mD:/AI/m/src/index.css[39m:407:0
+[33m  405|      border-color: var(--theme-glass-hover-border);
+  406|    }
+  407|  }
+     |  ^
+  408|  
+  409|  @layer utilities {[39m
+      at Input.error (D:\AI\m\node_modules\postcss\lib\input.js:135:16)
+      at Parser.unexpectedClose (D:\AI\m\node_modules\postcss\lib\parser.js:594:22)
+      at Parser.end (D:\AI\m\node_modules\postcss\lib\parser.js:337:12)
+      at Parser.parse (D:\AI\m\node_modules\postcss\lib\parser.js:463:16)
+      at parse (D:\AI\m\node_modules\postcss\lib\parse.js:11:12)
+      at new LazyResult (D:\AI\m\node_modules\postcss\lib\lazy-result.js:165:16)
+      at Processor.process (D:\AI\m\node_modules\postcss\lib\processor.js:53:14)
+      at runPostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43983:52)
+      at async compilePostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43953:18)
+      at async compileCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43808:27)
+      at async TransformPluginContext.handler (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43124:11)
+      at async EnvironmentPluginContainer.transform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:42453:18)
+      at async loadAndTransform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:35845:27)
+      at async viteTransformMiddleware (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:37369:24)
+[2m12:16:00[22m [31m[1m[vite][22m[39m [31mInternal server error: [postcss] D:/AI/m/src/index.css:408:1: Unexpected }[39m
+  Plugin: [35mvite:css[39m
+  File: [36mD:/AI/m/src/index.css[39m:408:0
+[33m  406|      border-color: var(--theme-glass-hover-border);
+  407|    }
+  408|  }
+     |  ^
+  409|  
+  410|  @layer utilities {[39m
+      at Input.error (D:\AI\m\node_modules\postcss\lib\input.js:135:16)
+      at Parser.unexpectedClose (D:\AI\m\node_modules\postcss\lib\parser.js:594:22)
+      at Parser.end (D:\AI\m\node_modules\postcss\lib\parser.js:337:12)
+      at Parser.parse (D:\AI\m\node_modules\postcss\lib\parser.js:463:16)
+      at parse (D:\AI\m\node_modules\postcss\lib\parse.js:11:12)
+      at new LazyResult (D:\AI\m\node_modules\postcss\lib\lazy-result.js:165:16)
+      at Processor.process (D:\AI\m\node_modules\postcss\lib\processor.js:53:14)
+      at runPostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43983:52)
+      at async compilePostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43953:18)
+      at async compileCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43808:27)
+      at async TransformPluginContext.handler (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43124:11)
+      at async EnvironmentPluginContainer.transform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:42453:18)
+      at async loadAndTransform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:35845:27)
+      at async viteTransformMiddleware (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:37369:24)
+[2m12:17:13[22m [31m[1m[vite][22m[39m [31mInternal server error: [postcss] D:/AI/m/src/index.css:5:1: Unclosed block[39m
+  Plugin: [35mvite:css[39m
+  File: [36mD:/AI/m/src/index.css[39m:5:0
+[33m  3  |  @tailwind utilities;
+  4  |  
+  5  |  @layer base {
+     |  ^
+  6  |    * {
+  7  |      margin: 0;[39m
+      at Input.error (D:\AI\m\node_modules\postcss\lib\input.js:135:16)
+      at Parser.unclosedBlock (D:\AI\m\node_modules\postcss\lib\parser.js:582:22)
+      at Parser.endFile (D:\AI\m\node_modules\postcss\lib\parser.js:342:35)
+      at Parser.parse (D:\AI\m\node_modules\postcss\lib\parser.js:483:10)
+      at parse (D:\AI\m\node_modules\postcss\lib\parse.js:11:12)
+      at new LazyResult (D:\AI\m\node_modules\postcss\lib\lazy-result.js:165:16)
+      at Processor.process (D:\AI\m\node_modules\postcss\lib\processor.js:53:14)
+      at runPostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43983:52)
+      at async compilePostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43953:18)
+      at async compileCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43808:27)
+      at async TransformPluginContext.handler (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43124:11)
+      at async EnvironmentPluginContainer.transform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:42453:18)
+      at async loadAndTransform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:35845:27)
+      at async viteTransformMiddleware (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:37369:24)
+[2m12:18:08[22m [31m[1m[vite][22m[39m [31mInternal server error: [postcss] D:/AI/m/src/index.css:5:1: Unclosed block[39m
+  Plugin: [35mvite:css[39m
+  File: [36mD:/AI/m/src/index.css[39m:5:0
+[33m  3  |  @tailwind utilities;
+  4  |  
+  5  |  @layer base {
+     |  ^
+  6  |    * {
+  7  |      margin: 0;[39m
+      at Input.error (D:\AI\m\node_modules\postcss\lib\input.js:135:16)
+      at Parser.unclosedBlock (D:\AI\m\node_modules\postcss\lib\parser.js:582:22)
+      at Parser.endFile (D:\AI\m\node_modules\postcss\lib\parser.js:342:35)
+      at Parser.parse (D:\AI\m\node_modules\postcss\lib\parser.js:483:10)
+      at parse (D:\AI\m\node_modules\postcss\lib\parse.js:11:12)
+      at new LazyResult (D:\AI\m\node_modules\postcss\lib\lazy-result.js:165:16)
+      at Processor.process (D:\AI\m\node_modules\postcss\lib\processor.js:53:14)
+      at runPostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43983:52)
+      at async compilePostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43953:18)
+      at async compileCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43808:27)
+      at async TransformPluginContext.handler (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43124:11)
+      at async EnvironmentPluginContainer.transform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:42453:18)
+      at async loadAndTransform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:35845:27)
+      at async viteTransformMiddleware (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:37369:24)
+[2m12:18:47[22m [31m[1m[vite][22m[39m [31mInternal server error: [postcss] D:/AI/m/src/index.css:5:1: Unclosed block[39m
+  Plugin: [35mvite:css[39m
+  File: [36mD:/AI/m/src/index.css[39m:5:0
+[33m  3  |  @tailwind utilities;
+  4  |  
+  5  |  @layer base {
+     |  ^
+  6  |    * {
+  7  |      margin: 0;[39m
+      at Input.error (D:\AI\m\node_modules\postcss\lib\input.js:135:16)
+      at Parser.unclosedBlock (D:\AI\m\node_modules\postcss\lib\parser.js:582:22)
+      at Parser.endFile (D:\AI\m\node_modules\postcss\lib\parser.js:342:35)
+      at Parser.parse (D:\AI\m\node_modules\postcss\lib\parser.js:483:10)
+      at parse (D:\AI\m\node_modules\postcss\lib\parse.js:11:12)
+      at new LazyResult (D:\AI\m\node_modules\postcss\lib\lazy-result.js:165:16)
+      at Processor.process (D:\AI\m\node_modules\postcss\lib\processor.js:53:14)
+      at runPostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43983:52)
+      at async compilePostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43953:18)
+      at async compileCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43808:27)
+      at async TransformPluginContext.handler (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43124:11)
+      at async EnvironmentPluginContainer.transform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:42453:18)
+      at async loadAndTransform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:35845:27)
+      at async viteTransformMiddleware (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:37369:24)
+[2m12:28:27[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\AI\m\src\components\Layout.tsx: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (234:8)
+
+[0m [90m 232 |[31m           [33m<[31m[33mSubPageTitle[31m [33m/[31m[33m>[31m
+ [90m 233 |[31m         [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+[31m[1m>[22m[31m[90m 234 |[31m         [33m<[31m[33mmain[31m className[33m=[31m[32m"relative z-10 pt-[60px] pb-[140px] min-h-screen"[31m[33m>[31m
+ [90m     |[31m         [31m[1m^[22m[31m
+ [90m 235 |[31m           [33m<[31m[33mOutlet[31m [33m/[31m[33m>[31m
+ [90m 236 |[31m         [33m<[31m[33m/[31m[33mmain[31m[33m>[31m
+ [90m 237 |[31m         {[90m/* 迷你播放器 + 底部导航 */[31m}[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/AI/m/src/components/Layout.tsx[39m:234:8
+[33m  232|            <SubPageTitle />
+  233|          </div>
+  234|          <main className="relative z-10 pt-[60px] pb-[140px] min-h-screen">
+     |          ^
+  235|            <Outlet />
+  236|          </main>[39m
+      at constructor (D:\AI\m\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (D:\AI\m\node_modules\@babel\parser\lib\index.js:6616:19)
+      at TypeScriptParserMixin.jsxParseElementAt (D:\AI\m\node_modules\@babel\parser\lib\index.js:4754:18)
+      at TypeScriptParserMixin.jsxParseElement (D:\AI\m\node_modules\@babel\parser\lib\index.js:4761:17)
+      at TypeScriptParserMixin.parseExprAtom (D:\AI\m\node_modules\@babel\parser\lib\index.js:4771:19)
+      at TypeScriptParserMixin.parseExprSubscripts (D:\AI\m\node_modules\@babel\parser\lib\index.js:11098:23)
+      at TypeScriptParserMixin.parseUpdate (D:\AI\m\node_modules\@babel\parser\lib\index.js:11083:21)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\AI\m\node_modules\@babel\parser\lib\index.js:11063:23)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\AI\m\node_modules\@babel\parser\lib\index.js:9854:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\AI\m\node_modules\@babel\parser\lib\index.js:10916:61)
+      at TypeScriptParserMixin.parseExprOps (D:\AI\m\node_modules\@babel\parser\lib\index.js:10921:23)
+      at TypeScriptParserMixin.parseMaybeConditional (D:\AI\m\node_modules\@babel\parser\lib\index.js:10898:23)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\AI\m\node_modules\@babel\parser\lib\index.js:10848:21)
+      at D:\AI\m\node_modules\@babel\parser\lib\index.js:9792:39
+      at TypeScriptParserMixin.tryParse (D:\AI\m\node_modules\@babel\parser\lib\index.js:6924:20)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\AI\m\node_modules\@babel\parser\lib\index.js:9792:18)
+      at D:\AI\m\node_modules\@babel\parser\lib\index.js:10817:39
+      at TypeScriptParserMixin.allowInAnd (D:\AI\m\node_modules\@babel\parser\lib\index.js:12443:12)
+      at TypeScriptParserMixin.parseMaybeAssignAllowIn (D:\AI\m\node_modules\@babel\parser\lib\index.js:10817:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (D:\AI\m\node_modules\@babel\parser\lib\index.js:12510:17)
+      at TypeScriptParserMixin.parseParenAndDistinguishExpression (D:\AI\m\node_modules\@babel\parser\lib\index.js:11692:28)
+      at TypeScriptParserMixin.parseExprAtom (D:\AI\m\node_modules\@babel\parser\lib\index.js:11348:23)
+      at TypeScriptParserMixin.parseExprAtom (D:\AI\m\node_modules\@babel\parser\lib\index.js:4776:20)
+      at TypeScriptParserMixin.parseExprSubscripts (D:\AI\m\node_modules\@babel\parser\lib\index.js:11098:23)
+      at TypeScriptParserMixin.parseUpdate (D:\AI\m\node_modules\@babel\parser\lib\index.js:11083:21)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\AI\m\node_modules\@babel\parser\lib\index.js:11063:23)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\AI\m\node_modules\@babel\parser\lib\index.js:9854:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\AI\m\node_modules\@babel\parser\lib\index.js:10916:61)
+      at TypeScriptParserMixin.parseExprOps (D:\AI\m\node_modules\@babel\parser\lib\index.js:10921:23)
+      at TypeScriptParserMixin.parseMaybeConditional (D:\AI\m\node_modules\@babel\parser\lib\index.js:10898:23)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\AI\m\node_modules\@babel\parser\lib\index.js:10848:21)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\AI\m\node_modules\@babel\parser\lib\index.js:9803:20)
+      at TypeScriptParserMixin.parseExpressionBase (D:\AI\m\node_modules\@babel\parser\lib\index.js:10801:23)
+      at D:\AI\m\node_modules\@babel\parser\lib\index.js:10797:39
+      at TypeScriptParserMixin.allowInAnd (D:\AI\m\node_modules\@babel\parser\lib\index.js:12438:16)
+      at TypeScriptParserMixin.parseExpression (D:\AI\m\node_modules\@babel\parser\lib\index.js:10797:17)
+      at TypeScriptParserMixin.parseReturnStatement (D:\AI\m\node_modules\@babel\parser\lib\index.js:13159:28)
+      at TypeScriptParserMixin.parseStatementContent (D:\AI\m\node_modules\@babel\parser\lib\index.js:12815:21)
+      at TypeScriptParserMixin.parseStatementContent (D:\AI\m\node_modules\@babel\parser\lib\index.js:9525:18)
+      at TypeScriptParserMixin.parseStatementLike (D:\AI\m\node_modules\@babel\parser\lib\index.js:12784:17)
+      at TypeScriptParserMixin.parseStatementListItem (D:\AI\m\node_modules\@babel\parser\lib\index.js:12764:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (D:\AI\m\node_modules\@babel\parser\lib\index.js:13333:61)
+      at TypeScriptParserMixin.parseBlockBody (D:\AI\m\node_modules\@babel\parser\lib\index.js:13326:10)
+      at TypeScriptParserMixin.parseBlock (D:\AI\m\node_modules\@babel\parser\lib\index.js:13314:10)
+      at TypeScriptParserMixin.parseStatementContent (D:\AI\m\node_modules\@babel\parser\lib\index.js:12875:21)
+      at TypeScriptParserMixin.parseStatementContent (D:\AI\m\node_modules\@babel\parser\lib\index.js:9525:18)
+      at TypeScriptParserMixin.parseStatementLike (D:\AI\m\node_modules\@babel\parser\lib\index.js:12784:17)
+      at TypeScriptParserMixin.parseStatementOrSloppyAnnexBFunctionDeclaration (D:\AI\m\node_modules\@babel\parser\lib\index.js:12774:17)
+      at TypeScriptParserMixin.parseIfStatement (D:\AI\m\node_modules\@babel\parser\lib\index.js:13147:28)
+      at TypeScriptParserMixin.parseStatementContent (D:\AI\m\node_modules\@babel\parser\lib\index.js:12813:21)
+[2m12:28:27[22m [31m[1m[vite][22m[39m [31mInternal server error: [postcss] D:/AI/m/src/index.css:5:1: Unclosed block[39m
+  Plugin: [35mvite:css[39m
+  File: [36mD:/AI/m/src/index.css[39m:5:0
+[33m  3  |  @tailwind utilities;
+  4  |  
+  5  |  @layer base {
+     |  ^
+  6  |    * {
+  7  |      margin: 0;[39m
+      at Input.error (D:\AI\m\node_modules\postcss\lib\input.js:135:16)
+      at Parser.unclosedBlock (D:\AI\m\node_modules\postcss\lib\parser.js:582:22)
+      at Parser.endFile (D:\AI\m\node_modules\postcss\lib\parser.js:342:35)
+      at Parser.parse (D:\AI\m\node_modules\postcss\lib\parser.js:483:10)
+      at parse (D:\AI\m\node_modules\postcss\lib\parse.js:11:12)
+      at new LazyResult (D:\AI\m\node_modules\postcss\lib\lazy-result.js:165:16)
+      at Processor.process (D:\AI\m\node_modules\postcss\lib\processor.js:53:14)
+      at runPostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43983:52)
+      at async compilePostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43953:18)
+      at async compileCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43808:27)
+      at async TransformPluginContext.handler (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43124:11)
+      at async EnvironmentPluginContainer.transform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:42453:18)
+      at async loadAndTransform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:35845:27)
+      at async viteTransformMiddleware (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:37369:24)
+[2m12:28:42[22m [31m[1m[vite][22m[39m [31mInternal server error: [postcss] D:/AI/m/src/index.css:5:1: Unclosed block[39m
+  Plugin: [35mvite:css[39m
+  File: [36mD:/AI/m/src/index.css[39m:5:0
+[33m  3  |  @tailwind utilities;
+  4  |  
+  5  |  @layer base {
+     |  ^
+  6  |    * {
+  7  |      margin: 0;[39m
+      at Input.error (D:\AI\m\node_modules\postcss\lib\input.js:135:16)
+      at Parser.unclosedBlock (D:\AI\m\node_modules\postcss\lib\parser.js:582:22)
+      at Parser.endFile (D:\AI\m\node_modules\postcss\lib\parser.js:342:35)
+      at Parser.parse (D:\AI\m\node_modules\postcss\lib\parser.js:483:10)
+      at parse (D:\AI\m\node_modules\postcss\lib\parse.js:11:12)
+      at new LazyResult (D:\AI\m\node_modules\postcss\lib\lazy-result.js:165:16)
+      at Processor.process (D:\AI\m\node_modules\postcss\lib\processor.js:53:14)
+      at runPostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43983:52)
+      at async compilePostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43953:18)
+      at async compileCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43808:27)
+      at async TransformPluginContext.handler (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43124:11)
+      at async EnvironmentPluginContainer.transform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:42453:18)
+      at async loadAndTransform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:35845:27)
+      at async viteTransformMiddleware (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:37369:24)
+[2m12:28:55[22m [31m[1m[vite][22m[39m [31mInternal server error: [postcss] D:/AI/m/src/index.css:5:1: Unclosed block[39m
+  Plugin: [35mvite:css[39m
+  File: [36mD:/AI/m/src/index.css[39m:5:0
+[33m  3  |  @tailwind utilities;
+  4  |  
+  5  |  @layer base {
+     |  ^
+  6  |    * {
+  7  |      margin: 0;[39m
+      at Input.error (D:\AI\m\node_modules\postcss\lib\input.js:135:16)
+      at Parser.unclosedBlock (D:\AI\m\node_modules\postcss\lib\parser.js:582:22)
+      at Parser.endFile (D:\AI\m\node_modules\postcss\lib\parser.js:342:35)
+      at Parser.parse (D:\AI\m\node_modules\postcss\lib\parser.js:483:10)
+      at parse (D:\AI\m\node_modules\postcss\lib\parse.js:11:12)
+      at new LazyResult (D:\AI\m\node_modules\postcss\lib\lazy-result.js:165:16)
+      at Processor.process (D:\AI\m\node_modules\postcss\lib\processor.js:53:14)
+      at runPostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43983:52)
+      at async compilePostCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43953:18)
+      at async compileCSS (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43808:27)
+      at async TransformPluginContext.handler (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:43124:11)
+      at async EnvironmentPluginContainer.transform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:42453:18)
+      at async loadAndTransform (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:35845:27)
+      at async viteTransformMiddleware (file:///D:/AI/m/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:37369:24)
