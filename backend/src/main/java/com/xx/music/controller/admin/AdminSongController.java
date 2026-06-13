@@ -31,7 +31,7 @@ public class AdminSongController {
             @RequestParam(required = false) Integer isVip,
             @RequestParam(required = false) String artistId,
             @RequestParam(required = false) String albumId,
-            @RequestParam(defaultValue = "play_count") String sortBy,
+            @RequestParam(defaultValue = "created_at") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
         AdminSongListVO songs = adminSongService.getSongs(page, size, keyword, status, isVip, artistId, albumId, sortBy, sortOrder);
         return R.ok(songs);

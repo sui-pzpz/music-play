@@ -54,7 +54,9 @@ public class AdminSongServiceImpl implements AdminSongService {
         Sort sort = Sort.unsorted();
         if (sortBy != null && !sortBy.isEmpty()) {
             Sort.Direction direction = "asc".equalsIgnoreCase(sortOrder) ? Sort.Direction.ASC : Sort.Direction.DESC;
-            sort = Sort.by(direction, sortBy);
+            // 转换 snake_case 到 camelCase（如 created_at -> createdAt）
+            String camelSortBy = toCamelCase(sortBy);
+            sort = Sort.by(direction, camelSortBy);
         } else {
             sort = Sort.by(Sort.Direction.DESC, "createdAt");
         }
@@ -380,5 +382,22 @@ public class AdminSongServiceImpl implements AdminSongService {
         vo.setCover(album.getCover());
         vo.setPublishDate(album.getPublishDate() != null ? album.getPublishDate().toString() : null);
         return vo;
+    }
+
+    private String toCamelCase(String snakeCase) {
+        if (snakeCase == null || !snakeCase.contains("_")) {
+            return snakeCase;
+        }
+        StringBuilder sb = new StringBuilder();
+        boolean upper = false;
+        for (char c : snakeCase.toCharArray()) {
+            if (c == '_') {
+                upper = true;
+            } else {
+                sb.append(upper ? Character.toUpperCase(c) : c);
+                upper = false;
+            }
+        }
+        return sb.toString();
     }
 }
