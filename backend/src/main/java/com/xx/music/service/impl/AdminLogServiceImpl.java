@@ -1,9 +1,11 @@
 package com.xx.music.service.impl;
 
 import com.xx.music.common.PageResult;
+import com.xx.music.model.entity.Admin;
 import com.xx.music.model.entity.AdminLog;
 import com.xx.music.model.vo.AdminLogVO;
 import com.xx.music.repository.AdminLogRepository;
+import com.xx.music.repository.AdminRepository;
 import com.xx.music.service.AdminLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 public class AdminLogServiceImpl implements AdminLogService {
 
     private final AdminLogRepository adminLogRepository;
+    private final AdminRepository adminRepository;
 
     @Override
     public void log(Long adminId, String action, String targetType, String targetId, String detail, String ip) {
@@ -45,6 +48,9 @@ public class AdminLogServiceImpl implements AdminLogService {
                     AdminLogVO vo = new AdminLogVO();
                     vo.setId(log.getId());
                     vo.setAdminId(log.getAdminId());
+                    // 关联查询管理员用户名
+                    Admin admin = adminRepository.findById(log.getAdminId()).orElse(null);
+                    vo.setAdminUsername(admin != null ? admin.getUsername() : "未知");
                     vo.setAction(log.getAction());
                     vo.setTargetType(log.getTargetType());
                     vo.setTargetId(log.getTargetId());

@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -20,6 +22,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countByDeletedAtIsNull();
 
     long countByStatusAndDeletedAtIsNull(Integer status);
+
+    long countByDeletedAtIsNullAndStatus(Integer status);
+
+    long countByCreatedAtAfterAndDeletedAtIsNull(LocalDateTime createdAt);
 
     Page<User> findByStatusAndDeletedAtIsNull(Integer status, Pageable pageable);
 }

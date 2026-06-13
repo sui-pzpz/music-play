@@ -5,8 +5,8 @@ import com.xx.music.common.R;
 import com.xx.music.model.dto.UpdateProfileDTO;
 import com.xx.music.model.dto.UpdateStatusDTO;
 import com.xx.music.model.vo.AdminUserListVO;
+import com.xx.music.model.vo.AdminUserVO;
 import com.xx.music.model.vo.SongVO;
-import com.xx.music.model.vo.UserVO;
 import com.xx.music.service.AdminLogService;
 import com.xx.music.service.AdminUserService;
 import jakarta.validation.Valid;
@@ -35,15 +35,19 @@ public class AdminUserController {
     }
 
     @GetMapping("/{uid}")
-    public R<UserVO> detail(@PathVariable String uid) {
-        UserVO user = adminUserService.getUserDetail(uid);
+    public R<AdminUserVO> detail(@PathVariable String uid) {
+        AdminUserVO user = adminUserService.getUserDetail(uid);
         return R.ok(user);
     }
 
     @PutMapping("/{uid}")
-    public R<UserVO> update(@PathVariable String uid, @RequestBody UpdateProfileDTO dto) {
-        // Reuse user update
-        return R.ok();
+    public R<AdminUserVO> update(Authentication authentication,
+                                 @PathVariable String uid,
+                                 @RequestBody UpdateProfileDTO dto) {
+        Long adminId = getAdminId(authentication);
+        AdminUserVO user = adminUserService.updateUser(uid, dto);
+        adminLogService.log(adminId, "update_user", "user", uid, "编辑用户信息", null);
+        return R.ok(user);
     }
 
     @PutMapping("/{uid}/status")

@@ -8,32 +8,17 @@ import java.util.List;
 @Data
 public class AdminDashboardVO {
 
-    private UserStats userStats;
-    private SongStats songStats;
+    private long totalUsers;
+    private long todayNewUsers;
+    private long totalSongs;
+    private long activeSongs;
+    private long totalPlaylists;
+    private long todayPlayCount;
     private List<RecentAction> recentActions;
 
     @Data
-    public static class UserStats {
-
-        private long totalUsers;
-        private long todayRegistrations;
-        private long activeToday;
-        private long vipUsers;
-    }
-
-    @Data
-    public static class SongStats {
-
-        private long totalSongs;
-        private long onlineSongs;
-        private long vipSongs;
-        private long totalPlayCount;
-    }
-
-    @Data
     public static class RecentAction {
-
-        private String admin;
+        private String adminUsername;
         private String action;
         private String target;
         private LocalDateTime time;

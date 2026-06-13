@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 @Data
 public class AdminLogVO {
 
-    private String id;
+    private Long id;
+    private Long adminId;
     private String adminUsername;
     private String action;
     private String targetType;

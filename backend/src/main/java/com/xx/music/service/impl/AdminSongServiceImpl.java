@@ -10,7 +10,10 @@ import com.xx.music.model.entity.Artist;
 import com.xx.music.model.entity.Song;
 import com.xx.music.model.entity.SongArtist;
 import com.xx.music.model.vo.AdminSongListVO;
+import com.xx.music.model.vo.AdminSongStatsVO;
+import com.xx.music.model.vo.AdminSongVO;
 import com.xx.music.model.vo.AlbumVO;
+import com.xx.music.model.vo.ArtistDetailVO;
 import com.xx.music.model.vo.ArtistVO;
 import com.xx.music.model.vo.SongDetailVO;
 import com.xx.music.model.vo.SongVO;
@@ -82,7 +85,7 @@ public class AdminSongServiceImpl implements AdminSongService {
         Page<Song> songPage = songRepository.findAll(spec, pageable);
 
         // 如果指定了artistId，额外过滤
-        List<SongVO> songVOList = songPage.getContent().stream()
+        List<AdminSongVO> songVOList = songPage.getContent().stream()
                 .filter(song -> {
                     if (artistId != null && !artistId.isEmpty()) {
                         List<SongArtist> artists = songArtistRepository.findBySongId(song.getId());
@@ -90,14 +93,20 @@ public class AdminSongServiceImpl implements AdminSongService {
                     }
                     return true;
                 })
-                .map(this::buildSongVO)
+                .map(this::buildAdminSongVO)
                 .collect(Collectors.toList());
+
+        // 统计信息
+        AdminSongStatsVO stats = new AdminSongStatsVO();
+        stats.setTotalSongs(songRepository.count());
+        stats.setOnlineSongs(songRepository.countByStatus(1));
+        stats.setOfflineSongs(songRepository.countByStatus(0));
+        stats.setVipSongs(songRepository.countByIsVip(1));
 
         AdminSongListVO vo = new AdminSongListVO();
         vo.setList(songVOList);
-        vo.setTotal(songPage.getTotalElements());
-        vo.setPage(page);
-        vo.setSize(size);
+        vo.setPagination(new PageResult.Pagination(page, size, songPage.getTotalElements()));
+        vo.setStatistics(stats);
         return vo;
     }
 
@@ -311,6 +320,47 @@ public class AdminSongServiceImpl implements AdminSongService {
         }
         vo.setArtistNames(artistNames);
         vo.setArtistIds(artistIds);
+
+        return vo;
+    }
+
+    private AdminSongVO buildAdminSongVO(Song song) {
+        AdminSongVO vo = new AdminSongVO();
+        vo.setSongId(song.getSongId());
+        vo.setName(song.getName());
+        vo.setDuration(song.getDuration());
+        vo.setIsVip(song.getIsVip() != null && song.getIsVip() == 1);
+        vo.setPlayCount(song.getPlayCount());
+        vo.setStatus(song.getStatus());
+        vo.setSource(song.getSource());
+        vo.setCreatedAt(song.getCreatedAt());
+
+        // 获取歌手列表
+        List<SongArtist> songArtists = songArtistRepository.findBySongId(song.getId());
+        List<ArtistDetailVO> artistVOList = songArtists.stream()
+                .map(sa -> artistRepository.findById(sa.getArtistId()).orElse(null))
+                .filter(a -> a != null)
+                .map(artist -> {
+                    ArtistDetailVO artistVO = new ArtistDetailVO();
+                    artistVO.setArtistId(artist.getArtistId());
+                    artistVO.setName(artist.getName());
+                    artistVO.setAvatar(artist.getAvatar());
+                    return artistVO;
+                })
+                .collect(Collectors.toList());
+        vo.setArtists(artistVOList);
+
+        // 获取专辑信息
+        if (song.getAlbumId() != null) {
+            Album album = albumRepository.findById(song.getAlbumId()).orElse(null);
+            if (album != null) {
+                AlbumVO albumVO = new AlbumVO();
+                albumVO.setAlbumId(album.getAlbumId());
+                albumVO.setName(album.getName());
+                albumVO.setCover(album.getCover());
+                vo.setAlbum(albumVO);
+            }
+        }
 
         return vo;
     }

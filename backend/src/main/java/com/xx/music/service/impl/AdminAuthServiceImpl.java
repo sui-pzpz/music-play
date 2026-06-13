@@ -51,7 +51,6 @@ public class AdminAuthServiceImpl implements AdminAuthService {
         vo.setAdminId(admin.getId());
         vo.setUsername(admin.getUsername());
         vo.setNickname(admin.getNickname());
-        vo.setAvatar(admin.getAvatar());
         vo.setRole(admin.getRole());
         vo.setToken(token);
         vo.setExpiresIn(jwtTokenProvider.getExpiration());
@@ -67,7 +66,6 @@ public class AdminAuthServiceImpl implements AdminAuthService {
         vo.setAdminId(admin.getId());
         vo.setUsername(admin.getUsername());
         vo.setNickname(admin.getNickname());
-        vo.setAvatar(admin.getAvatar());
         vo.setRole(admin.getRole());
         return vo;
     }

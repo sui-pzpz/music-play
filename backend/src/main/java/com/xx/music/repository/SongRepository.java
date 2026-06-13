@@ -27,6 +27,8 @@ public interface SongRepository extends JpaRepository<Song, Long> {
 
     long countByStatus(Integer status);
 
+    long countByIsVip(Integer isVip);
+
     long countByIsVipAndStatus(Integer isVip, Integer status);
 
     Page<Song> findByStatusOrderByPlayCountDesc(Integer status, Pageable pageable);

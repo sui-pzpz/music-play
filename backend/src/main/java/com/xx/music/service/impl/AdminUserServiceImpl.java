@@ -2,11 +2,13 @@ package com.xx.music.service.impl;
 
 import com.xx.music.common.BusinessException;
 import com.xx.music.common.PageResult;
+import com.xx.music.model.dto.UpdateProfileDTO;
 import com.xx.music.model.dto.UpdateStatusDTO;
 import com.xx.music.model.entity.*;
 import com.xx.music.model.vo.AdminUserListVO;
+import com.xx.music.model.vo.AdminUserVO;
+import com.xx.music.model.vo.AdminUserStatsVO;
 import com.xx.music.model.vo.SongVO;
-import com.xx.music.model.vo.UserVO;
 import com.xx.music.repository.*;
 import com.xx.music.service.AdminUserService;
 import lombok.RequiredArgsConstructor;
@@ -69,32 +71,38 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         Page<User> userPage = userRepository.findAll(spec, pageable);
 
-        List<UserVO> userVOList = userPage.getContent().stream()
+        List<AdminUserVO> userVOList = userPage.getContent().stream()
                 .map(user -> {
-                    UserVO vo = new UserVO();
+                    AdminUserVO vo = new AdminUserVO();
                     vo.setUid(user.getUid());
                     vo.setNickname(user.getNickname());
                     vo.setAvatar(user.getAvatar());
                     vo.setPhone(user.getPhone());
                     vo.setGender(user.getGender());
-                    vo.setBirthday(user.getBirthday() != null ? user.getBirthday().toString() : null);
-                    vo.setSignature(user.getSignature());
                     vo.setStatus(user.getStatus());
                     vo.setCreatedAt(user.getCreatedAt());
+                    vo.setLastLoginAt(user.getLastLoginAt());
                     return vo;
                 })
                 .collect(Collectors.toList());
 
+        // 统计信息
+        AdminUserStatsVO stats = new AdminUserStatsVO();
+        stats.setTotalUsers(userRepository.countByDeletedAtIsNull());
+        stats.setActiveUsers(userRepository.countByDeletedAtIsNullAndStatus(1));
+        stats.setDisabledUsers(userRepository.countByDeletedAtIsNullAndStatus(0));
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        stats.setTodayRegistered(userRepository.countByCreatedAtAfterAndDeletedAtIsNull(todayStart));
+
         AdminUserListVO vo = new AdminUserListVO();
         vo.setList(userVOList);
-        vo.setTotal(userPage.getTotalElements());
-        vo.setPage(page);
-        vo.setSize(size);
+        vo.setPagination(new PageResult.Pagination(page, size, userPage.getTotalElements()));
+        vo.setStatistics(stats);
         return vo;
     }
 
     @Override
-    public UserVO getUserDetail(String uid) {
+    public AdminUserVO getUserDetail(String uid) {
         User user = userRepository.findByUidAndDeletedAtIsNull(uid)
                 .orElseThrow(() -> new BusinessException("用户不存在"));
 
@@ -104,20 +112,44 @@ public class AdminUserServiceImpl implements AdminUserService {
             memberLevel = member.getLevel() != null ? member.getLevel() : 0;
         }
 
-        UserVO vo = new UserVO();
+        AdminUserVO vo = new AdminUserVO();
         vo.setUid(user.getUid());
         vo.setNickname(user.getNickname());
         vo.setAvatar(user.getAvatar());
         vo.setPhone(user.getPhone());
         vo.setGender(user.getGender());
-        vo.setBirthday(user.getBirthday() != null ? user.getBirthday().toString() : null);
-        vo.setSignature(user.getSignature());
         vo.setStatus(user.getStatus());
         vo.setMemberLevel(memberLevel);
         vo.setCreatedAt(user.getCreatedAt());
         vo.setLastLoginAt(user.getLastLoginAt());
-        vo.setLastLoginIp(user.getLastLoginIp());
         return vo;
+    }
+
+    @Override
+    @Transactional
+    public AdminUserVO updateUser(String uid, UpdateProfileDTO dto) {
+        User user = userRepository.findByUidAndDeletedAtIsNull(uid)
+                .orElseThrow(() -> new BusinessException("用户不存在"));
+
+        if (dto.getNickname() != null) {
+            user.setNickname(dto.getNickname());
+        }
+        if (dto.getAvatar() != null) {
+            user.setAvatar(dto.getAvatar());
+        }
+        if (dto.getGender() != null) {
+            user.setGender(dto.getGender());
+        }
+        if (dto.getBirthday() != null) {
+            user.setBirthday(java.time.LocalDate.parse(dto.getBirthday()));
+        }
+        if (dto.getSignature() != null) {
+            user.setSignature(dto.getSignature());
+        }
+        user.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(user);
+
+        return getUserDetail(uid);
     }
 
     @Override
