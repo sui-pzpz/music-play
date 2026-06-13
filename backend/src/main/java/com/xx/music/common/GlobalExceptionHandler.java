@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public R<Void> handleValidation(MethodArgumentNotValidException e) {
@@ -24,6 +26,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public R<Void> handleIllegalArgument(IllegalArgumentException e) {
         return R.badRequest(e.getMessage());
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public R<Void> handleBusinessException(BusinessException e) {
+        log.warn("业务异常: {}", e.getMessage());
+        return R.fail(e.getCode(), e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

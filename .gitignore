@@ -23,3 +23,17 @@ assets
 *.njsproj
 *.sln
 *.sw?
+
+# Java/Maven build artifacts
+backend/target/
+*.class
+*.jar
+
+# Temp/debug files
+backend/GenBcrypt.java
+backend/build_errors*.txt
+backend/compile-output*.txt
+backend/run-output*.txt
+backend/fix-admin-pwd.sql
+backend/fix-pwd.sql
+backend/test/

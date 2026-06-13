@@ -14,6 +14,22 @@ public class PageResult<T> {
     private List<T> list;
     private Pagination pagination;
 
+    public List<T> getList() {
+        return this.list;
+    }
+
+    public void setList(List<T> list) {
+        this.list = list;
+    }
+
+    public Pagination getPagination() {
+        return this.pagination;
+    }
+
+    public void setPagination(Pagination pagination) {
+        this.pagination = pagination;
+    }
+
     public static <T> PageResult<T> of(List<T> list, long total, int page, int size) {
         PageResult<T> result = new PageResult<>();
         result.setList(list);
@@ -35,6 +51,38 @@ public class PageResult<T> {
             this.size = size;
             this.total = total;
             this.totalPages = (size > 0) ? (total + size - 1) / size : 0;
+        }
+
+        public int getPage() {
+            return this.page;
+        }
+
+        public void setPage(int page) {
+            this.page = page;
+        }
+
+        public int getSize() {
+            return this.size;
+        }
+
+        public void setSize(int size) {
+            this.size = size;
+        }
+
+        public long getTotal() {
+            return this.total;
+        }
+
+        public void setTotal(long total) {
+            this.total = total;
+        }
+
+        public long getTotalPages() {
+            return this.totalPages;
+        }
+
+        public void setTotalPages(long totalPages) {
+            this.totalPages = totalPages;
         }
     }
 }
