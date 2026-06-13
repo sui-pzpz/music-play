@@ -52,7 +52,7 @@ public class PlaylistServiceImpl implements PlaylistService {
         playlist.setSongCount(0);
         playlist.setPlayCount(0L);
         playlist.setCollectCount(0);
-        playlist.setTags(dto.getTags() != null ? dto.getTags() : "");
+        playlist.setTags(dto.getTags() != null ? String.join(",", dto.getTags()) : "");
         playlist.setIsOfficial(0);
         playlist.setStatus(1);
         playlist.setCreatedAt(LocalDateTime.now());
@@ -127,7 +127,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             playlist.setDescription(dto.getDescription());
         }
         if (dto.getTags() != null) {
-            playlist.setTags(dto.getTags());
+            playlist.setTags(String.join(",", dto.getTags()));
         }
         playlist.setUpdatedAt(LocalDateTime.now());
         playlistRepository.save(playlist);

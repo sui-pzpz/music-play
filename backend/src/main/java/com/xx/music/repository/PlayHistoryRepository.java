@@ -6,10 +6,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+
 @Repository
 public interface PlayHistoryRepository extends JpaRepository<PlayHistory, Long> {
 
     Page<PlayHistory> findByUidOrderByPlayedAtDesc(String uid, Pageable pageable);
 
     long countByUid(String uid);
+
+    long countByPlayedAtAfter(LocalDateTime playedAt);
 }

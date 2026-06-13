@@ -160,7 +160,7 @@ public class AdminSongServiceImpl implements AdminSongService {
         song.setSongId(songId);
         song.setName(dto.getName());
         song.setDuration(dto.getDuration());
-        song.setIsVip(dto.getIsVip() != null ? dto.getIsVip() : 0);
+        song.setIsVip(dto.getIsVip() != null ? (dto.getIsVip() ? 1 : 0) : 0);
         song.setHasStandard(dto.getHasStandard() != null ? dto.getHasStandard() : 1);
         song.setHasHigh(dto.getHasHigh() != null ? dto.getHasHigh() : 0);
         song.setHasLossless(dto.getHasLossless() != null ? dto.getHasLossless() : 0);
@@ -186,7 +186,7 @@ public class AdminSongServiceImpl implements AdminSongService {
         // 关联歌手
         if (dto.getArtistIds() != null && !dto.getArtistIds().isEmpty()) {
             for (int i = 0; i < dto.getArtistIds().size(); i++) {
-                Artist artist = artistRepository.findByArtistId(dto.getArtistIds().get(i)).orElse(null);
+                Artist artist = artistRepository.findByArtistId(dto.getArtistIds().get(i).getArtistId()).orElse(null);
                 if (artist != null) {
                     SongArtist songArtist = new SongArtist();
                     songArtist.setSongId(song.getId());
@@ -219,7 +219,7 @@ public class AdminSongServiceImpl implements AdminSongService {
             song.setDuration(dto.getDuration());
         }
         if (dto.getIsVip() != null) {
-            song.setIsVip(dto.getIsVip());
+            song.setIsVip(dto.getIsVip() ? 1 : 0);
         }
         if (dto.getHasStandard() != null) {
             song.setHasStandard(dto.getHasStandard());
@@ -258,7 +258,7 @@ public class AdminSongServiceImpl implements AdminSongService {
             songArtistRepository.deleteAll(existingArtists);
 
             for (int i = 0; i < dto.getArtistIds().size(); i++) {
-                Artist artist = artistRepository.findByArtistId(dto.getArtistIds().get(i)).orElse(null);
+                Artist artist = artistRepository.findByArtistId(dto.getArtistIds().get(i).getArtistId()).orElse(null);
                 if (artist != null) {
                     SongArtist songArtist = new SongArtist();
                     songArtist.setSongId(song.getId());
@@ -329,7 +329,7 @@ public class AdminSongServiceImpl implements AdminSongService {
         vo.setSongId(song.getSongId());
         vo.setName(song.getName());
         vo.setDuration(song.getDuration());
-        vo.setIsVip(song.getIsVip() != null && song.getIsVip() == 1);
+        vo.setIsVip(song.getIsVip());
         vo.setPlayCount(song.getPlayCount());
         vo.setStatus(song.getStatus());
         vo.setSource(song.getSource());

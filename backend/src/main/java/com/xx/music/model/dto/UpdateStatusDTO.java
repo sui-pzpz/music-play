@@ -10,4 +10,20 @@ public class UpdateStatusDTO {
     private Integer status;
 
     private String reason;
+
+    public Integer getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getReason() {
+        return this.reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
 }

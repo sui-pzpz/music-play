@@ -6,10 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface CollectionRepository extends JpaRepository<Collection, Long> {
 
-    Collection findByUidAndTargetTypeAndTargetId(String uid, String targetType, String targetId);
+    Optional<Collection> findByUidAndTargetTypeAndTargetId(String uid, String targetType, String targetId);
 
     boolean existsByUidAndTargetTypeAndTargetId(String uid, String targetType, String targetId);
 

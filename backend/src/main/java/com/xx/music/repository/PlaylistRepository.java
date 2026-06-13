@@ -4,12 +4,17 @@ import com.xx.music.model.entity.Playlist;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
+import java.util.Optional;
 
-    Playlist findByPlaylistIdAndDeletedAtIsNull(String playlistId);
+@Repository
+public interface PlaylistRepository extends JpaRepository<Playlist, Long>, JpaSpecificationExecutor<Playlist> {
+
+    Optional<Playlist> findByPlaylistIdAndDeletedAtIsNull(String playlistId);
+
+    long countByDeletedAtIsNull();
 
     Page<Playlist> findByCreatorUidAndDeletedAtIsNull(String creatorUid, Pageable pageable);
 
