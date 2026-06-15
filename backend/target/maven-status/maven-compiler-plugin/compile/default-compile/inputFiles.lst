@@ -17,6 +17,7 @@ D:\AI\m\backend\src\main\java\com\xx\music\service\UserService.java
 D:\AI\m\backend\src\main\java\com\xx\music\dto\SmsSendRequest.java
 D:\AI\m\backend\src\main\java\com\xx\music\controller\auth\AuthController.java
 D:\AI\m\backend\src\main\java\com\xx\music\dto\RegisterRequest.java
+D:\AI\m\backend\src\main\java\com\xx\music\controller\proxy\MusicProxyController.java
 D:\AI\m\backend\src\main\java\com\xx\music\controller\recommend\RecommendController.java
 D:\AI\m\backend\src\main\java\com\xx\music\common\PageResult.java
 D:\AI\m\backend\src\main\java\com\xx\music\config\CorsConfig.java

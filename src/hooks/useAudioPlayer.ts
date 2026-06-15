@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { usePlayerStore, setCancelableTimeout } from '@/store/playerStore'
 import { showToast } from '@/store/toastStore'
+import { getSongUrl, invalidateSongUrlCache } from '@/services/musicApi'
 
 // 播放版本号，用于忽略旧的 play() Promise reject
 let playVersion = 0
@@ -90,21 +91,55 @@ export function useAudioPlayer() {
     }
 
     const handleError = () => {
-      const { isLoading, isPlaying, audioUrl, _skipCount } = usePlayerStore.getState()
+      const { isLoading, isPlaying, audioUrl, _skipCount, currentSong } = usePlayerStore.getState()
       if (!audioUrl) return
       if (isLoading || isPlaying) {
-        const newSkipCount = _skipCount + 1
-        usePlayerStore.setState({ isLoading: false, isPlaying: false, _skipCount: newSkipCount })
-        if (newSkipCount >= 5) {
-          showToast('连续多首无法播放，已停止', 'warning')
-          usePlayerStore.setState({ _skipCount: 0 })
+        // 尝试重新获取播放链接（URL可能已过期）
+        if (currentSong && currentSong.platform !== 'local') {
+          usePlayerStore.setState({ isPlaying: false })
+          invalidateSongUrlCache(currentSong)
+          getSongUrl(currentSong).then((result) => {
+            const state = usePlayerStore.getState()
+            if (result && result.url && state.currentSong?.id === currentSong.id) {
+              audio.src = result.url
+              audio.load()
+              audio.play().then(() => {
+                playVersionRef.current++
+                usePlayerStore.setState({
+                  isPlaying: true,
+                  audioUrl: result.url,
+                  _skipCount: 0,
+                })
+              }).catch(() => {
+                // 重新获取的URL也无法播放，跳过
+                skipAfterError(audioUrl)
+              })
+            } else {
+              skipAfterError(audioUrl)
+            }
+          }).catch(() => {
+            skipAfterError(audioUrl)
+          })
           return
         }
-        showToast('音频加载失败，自动跳过', 'warning')
-        setCancelableTimeout(() => {
-          usePlayerStore.getState().nextSong()
-        }, 500)
+        skipAfterError(audioUrl)
       }
+    }
+
+    const skipAfterError = (audioUrl: string) => {
+      if (!audioUrl) return
+      const { _skipCount } = usePlayerStore.getState()
+      const newSkipCount = _skipCount + 1
+      usePlayerStore.setState({ isLoading: false, isPlaying: false, _skipCount: newSkipCount })
+      if (newSkipCount >= 5) {
+        showToast('连续多首无法播放，已停止', 'warning')
+        usePlayerStore.setState({ _skipCount: 0 })
+        return
+      }
+      showToast('音频加载失败，自动跳过', 'warning')
+      setCancelableTimeout(() => {
+        usePlayerStore.getState().nextSong()
+      }, 500)
     }
 
     audio.addEventListener('timeupdate', handleTimeUpdate)

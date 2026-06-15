@@ -630,7 +630,7 @@ export default function Home() {
             </div>
             {(favorites.length > 0 || history.length > 0) && (
               <button
-                onClick={() => { usePlayerStore.setState({ smartRecommend: [] }); loadSmartRecommend() }}
+                onClick={() => { loadSmartRecommend() }}
                 disabled={smartRecommendLoading}
                 className="flex items-center gap-1 text-xs text-emerald-400/70 hover:text-emerald-600 disabled:opacity-50"
               >

@@ -4,11 +4,21 @@ import type { SearchResult, PlayUrlData, LyricData, MusicPlatform, Song } from '
 const NETEASE_URL = 'https://api.bugpk.com/api/163_music'
 const QQ_URL = 'https://api.bugpk.com/api/qqmusic'
 
-// ========== 备用 API（Meting） ==========
+// ========== 备用 API（Meting 实例） ==========
 const METING_URL = 'https://music.3e0.cn'
-
-// ========== 第三备用 API（injahow.cn Meting） ==========
 const METING2_URL = 'https://api.injahow.cn/meting'
+// 第三备用 Meting 实例（自动选择可用节点）
+const METING3_URL = 'https://api.qqr.ink/meting'
+
+// 带超时的 fetch
+function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 10000): Promise<Response> {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
+  if (options.signal) {
+    options.signal.addEventListener('abort', () => controller.abort())
+  }
+  return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(timer))
+}
 
 // ========== API 缓存 ==========
 interface CacheEntry<T> {
@@ -474,6 +484,68 @@ function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+// ========== 第三备用 API（qqr.ink） ==========
+async function getNeteaseUrlMeting3(id: number): Promise<string | null> {
+  const cacheKey = `meting3_netease_url_${id}`
+  const cached = getCached<string>(cacheKey)
+  if (cached) return cached
+  try {
+    const params = new URLSearchParams({ server: 'netease', type: 'url', id: String(id) })
+    const res = await fetchWithTimeout(`${METING3_URL}/?${params}`, { redirect: 'follow' }, 8000)
+    const contentType = res.headers.get('content-type') || ''
+    if (contentType.includes('audio') || contentType.includes('mpeg')) {
+      const url = res.url
+      res.body?.cancel()
+      setCache(cacheKey, url)
+      return url
+    }
+    if (res.url && res.url.includes('.mp3')) {
+      setCache(cacheKey, res.url)
+      return res.url
+    }
+    return null
+  } catch { return null }
+}
+
+async function getQQUrlMeting3(mid: string): Promise<string | null> {
+  const cacheKey = `meting3_qq_url_${mid}`
+  const cached = getCached<string>(cacheKey)
+  if (cached) return cached
+  try {
+    const params = new URLSearchParams({ server: 'tencent', type: 'url', id: mid })
+    const res = await fetchWithTimeout(`${METING3_URL}/?${params}`, { redirect: 'follow' }, 8000)
+    const contentType = res.headers.get('content-type') || ''
+    if (contentType.includes('audio') || contentType.includes('mpeg')) {
+      const url = res.url
+      res.body?.cancel()
+      setCache(cacheKey, url)
+      return url
+    }
+    if (res.url && (res.url.includes('.mp3') || res.url.includes('.m4a'))) {
+      setCache(cacheKey, res.url)
+      return res.url
+    }
+    return null
+  } catch { return null }
+}
+
+// 清除某首歌的 URL 缓存，下次获取时会重新请求
+export function invalidateSongUrlCache(song: Song): void {
+  if (song.platform === 'qq' && song.mid) {
+    apiCache.delete(`qq_song_${song.mid}`)
+    apiCache.delete(`meting_qq_url_${song.mid}`)
+    apiCache.delete(`meting2_qq_url_${song.mid}`)
+    apiCache.delete(`meting3_qq_url_${song.mid}`)
+  } else if (song.platform === 'netease') {
+    for (const lv of NETEASE_LEVELS) {
+      apiCache.delete(`netease_url_${song.id}_${lv}`)
+    }
+    apiCache.delete(`meting_netease_url_${song.id}`)
+    apiCache.delete(`meting2_netease_url_${song.id}`)
+    apiCache.delete(`meting3_netease_url_${song.id}`)
+  }
+}
+
 // ========== 统一接口 ==========
 
 export async function searchSongs(keyword: string, platform: MusicPlatform, limit = 20, signal?: AbortSignal): Promise<SearchResult> {
@@ -495,48 +567,37 @@ export async function searchSongs(keyword: string, platform: MusicPlatform, limi
 // 网易云多音质等级，按优先级尝试
 const NETEASE_LEVELS = ['standard', 'higher', 'exhigh', 'lossless', 'hires']
 
-export async function getSongUrl(song: Song, level = 'standard'): Promise<{ url: string; lrc: string; cover: string } | null> {
-  if (song.platform === 'qq') {
-    if (!song.mid) return null
-    // QQ 音乐：主 API + 备用 API 并行竞速
-    try {
-      const results = await Promise.allSettled([
-        getQQSongUrl(song.mid),
-        getQQUrlMeting(song.mid),
-        getQQUrlMeting2(song.mid),
-      ])
-      // 优先使用主 API 结果
-      if (results[0].status === 'fulfilled' && results[0].value?.url) {
-        return results[0].value
-      }
-      // 主 API 失败，用备用结果
-      const fulfilled = results.filter((r): r is PromiseFulfilledResult<any> => r.status === 'fulfilled' && !!r.value)
-      for (let i = 1; i < fulfilled.length; i++) {
-        const val = fulfilled[i].value
-        const url = typeof val === 'string' ? val : val?.url
-        if (url) return { url, lrc: '', cover: song.picUrl || '' }
-      }
-    } catch { /* 全部失败 */ }
+// QQ 音乐获取播放链接（内部实现）
+async function getSongUrlQQ(song: Song): Promise<{ url: string; lrc: string; cover: string } | null> {
+  if (!song.mid) return null
+  try {
+    const results = await Promise.allSettled([
+      getQQSongUrl(song.mid),
+      getQQUrlMeting(song.mid),
+      getQQUrlMeting2(song.mid),
+      getQQUrlMeting3(song.mid),
+    ])
+    if (results[0].status === 'fulfilled' && results[0].value?.url) {
+      return results[0].value
+    }
+    const fulfilled = results.filter((r): r is PromiseFulfilledResult<any> => r.status === 'fulfilled' && !!r.value)
+    for (let i = 1; i < fulfilled.length; i++) {
+      const val = fulfilled[i].value
+      const url = typeof val === 'string' ? val : val?.url
+      if (url) return { url, lrc: '', cover: song.picUrl || '' }
+    }
+  } catch { /* 全部失败 */ }
+  return null
+}
 
-    // 主 API 和备用都失败，重试主 API 一次（无延迟）
-    try {
-      const result = await getQQSongUrl(song.mid)
-      if (result && result.url) return result
-    } catch { /* 重试也失败 */ }
-
-    return null
-  }
-
-  // 网易云：主 API 多音质并行 + 备用 API 并行竞速
+// 网易云获取播放链接（内部实现）
+async function getSongUrlNetease(song: Song, level: string): Promise<{ url: string; lrc: string; cover: string } | null> {
   const startIndex = NETEASE_LEVELS.indexOf(level)
   const levels = startIndex >= 0 ? NETEASE_LEVELS.slice(startIndex) : NETEASE_LEVELS
-
-  // 并行请求：主 API 前 3 个音质 + 两个备用 API
   try {
     const mainResults = await Promise.allSettled(
       levels.slice(0, 3).map((lv) => getNeteaseSongUrl(song.id, lv))
     )
-    // 取第一个成功的主 API 结果
     for (const r of mainResults) {
       if (r.status === 'fulfilled' && r.value?.url) {
         const lyricData = await getNeteaseLyric(song.id)
@@ -548,12 +609,11 @@ export async function getSongUrl(song: Song, level = 'standard'): Promise<{ url:
       }
     }
   } catch { /* 主 API 全部失败 */ }
-
-  // 主 API 失败，并行请求备用 API
   try {
     const backupResults = await Promise.allSettled([
       getNeteaseUrlMeting(song.id),
       getNeteaseUrlMeting2(song.id),
+      getNeteaseUrlMeting3(song.id),
     ])
     for (const r of backupResults) {
       if (r.status === 'fulfilled' && r.value) {
@@ -563,6 +623,25 @@ export async function getSongUrl(song: Song, level = 'standard'): Promise<{ url:
       }
     }
   } catch { /* 备用也失败 */ }
+  return null
+}
+
+export async function getSongUrl(song: Song, level = 'standard', retryCount = 0): Promise<{ url: string; lrc: string; cover: string } | null> {
+  const maxRetries = 1
+  const fetchFn = song.platform === 'qq'
+    ? () => getSongUrlQQ(song)
+    : () => getSongUrlNetease(song, level)
+
+  // 第一次尝试
+  const result = await fetchFn()
+  if (result && result.url) return result
+
+  // 失败后清除缓存并重试
+  if (retryCount < maxRetries) {
+    invalidateSongUrlCache(song)
+    await delay(800)
+    return getSongUrl(song, level, retryCount + 1)
+  }
 
   return null
 }

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import type { Song, LyricLine, Playlist } from '@/types'
-import { searchSongs, getSongUrl } from '@/services/musicApi'
+import { searchSongs, getSongUrl, invalidateSongUrlCache } from '@/services/musicApi'
 import type { MusicPlatform } from '@/types'
 import { parseLrc, findCurrentLine } from '@/utils/lrcParser'
 import { showToast } from '@/store/toastStore'
@@ -305,47 +305,9 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     }
   })(),
 
-  // 初始化时加载推荐热歌
+  // 初始化推荐（已移除硬编码歌曲，由用户主动搜索）
   initRecommend: async () => {
-    const { playlist } = get()
-    if (playlist.length > 0) return
-
-    const recommendSongs: { keyword: string; platform: MusicPlatform }[] = [
-      { keyword: '用背脊唱情歌 汤令山', platform: 'netease' },
-      { keyword: '去北极忘记你 汤令山', platform: 'netease' },
-      { keyword: '颜色 汤令山', platform: 'netease' },
-      { keyword: '紧急联络人 汤令山', platform: 'netease' },
-      { keyword: '等你的季节', platform: 'netease' },
-      { keyword: '仰望 杨丞琳', platform: 'netease' },
-      { keyword: '全世界陪我失眠 汪苏泷', platform: 'netease' },
-      { keyword: '半点心', platform: 'netease' },
-      { keyword: '如果呢 郑润泽', platform: 'netease' },
-      { keyword: '晴天 周杰伦', platform: 'qq' },
-      { keyword: '忘记', platform: 'netease' },
-      { keyword: '忽而今夏 汪苏泷', platform: 'netease' },
-      { keyword: '安河桥', platform: 'netease' },
-      { keyword: '海阔天空', platform: 'netease' },
-      { keyword: '玻璃', platform: 'netease' },
-    ]
-
-    try {
-      // 全部并行搜索，取每首搜索结果的第一首
-      const results = await Promise.allSettled(
-        recommendSongs.map((item) => searchSongs(item.keyword, item.platform, 1))
-      )
-      const allSongs: Song[] = []
-      for (const result of results) {
-        if (result.status === 'fulfilled' && result.value.songs.length > 0) {
-          const song = result.value.songs[0]
-          if (!song.duration || song.duration >= 60000) {
-            allSongs.push(song)
-          }
-        }
-      }
-      if (allSongs.length > 0 && get().playlist.length === 0) {
-        set({ playlist: allSongs })
-      }
-    } catch { /* ignore */ }
+    // 不再自动加载固定歌曲，等待用户搜索
   },
 
   setSearchKeyword: (keyword: string) => {
@@ -665,7 +627,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
   },
 
   loadSongData: async (_songId: number, loadId: number) => {
-    const { currentSong, playlist, currentSongIndex } = get()
+    const { currentSong } = get()
     const song = currentSong
     if (!song) return
 
@@ -681,89 +643,18 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       return
     }
 
-    try {
-      const result = await getSongUrl(song)
-      if (get()._loadId !== loadId) return
-      if (!result || !result.url) {
-        // 尝试在另一个平台搜索同一首歌
-        const altPlatform: MusicPlatform = song.platform === 'netease' ? 'qq' : 'netease'
-        try {
-          const altSearch = await searchSongs(`${song.name} ${song.artists}`, altPlatform, 3)
-          if (get()._loadId !== loadId) return
-          if (altSearch.songs.length > 0) {
-            const altSong = altSearch.songs[0]
-            const nameSimilar = altSong.name.includes(song.name) || song.name.includes(altSong.name)
-            if (nameSimilar) {
-              const altResult = await getSongUrl(altSong)
-              if (get()._loadId !== loadId) return
-              if (altResult && altResult.url) {
-                // 使用另一平台的完整歌曲信息（保留正确的平台和ID）
-                const { playlist: currentPlaylist, currentSongIndex: currentIndex } = get()
-                if (currentIndex >= 0 && currentIndex < currentPlaylist.length) {
-                  const newPlaylist = [...currentPlaylist]
-                  newPlaylist[currentIndex] = altSong
-                  set({ playlist: newPlaylist, currentSong: altSong })
-                }
-                const lyrics = parseLrc(altResult.lrc)
-                if (altResult.cover && !altSong.picUrl) {
-                  const { playlist: pl2, currentSongIndex: ci2 } = get()
-                  if (ci2 >= 0 && ci2 < pl2.length) {
-                    const updatedPlaylist = [...pl2]
-                    updatedPlaylist[ci2] = { ...altSong, picUrl: altResult.cover }
-                    set({ playlist: updatedPlaylist, currentSong: { ...altSong, picUrl: altResult.cover } })
-                  }
-                }
-                set({
-                  audioUrl: altResult.url,
-                  lyrics,
-                  currentLyricIndex: -1,
-                  isLoading: false,
-                  _skipCount: 0,
-                  _restoreSeekTarget: null,
-                })
-                return
-              }
-            }
-          }
-        } catch {
-          // 跨平台搜索也失败，继续正常跳过逻辑
-        }
-
-        const skipCount = get()._skipCount + 1
-        set({ isLoading: false, isPlaying: false, audioUrl: '', _skipCount: skipCount, _restoreSeekTarget: null })
-
-        // 连续跳过次数过多，停止自动跳过
-        if (skipCount >= MAX_CONSECUTIVE_SKIPS) {
-          showToast('连续多首无法播放，已停止', 'warning')
-          set({ _skipCount: 0 })
-          return
-        }
-
-        // 只在第一次跳过时提示，避免刷屏
-        if (skipCount <= 1) {
-          showToast(`无法播放「${song.name}」，自动跳过`, 'warning')
-        }
-        setCancelableTimeout(() => {
-          const { currentSongIndex } = get()
-          if (currentSongIndex >= 0) {
-            get().nextSong()
-          }
-        }, 500)
-        return
-      }
-
+    // 应用获取到的播放结果到 store
+    const applyResult = (result: { url: string; lrc: string; cover: string }, targetSong: Song) => {
       const lyrics = parseLrc(result.lrc)
-
-      // QQ 音乐返回封面图，更新到播放列表
-      if (result.cover && !song.picUrl) {
-        const { playlist: currentPlaylist, currentSongIndex: currentIndex } = get()
-        if (currentIndex >= 0 && currentIndex < currentPlaylist.length) {
-          const newPlaylist = [...currentPlaylist]
-          newPlaylist[currentIndex] = { ...song, picUrl: result.cover }
-          set({ playlist: newPlaylist, currentSong: { ...song, picUrl: result.cover } })
+      // 更新封面
+      if (result.cover && !targetSong.picUrl) {
+        const { playlist: pl, currentSongIndex: ci } = get()
+        if (ci >= 0 && ci < pl.length) {
+          const updated = [...pl]
+          updated[ci] = { ...targetSong, picUrl: result.cover }
+          set({ playlist: updated, currentSong: { ...targetSong, picUrl: result.cover } })
         }
       }
-
       set({
         audioUrl: result.url,
         lyrics,
@@ -772,7 +663,10 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
         _skipCount: 0,
         _restoreSeekTarget: null,
       })
-    } catch {
+    }
+
+    // 跳过当前歌曲
+    const skipSong = (reason: string) => {
       if (get()._loadId !== loadId) return
       const skipCount = get()._skipCount + 1
       set({ isLoading: false, isPlaying: false, audioUrl: '', _skipCount: skipCount, _restoreSeekTarget: null })
@@ -782,11 +676,67 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
         return
       }
       if (skipCount <= 1) {
-        showToast(`加载「${song.name}」失败，自动跳过`, 'error')
+        showToast(reason, 'warning')
       }
       setCancelableTimeout(() => {
-        get().nextSong()
+        const { currentSongIndex } = get()
+        if (currentSongIndex >= 0) get().nextSong()
       }, 500)
+    }
+
+    try {
+      // 第一次尝试获取播放链接
+      let result = await getSongUrl(song)
+      if (get()._loadId !== loadId) return
+
+      if (result && result.url) {
+        applyResult(result, song)
+        return
+      }
+
+      // 第一次失败，等待后清除缓存重试
+      await new Promise((r) => setTimeout(r, 1000))
+      if (get()._loadId !== loadId) return
+
+      invalidateSongUrlCache(song)
+      result = await getSongUrl(song)
+      if (get()._loadId !== loadId) return
+
+      if (result && result.url) {
+        applyResult(result, song)
+        return
+      }
+
+      // 两次都失败，尝试跨平台搜索
+      const altPlatform: MusicPlatform = song.platform === 'netease' ? 'qq' : 'netease'
+      try {
+        const altSearch = await searchSongs(`${song.name} ${song.artists}`, altPlatform, 3)
+        if (get()._loadId !== loadId) return
+        if (altSearch.songs.length > 0) {
+          const altSong = altSearch.songs[0]
+          const nameSimilar = altSong.name.includes(song.name) || song.name.includes(altSong.name)
+          if (nameSimilar) {
+            const altResult = await getSongUrl(altSong)
+            if (get()._loadId !== loadId) return
+            if (altResult && altResult.url) {
+              // 替换播放列表中的歌曲信息
+              const { playlist: pl, currentSongIndex: ci } = get()
+              if (ci >= 0 && ci < pl.length) {
+                const updated = [...pl]
+                updated[ci] = altSong
+                set({ playlist: updated, currentSong: altSong })
+              }
+              applyResult(altResult, altSong)
+              return
+            }
+          }
+        }
+      } catch { /* 跨平台搜索也失败 */ }
+
+      skipSong(`无法播放「${song.name}」，自动跳过`)
+    } catch {
+      if (get()._loadId !== loadId) return
+      skipSong(`加载「${song.name}」失败，自动跳过`)
     }
   },
 
@@ -1039,26 +989,14 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
   },
 
   playSmartRecommend: (index: number) => {
-    const { smartRecommend, playlist, currentSongIndex } = get()
+    const { smartRecommend } = get()
     if (index < 0 || index >= smartRecommend.length) return
-    const song = smartRecommend[index]
-    const existingIndex = playlist.findIndex((s) => s.id === song.id)
-    if (existingIndex >= 0) {
-      get().playSong(existingIndex)
-    } else {
-      let newPlaylist: Song[]
-      let adjustedIndex = currentSongIndex
-      if (playlist.length >= MAX_PLAYLIST_SIZE) {
-        const removeIndex = currentSongIndex === 0 ? 1 : 0
-        newPlaylist = [...playlist.slice(0, removeIndex), ...playlist.slice(removeIndex + 1), song]
-        adjustedIndex = currentSongIndex > removeIndex ? currentSongIndex - 1 : currentSongIndex
-      } else {
-        newPlaylist = [...playlist, song]
-      }
-      const newIndex = newPlaylist.length - 1
-      set({ playlist: newPlaylist, currentSongIndex: adjustedIndex })
-      get().playSong(newIndex)
-    }
+    // 将猜你喜欢列表设为播放列表，保留当前播放模式
+    set({
+      playlist: [...smartRecommend],
+      playNextQueue: [],
+    })
+    get().playSong(index)
   },
 
   setSleepTimer: (minutes: number) => {
