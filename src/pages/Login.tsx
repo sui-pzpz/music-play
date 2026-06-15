@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DecorationElements } from '@/components/DecorationElements'
+import { loginByPassword, loginBySms, sendSms, register, resetPassword } from '@/services/authService'
 
 type LoginMode = 'code' | 'password' | 'register' | 'reset'
 
@@ -19,18 +20,17 @@ function getPasswordStrength(pwd: string): { level: 'weak' | 'medium' | 'strong'
 export default function Login() {
   const [loginMode, setLoginMode] = useState<LoginMode>('code')
   const [phone, setPhone] = useState('')
-  const generateCode = () => String(Math.floor(100000 + Math.random() * 900000))
-  const [verificationCode, setVerificationCode] = useState(generateCode)
   const [account, setAccount] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isChecked, setIsChecked] = useState(false)
   const [focusedField, setFocusedField] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
-  // 密码错误锁定逻辑
-  const [failCount, setFailCount] = useState(0)
-  const [lockSeconds, setLockSeconds] = useState(0)
+  // 密码错误锁定逻辑（由后端控制，前端仅展示）
   const [lockMessage, setLockMessage] = useState('')
+  const [lockSeconds, setLockSeconds] = useState(0)
   const lockTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // 注册模式状态
@@ -44,7 +44,7 @@ export default function Login() {
   // 重置密码模式状态
   const [resetPhone, setResetPhone] = useState('')
   const [resetCode, setResetCode] = useState('')
-  const [resetPassword, setResetPassword] = useState('')
+  const [resetPasswordVal, setResetPasswordVal] = useState('')
   const [resetConfirmPassword, setResetConfirmPassword] = useState('')
   const [showResetPassword, setShowResetPassword] = useState(false)
   const [showResetConfirmPassword, setShowResetConfirmPassword] = useState(false)
@@ -52,10 +52,9 @@ export default function Login() {
   // 验证码交互状态
   const [codeInput, setCodeInput] = useState('')
   const [codeCountdown, setCodeCountdown] = useState(0)
-  const [codeExpireAt, setCodeExpireAt] = useState(0)
   const [codeVisible, setCodeVisible] = useState(false)
+  const [devCode, setDevCode] = useState('')
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const expireRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const navigate = useNavigate()
 
@@ -83,33 +82,6 @@ export default function Login() {
     }
   }, [codeCountdown > 0])
 
-  // 验证码过期检查
-  useEffect(() => {
-    if (codeExpireAt <= 0) return
-    expireRef.current = setInterval(() => {
-      if (Date.now() >= codeExpireAt) {
-        setCodeVisible(false)
-        setCodeExpireAt(0)
-        if (expireRef.current) {
-          clearInterval(expireRef.current)
-          expireRef.current = null
-        }
-      }
-    }, 1000)
-    return () => {
-      if (expireRef.current) clearInterval(expireRef.current)
-    }
-  }, [codeExpireAt > 0])
-
-  // 获取验证码
-  const handleGetCode = () => {
-    if (codeCountdown > 0) return
-    setVerificationCode(generateCode())
-    setCodeCountdown(60)
-    setCodeExpireAt(Date.now() + 5 * 60 * 1000)
-    setCodeVisible(true)
-  }
-
   // 锁定倒计时
   useEffect(() => {
     if (lockSeconds <= 0) {
@@ -123,7 +95,6 @@ export default function Login() {
       setLockSeconds(prev => {
         if (prev <= 1) {
           setLockMessage('')
-          setFailCount(0)
           return 0
         }
         return prev - 1
@@ -134,24 +105,184 @@ export default function Login() {
     }
   }, [lockSeconds > 0])
 
-  const handlePasswordLogin = useCallback(() => {
-    if (lockSeconds > 0) return
-    // 模拟密码错误（无真实接口，演示锁定逻辑）
-    const newFailCount = failCount + 1
-    setFailCount(newFailCount)
-
-    if (newFailCount >= 5 && newFailCount < 10) {
-      // 第5次错误，锁定1分钟
-      setLockSeconds(60)
-      setLockMessage('密码错误次数过多，请1分钟后重试')
-    } else if (newFailCount >= 10) {
-      // 第10次错误，锁定10分钟
-      setLockSeconds(600)
-      setLockMessage('密码错误次数过多，请10分钟后重试')
-    } else {
-      setLockMessage(`密码错误，还剩${5 - newFailCount}次机会`)
+  // 获取验证码
+  const handleGetCode = useCallback(async (targetPhone: string) => {
+    if (codeCountdown > 0) return
+    if (!targetPhone || !/^1[3-9]\d{9}$/.test(targetPhone)) {
+      setErrorMessage('请输入正确的手机号')
+      return
     }
-  }, [failCount, lockSeconds])
+    setErrorMessage('')
+    try {
+      const res = await sendSms(targetPhone)
+      if (res.code === 200) {
+        setCodeCountdown(60)
+        // 开发模式：后端返回验证码，展示通知条
+        if (res.data?.code) {
+          setDevCode(res.data.code)
+          setCodeVisible(true)
+        }
+      } else {
+        setErrorMessage(res.message || '发送验证码失败')
+      }
+    } catch {
+      setErrorMessage('网络错误，请稍后重试')
+    }
+  }, [codeCountdown])
+
+  // 密码登录
+  const handlePasswordLogin = useCallback(async () => {
+    if (lockSeconds > 0 || loading) return
+    if (!account.trim()) {
+      setErrorMessage('请输入账号')
+      return
+    }
+    if (!password) {
+      setErrorMessage('请输入密码')
+      return
+    }
+    if (!isChecked) {
+      setErrorMessage('请先同意服务协议和隐私政策')
+      return
+    }
+    setErrorMessage('')
+    setLoading(true)
+    try {
+      const res = await loginByPassword(account, password)
+      if (res.code === 200 && res.data) {
+        localStorage.setItem('auth_token', res.data.accessToken)
+        localStorage.setItem('refresh_token', res.data.refreshToken)
+        goToHome()
+      } else {
+        // 处理错误
+        if (res.code === 403) {
+          // 账号锁定
+          const match = res.message.match(/(\d+)秒后重试/)
+          if (match) {
+            setLockSeconds(parseInt(match[1]))
+          }
+          setLockMessage(res.message)
+        } else {
+          setErrorMessage(res.message || '登录失败')
+        }
+      }
+    } catch {
+      setErrorMessage('网络错误，请稍后重试')
+    } finally {
+      setLoading(false)
+    }
+  }, [account, password, lockSeconds, loading, isChecked])
+
+  // 验证码登录
+  const handleSmsLogin = useCallback(async () => {
+    if (loading) return
+    if (!phone || !/^1[3-9]\d{9}$/.test(phone)) {
+      setErrorMessage('请输入正确的手机号')
+      return
+    }
+    if (!codeInput) {
+      setErrorMessage('请输入验证码')
+      return
+    }
+    if (!isChecked) {
+      setErrorMessage('请先同意服务协议和隐私政策')
+      return
+    }
+    setErrorMessage('')
+    setLoading(true)
+    try {
+      const res = await loginBySms(phone, codeInput)
+      if (res.code === 200 && res.data) {
+        localStorage.setItem('auth_token', res.data.accessToken)
+        localStorage.setItem('refresh_token', res.data.refreshToken)
+        goToHome()
+      } else {
+        setErrorMessage(res.message || '登录失败')
+      }
+    } catch {
+      setErrorMessage('网络错误，请稍后重试')
+    } finally {
+      setLoading(false)
+    }
+  }, [phone, codeInput, loading, isChecked])
+
+  // 注册
+  const handleRegister = useCallback(async () => {
+    if (loading) return
+    if (!regPhone || !/^1[3-9]\d{9}$/.test(regPhone)) {
+      setErrorMessage('请输入正确的手机号')
+      return
+    }
+    if (!regCode) {
+      setErrorMessage('请输入验证码')
+      return
+    }
+    if (!regPassword || regPassword.length < 8) {
+      setErrorMessage('密码长度为8-16位')
+      return
+    }
+    if (regPassword !== regConfirmPassword) {
+      setErrorMessage('两次密码输入不一致')
+      return
+    }
+    if (!isChecked) {
+      setErrorMessage('请先同意服务协议和隐私政策')
+      return
+    }
+    setErrorMessage('')
+    setLoading(true)
+    try {
+      const res = await register(regPhone, regCode, regPassword)
+      if (res.code === 200) {
+        setErrorMessage('')
+        setLoginMode('code')
+        setPhone(regPhone)
+        setErrorMessage('注册成功，请登录')
+      } else {
+        setErrorMessage(res.message || '注册失败')
+      }
+    } catch {
+      setErrorMessage('网络错误，请稍后重试')
+    } finally {
+      setLoading(false)
+    }
+  }, [regPhone, regCode, regPassword, regConfirmPassword, loading, isChecked])
+
+  // 重置密码
+  const handleResetPassword = useCallback(async () => {
+    if (loading) return
+    if (!resetPhone || !/^1[3-9]\d{9}$/.test(resetPhone)) {
+      setErrorMessage('请输入正确的手机号')
+      return
+    }
+    if (!resetCode) {
+      setErrorMessage('请输入验证码')
+      return
+    }
+    if (!resetPasswordVal || resetPasswordVal.length < 8) {
+      setErrorMessage('密码长度为8-16位')
+      return
+    }
+    if (resetPasswordVal !== resetConfirmPassword) {
+      setErrorMessage('两次密码输入不一致')
+      return
+    }
+    setErrorMessage('')
+    setLoading(true)
+    try {
+      const res = await resetPassword(resetPhone, resetCode, resetPasswordVal)
+      if (res.code === 200) {
+        setLoginMode('password')
+        setErrorMessage('密码重置成功，请登录')
+      } else {
+        setErrorMessage(res.message || '重置密码失败')
+      }
+    } catch {
+      setErrorMessage('网络错误，请稍后重试')
+    } finally {
+      setLoading(false)
+    }
+  }, [resetPhone, resetCode, resetPasswordVal, resetConfirmPassword, loading])
 
   const formatLockTime = (seconds: number) => {
     const m = Math.floor(seconds / 60)
@@ -178,9 +309,9 @@ export default function Login() {
     return 'text-emerald-600'
   }
 
-  const PasswordStrengthIndicator = ({ password }: { password: string }) => {
-    const { level, label } = getPasswordStrength(password)
-    if (!password) return null
+  const PasswordStrengthIndicator = ({ password: pwd }: { password: string }) => {
+    const { level, label } = getPasswordStrength(pwd)
+    if (!pwd) return null
     return (
       <div className="flex items-center gap-2 mt-1.5">
         <div className="flex gap-1 flex-1">
@@ -193,19 +324,37 @@ export default function Login() {
     )
   }
 
+  // 主按钮点击
+  const handleMainAction = () => {
+    switch (loginMode) {
+      case 'code':
+        handleSmsLogin()
+        break
+      case 'password':
+        handlePasswordLogin()
+        break
+      case 'register':
+        handleRegister()
+        break
+      case 'reset':
+        handleResetPassword()
+        break
+    }
+  }
+
   return (
     <div
       className="relative min-h-screen w-full overflow-hidden"
       style={{ background: 'var(--theme-bg-gradient)' }}
     >
-      {/* 验证码通知条 */}
-      {codeVisible && (
+      {/* 验证码通知条（开发模式） */}
+      {codeVisible && devCode && (
         <div className="fixed top-0 left-0 right-0 z-50 animate-slide-down">
           <div className="mx-auto max-w-sm px-4 pt-3">
             <div className="flex items-center justify-between px-4 py-3 rounded-2xl bg-white/80 backdrop-blur-xl border border-emerald-200/50 shadow-lg shadow-emerald-500/10">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-emerald-600">验证码：</span>
-                <span className="text-xl font-bold tracking-[0.2em] text-emerald-700">{verificationCode}</span>
+                <span className="text-xl font-bold tracking-[0.2em] text-emerald-700">{devCode}</span>
               </div>
               <button
                 onClick={() => setCodeVisible(false)}
@@ -242,7 +391,7 @@ export default function Login() {
             {(loginMode === 'code' || loginMode === 'password') && (
               <div className="flex mb-6 bg-emerald-50/60 rounded-xl p-1">
                 <button
-                  onClick={() => setLoginMode('code')}
+                  onClick={() => { setLoginMode('code'); setErrorMessage('') }}
                   className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 ${
                     loginMode === 'code'
                       ? 'bg-white text-emerald-700 shadow-sm'
@@ -252,7 +401,7 @@ export default function Login() {
                   验证码登录
                 </button>
                 <button
-                  onClick={() => setLoginMode('password')}
+                  onClick={() => { setLoginMode('password'); setErrorMessage('') }}
                   className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 ${
                     loginMode === 'password'
                       ? 'bg-white text-emerald-700 shadow-sm'
@@ -277,6 +426,22 @@ export default function Login() {
               <div className="mb-6">
                 <h2 className="text-lg font-semibold text-emerald-700">重置密码</h2>
                 <p className="text-xs text-emerald-400 mt-1">通过手机验证码重置密码</p>
+              </div>
+            )}
+
+            {/* 错误提示 */}
+            {errorMessage && (
+              <div className={`mb-4 px-4 py-2.5 rounded-xl text-sm flex items-center gap-2 ${
+                errorMessage.includes('成功')
+                  ? 'bg-emerald-50 text-emerald-600 border border-emerald-200/60'
+                  : 'bg-amber-50 text-amber-600 border border-amber-200/60'
+              }`}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="shrink-0">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+                  <line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+                <span>{errorMessage}</span>
               </div>
             )}
 
@@ -334,7 +499,7 @@ export default function Login() {
                   </div>
 
                   <button
-                    onClick={handleGetCode}
+                    onClick={() => handleGetCode(phone)}
                     disabled={codeCountdown > 0}
                     className={`px-4 py-3 rounded-xl border text-sm font-medium whitespace-nowrap transition-all duration-300 ${
                       codeCountdown > 0
@@ -414,7 +579,7 @@ export default function Login() {
                 <div className="flex items-center justify-end mb-4 text-sm">
                   <span
                     className="text-emerald-500 cursor-pointer hover:text-emerald-700 transition-colors"
-                    onClick={() => setLoginMode('reset')}
+                    onClick={() => { setLoginMode('reset'); setErrorMessage('') }}
                   >
                     忘记密码？
                   </span>
@@ -463,7 +628,7 @@ export default function Login() {
                     />
                   </div>
                   <button
-                    onClick={handleGetCode}
+                    onClick={() => handleGetCode(regPhone)}
                     disabled={codeCountdown > 0}
                     className={`px-4 py-3 rounded-xl border text-sm font-medium whitespace-nowrap transition-all duration-300 ${
                       codeCountdown > 0
@@ -582,7 +747,7 @@ export default function Login() {
                     />
                   </div>
                   <button
-                    onClick={handleGetCode}
+                    onClick={() => handleGetCode(resetPhone)}
                     disabled={codeCountdown > 0}
                     className={`px-4 py-3 rounded-xl border text-sm font-medium whitespace-nowrap transition-all duration-300 ${
                       codeCountdown > 0
@@ -598,8 +763,8 @@ export default function Login() {
                 <div className="mb-1 relative">
                   <input
                     type={showResetPassword ? 'text' : 'password'}
-                    value={resetPassword}
-                    onChange={(e) => setResetPassword(e.target.value)}
+                    value={resetPasswordVal}
+                    onChange={(e) => setResetPasswordVal(e.target.value)}
                     onFocus={() => setFocusedField('resetPassword')}
                     onBlur={() => setFocusedField(null)}
                     placeholder="请设置新密码（8-16位）"
@@ -623,7 +788,7 @@ export default function Login() {
                     )}
                   </button>
                 </div>
-                <PasswordStrengthIndicator password={resetPassword} />
+                <PasswordStrengthIndicator password={resetPasswordVal} />
 
                 {/* 确认新密码 */}
                 <div className="mt-4 mb-1 relative">
@@ -654,7 +819,7 @@ export default function Login() {
                     )}
                   </button>
                 </div>
-                {resetConfirmPassword && resetConfirmPassword !== resetPassword && (
+                {resetConfirmPassword && resetConfirmPassword !== resetPasswordVal && (
                   <p className="text-xs text-red-500 mt-1">两次密码输入不一致</p>
                 )}
               </>
@@ -686,21 +851,23 @@ export default function Login() {
 
             {/* 主按钮 */}
             <button
-              onClick={loginMode === 'password' ? handlePasswordLogin : undefined}
-              disabled={loginMode === 'password' && lockSeconds > 0}
+              onClick={handleMainAction}
+              disabled={loading || (loginMode === 'password' && lockSeconds > 0)}
               className={`w-full py-3.5 rounded-xl text-white font-medium text-base transition-all duration-300 ${
-                loginMode === 'password' && lockSeconds > 0
+                loading || (loginMode === 'password' && lockSeconds > 0)
                   ? 'bg-emerald-300 cursor-not-allowed'
                   : 'bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 hover:shadow-lg hover:shadow-emerald-500/25 active:scale-[0.98]'
               }`}
             >
-              {loginMode === 'password' && lockSeconds > 0
-                ? `锁定中 ${formatLockTime(lockSeconds)}`
-                : loginMode === 'register'
-                  ? '注册'
-                  : loginMode === 'reset'
-                    ? '重置密码'
-                    : '登录'}
+              {loading
+                ? '处理中...'
+                : loginMode === 'password' && lockSeconds > 0
+                  ? `锁定中 ${formatLockTime(lockSeconds)}`
+                  : loginMode === 'register'
+                    ? '注册'
+                    : loginMode === 'reset'
+                      ? '重置密码'
+                      : '登录'}
             </button>
 
             {/* 底部链接 */}
@@ -708,7 +875,7 @@ export default function Login() {
               <div className="mt-4 text-center">
                 <span
                   className="text-sm text-emerald-500 cursor-pointer hover:text-emerald-700 transition-colors"
-                  onClick={() => setLoginMode('code')}
+                  onClick={() => { setLoginMode('code'); setErrorMessage('') }}
                 >
                   已有账号？去登录
                 </span>
@@ -718,7 +885,7 @@ export default function Login() {
               <div className="mt-4 text-center">
                 <span
                   className="text-sm text-emerald-500 cursor-pointer hover:text-emerald-700 transition-colors"
-                  onClick={() => setLoginMode('password')}
+                  onClick={() => { setLoginMode('password'); setErrorMessage('') }}
                 >
                   返回登录
                 </span>
@@ -743,7 +910,7 @@ export default function Login() {
             <div className="mt-4 text-center">
               <span
                 className="text-sm text-emerald-500 cursor-pointer hover:text-emerald-700 transition-colors"
-                onClick={() => setLoginMode('register')}
+                onClick={() => { setLoginMode('register'); setErrorMessage('') }}
               >
                 还没有账号？立即注册
               </span>

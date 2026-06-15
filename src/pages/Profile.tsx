@@ -34,6 +34,7 @@ export default function Profile() {
 
   const handleLogout = () => {
     localStorage.removeItem('auth_token')
+    localStorage.removeItem('refresh_token')
     navigate('/login', { replace: true })
   }
 

@@ -26,6 +26,12 @@ public class GlobalExceptionHandler {
         return R.badRequest(e.getMessage());
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public R<Void> handleIllegalState(IllegalStateException e) {
+        return R.forbidden(e.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public R<Void> handleException(Exception e) {
