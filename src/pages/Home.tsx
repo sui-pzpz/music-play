@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { usePlayerStore } from '@/store/playerStore'
-import { SongRow, CollapsibleSection } from '@/components/PlaylistPanel'
-import { Search, Loader2, Sparkles, Compass, RefreshCw, History, X, Music, FolderOpen, ImageIcon, TrendingUp, SlidersHorizontal } from 'lucide-react'
+import { SongRow } from '@/components/PlaylistPanel'
+import { Search, Loader2, Sparkles, Compass, RefreshCw, History, X, Music, FolderOpen, ImageIcon, TrendingUp } from 'lucide-react'
 import { clsx } from 'clsx'
 import type { MusicPlatform } from '@/types'
 
@@ -87,7 +87,6 @@ export default function Home() {
 
   const [inputValue, setInputValue] = useState('')
   const [searchInputFocused, setSearchInputFocused] = useState(false)
-  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({})
   const [showOcrResult, setShowOcrResult] = useState(false)
   const [sortBy, setSortBy] = useState<SortOption>('relevance')
   const [platformFilter, setPlatformFilter] = useState<PlatformFilter>('all')
@@ -173,9 +172,8 @@ export default function Home() {
   const searchKeyword = usePlayerStore((s) => s.searchKeyword)
 
   const isFav = (songId: number, p?: string) => favorites.some((s) => s.id === songId && (p === undefined || s.platform === p))
-  const toggleSection = (key: string) => setCollapsedSections((prev) => ({ ...prev, [key]: !prev[key] }))
 
-  const highlightMatch = (text: string, query: string, isDark: boolean) => {
+  const highlightMatch = (text: string, query: string) => {
     if (!query) return text
     const lowerText = text.toLowerCase()
     const lowerQuery = query.toLowerCase()
@@ -288,10 +286,10 @@ export default function Home() {
                       <Search className="h-3.5 w-3.5 flex-shrink-0 text-emerald-400/60" />
                       <div className="min-w-0 flex-1">
                         <span className={clsx('text-sm', darkMode ? 'text-zinc-200' : 'text-emerald-900')}>
-                          {highlightMatch(s.name, inputValue.trim(), darkMode)}
+                          {highlightMatch(s.name, inputValue.trim())}
                         </span>
                         <span className={clsx('text-xs ml-1.5', darkMode ? 'text-zinc-500' : 'text-emerald-400/70')}>
-                          {highlightMatch(s.artist, inputValue.trim(), darkMode)}
+                          {highlightMatch(s.artist, inputValue.trim())}
                         </span>
                       </div>
                     </button>

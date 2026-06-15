@@ -1,6 +1,5 @@
 import { usePlayerStore } from '@/store/playerStore'
 import { Loader2 } from 'lucide-react'
-import { clsx } from 'clsx'
 
 export default function SongInfo() {
   const currentSong = usePlayerStore((s) => s.currentSong)

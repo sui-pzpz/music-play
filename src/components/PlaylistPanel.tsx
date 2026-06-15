@@ -18,9 +18,9 @@ function SongSkeleton() {
 }
 
 // 歌曲行组件
-export function SongRow({ song, index, isActive, onPlay, onFavorite, onAddNext, onDelete, onAddToPlaylist, isFav, compact, platformTag, darkMode }: {
+export function SongRow({ song, isActive, onPlay, onFavorite, onAddNext, onDelete, onAddToPlaylist, isFav, compact, platformTag, darkMode }: {
   song: { id: number; mid?: string; name: string; artists: string; picUrl?: string; platform: string }
-  index: number
+  index?: number
   isActive?: boolean
   onPlay: () => void
   onFavorite?: () => void
@@ -264,12 +264,11 @@ export function AddToPlaylistDropdown({ song, onClose }: {
 }
 
 // 歌单 Tab 内容
-export function PlaylistTabContent({ savedPlaylists, createPlaylist, deletePlaylist, renamePlaylist, addSongToPlaylist, removeSongFromPlaylist, playPlaylist, addPlaylistToPlayNext, addToPlayNext, toggleFavorite, isFav, darkMode }: {
+export function PlaylistTabContent({ savedPlaylists, createPlaylist, deletePlaylist, renamePlaylist, removeSongFromPlaylist, playPlaylist, addPlaylistToPlayNext, addToPlayNext, toggleFavorite, isFav, darkMode }: {
   savedPlaylists: import('@/types').Playlist[]
   createPlaylist: (name: string) => string
   deletePlaylist: (id: string) => void
   renamePlaylist: (id: string, name: string) => void
-  addSongToPlaylist: (playlistId: string, song: import('@/types').Song) => void
   removeSongFromPlaylist: (playlistId: string, songId: number, songPlatform: string) => void
   playPlaylist: (id: string) => void
   addPlaylistToPlayNext: (id: string) => void
@@ -509,7 +508,6 @@ export default function PlaylistPanel() {
   const createPlaylist = usePlayerStore((s) => s.createPlaylist)
   const deletePlaylist = usePlayerStore((s) => s.deletePlaylist)
   const renamePlaylist = usePlayerStore((s) => s.renamePlaylist)
-  const addSongToPlaylist = usePlayerStore((s) => s.addSongToPlaylist)
   const removeSongFromPlaylist = usePlayerStore((s) => s.removeSongFromPlaylist)
   const playPlaylist = usePlayerStore((s) => s.playPlaylist)
   const addPlaylistToPlayNext = usePlayerStore((s) => s.addPlaylistToPlayNext)
@@ -1080,7 +1078,6 @@ export default function PlaylistPanel() {
             createPlaylist={createPlaylist}
             deletePlaylist={deletePlaylist}
             renamePlaylist={renamePlaylist}
-            addSongToPlaylist={addSongToPlaylist}
             removeSongFromPlaylist={removeSongFromPlaylist}
             playPlaylist={playPlaylist}
             addPlaylistToPlayNext={addPlaylistToPlayNext}

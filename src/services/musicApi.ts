@@ -61,17 +61,6 @@ function qqSongId(mid: string): number {
   return Math.abs(hash)
 }
 
-// 为非数字 ID 生成稳定的哈希 ID（用于 Meting 等返回字符串 ID 的 API）
-function hashSongId(id: string): number {
-  let hash = 0
-  for (let i = 0; i < id.length; i++) {
-    const char = id.charCodeAt(i)
-    hash = ((hash << 5) - hash) + char
-    hash |= 0
-  }
-  return Math.abs(hash)
-}
-
 // ========== 网易云音乐（主 API） ==========
 
 async function searchNetease(keyword: string, limit = 20, offset = 0, signal?: AbortSignal): Promise<SearchResult> {
@@ -98,6 +87,7 @@ async function searchNetease(keyword: string, limit = 20, offset = 0, signal?: A
     songs: json.data.songs.map((s: any) => ({
       id: s.id,
       name: s.name,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       artists: Array.isArray(s.artists) ? s.artists.map((a: any) => a.name || a).join('/') : String(s.artists || ''),
       album: s.album || '',
       picUrl: s.picUrl || '',
@@ -463,22 +453,6 @@ async function getQQUrlMeting2(mid: string): Promise<string | null> {
   }
 }
 
-async function getNeteaseLyricMeting2(id: number): Promise<string> {
-  try {
-    const params = new URLSearchParams({
-      server: 'netease',
-      type: 'lrc',
-      id: String(id),
-    })
-
-    const res = await fetch(`${METING2_URL}/?${params}`)
-    if (!res.ok) return ''
-    return await res.text()
-  } catch {
-    return ''
-  }
-}
-
 // 延迟工具函数
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
@@ -580,10 +554,9 @@ async function getSongUrlQQ(song: Song): Promise<{ url: string; lrc: string; cov
     if (results[0].status === 'fulfilled' && results[0].value?.url) {
       return results[0].value
     }
-    const fulfilled = results.filter((r): r is PromiseFulfilledResult<any> => r.status === 'fulfilled' && !!r.value)
+    const fulfilled = results.filter((r): r is PromiseFulfilledResult<string | null> => r.status === 'fulfilled' && !!r.value)
     for (let i = 1; i < fulfilled.length; i++) {
-      const val = fulfilled[i].value
-      const url = typeof val === 'string' ? val : val?.url
+      const url = fulfilled[i].value
       if (url) return { url, lrc: '', cover: song.picUrl || '' }
     }
   } catch { /* 全部失败 */ }

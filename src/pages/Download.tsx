@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePlayerStore } from '@/store/playerStore'
 import { clsx } from 'clsx'
-import { ArrowLeft, Download as DownloadIcon, CheckCircle, Trash2, Music } from 'lucide-react'
+import { ArrowLeft, Download as DownloadIcon, CheckCircle, Trash2 } from 'lucide-react'
 
 const placeholderDownloads = [
   { id: 1, name: '晴天', artist: '周杰伦', size: '8.2MB', status: 'done' as const },

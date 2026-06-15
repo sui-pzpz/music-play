@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePlayerStore } from '@/store/playerStore'
 import { SongRow, PlaylistTabContent } from '@/components/PlaylistPanel'
-import { Heart, ListMusic, Clock, Trash2, User, Music, LogOut } from 'lucide-react'
+import { Heart, ListMusic, Clock, Trash2, User, LogOut } from 'lucide-react'
 import { clsx } from 'clsx'
 
 type ProfileTab = 'favorites' | 'playlists' | 'history'
@@ -19,7 +19,6 @@ export default function Profile() {
   const createPlaylist = usePlayerStore((s) => s.createPlaylist)
   const deletePlaylist = usePlayerStore((s) => s.deletePlaylist)
   const renamePlaylist = usePlayerStore((s) => s.renamePlaylist)
-  const addSongToPlaylist = usePlayerStore((s) => s.addSongToPlaylist)
   const removeSongFromPlaylist = usePlayerStore((s) => s.removeSongFromPlaylist)
   const playPlaylist = usePlayerStore((s) => s.playPlaylist)
   const addPlaylistToPlayNext = usePlayerStore((s) => s.addPlaylistToPlayNext)
@@ -193,7 +192,6 @@ export default function Profile() {
             createPlaylist={createPlaylist}
             deletePlaylist={deletePlaylist}
             renamePlaylist={renamePlaylist}
-            addSongToPlaylist={addSongToPlaylist}
             removeSongFromPlaylist={removeSongFromPlaylist}
             playPlaylist={playPlaylist}
             addPlaylistToPlayNext={addPlaylistToPlayNext}

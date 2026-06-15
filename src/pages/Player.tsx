@@ -8,7 +8,7 @@ import VolumeControl from '@/components/VolumeControl'
 import { useAudioPlayer } from '@/hooks/useAudioPlayer'
 import { useSwipe } from '@/hooks/useSwipe'
 import { usePlayerStore } from '@/store/playerStore'
-import { Heart, Music, Disc, AlignLeft, ChevronDown } from 'lucide-react'
+import { Heart, Disc, AlignLeft, ChevronDown } from 'lucide-react'
 import { clsx } from 'clsx'
 
 function HeartBurst({ x, y, onDone }: { x: number; y: number; onDone: () => void }) {
@@ -39,7 +39,6 @@ export default function Player({ onMinimize }: PlayerProps) {
   const isFavorite = usePlayerStore((s) => s.isFavorite)
   const displayMode = usePlayerStore((s) => s.displayMode)
   const setDisplayMode = usePlayerStore((s) => s.setDisplayMode)
-  const togglePlay = usePlayerStore((s) => s.togglePlay)
   const nextSong = usePlayerStore((s) => s.nextSong)
   const prevSong = usePlayerStore((s) => s.prevSong)
   const darkMode = usePlayerStore((s) => s.darkMode)

@@ -91,7 +91,7 @@ export function useAudioPlayer() {
     }
 
     const handleError = () => {
-      const { isLoading, isPlaying, audioUrl, _skipCount, currentSong } = usePlayerStore.getState()
+      const { isLoading, isPlaying, audioUrl, currentSong } = usePlayerStore.getState()
       if (!audioUrl) return
       if (isLoading || isPlaying) {
         // 尝试重新获取播放链接（URL可能已过期）
@@ -104,7 +104,7 @@ export function useAudioPlayer() {
               audio.src = result.url
               audio.load()
               audio.play().then(() => {
-                playVersionRef.current++
+                playVersion++
                 usePlayerStore.setState({
                   isPlaying: true,
                   audioUrl: result.url,
@@ -136,7 +136,9 @@ export function useAudioPlayer() {
         usePlayerStore.setState({ _skipCount: 0 })
         return
       }
-      showToast('音频加载失败，自动跳过', 'warning')
+      if (newSkipCount === 1) {
+        showToast('音频加载失败，自动跳过', 'warning')
+      }
       setCancelableTimeout(() => {
         usePlayerStore.getState().nextSong()
       }, 500)

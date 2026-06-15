@@ -6,7 +6,6 @@ import { clsx } from 'clsx'
 export default function VolumeControl() {
   const volume = usePlayerStore((s) => s.volume)
   const setVolume = usePlayerStore((s) => s.setVolume)
-  const toggleMute = usePlayerStore((s) => s.toggleMute)
   const darkMode = usePlayerStore((s) => s.darkMode)
   const [showSlider, setShowSlider] = useState(false)
   const sliderRef = useRef<HTMLDivElement>(null)

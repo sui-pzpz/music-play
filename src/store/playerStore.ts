@@ -595,17 +595,17 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       const { currentSong, _skipCount } = get()
       const skipCount = _skipCount + 1
       set({ _skipCount: skipCount })
-      if (currentSong) {
-        showToast(`「${currentSong.name}」为试听版，自动跳过`, 'warning')
-      }
-      if (skipCount < MAX_CONSECUTIVE_SKIPS) {
-        setCancelableTimeout(() => {
-          get().nextSong()
-        }, 500)
-      } else {
+      if (skipCount >= MAX_CONSECUTIVE_SKIPS) {
         showToast('连续多首无法播放，已停止', 'warning')
         set({ _skipCount: 0 })
+        return
       }
+      if (skipCount === 1 && currentSong) {
+        showToast(`「${currentSong.name}」为试听版，自动跳过`, 'warning')
+      }
+      setCancelableTimeout(() => {
+        get().nextSong()
+      }, 500)
     }
   },
 
@@ -675,7 +675,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
         set({ _skipCount: 0 })
         return
       }
-      if (skipCount <= 1) {
+      if (skipCount === 1) {
         showToast(reason, 'warning')
       }
       setCancelableTimeout(() => {

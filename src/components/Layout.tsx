@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useLocation, Outlet, useNavigate } from 'react-router-dom'
-import { Home, User, Settings, Moon, Sun, Music, Play, Pause, SkipForward, SkipBack, Heart, ArrowLeft, Music2 } from 'lucide-react'
+import { Home, User, Settings, Moon, Sun, Music, Play, Pause, SkipForward, SkipBack, Heart, ArrowLeft } from 'lucide-react'
 import { usePlayerStore } from '@/store/playerStore'
 import { useAudioPlayer } from '@/hooks/useAudioPlayer'
 import { useEntranceAnimation, useInteractionFeedback } from '@/hooks/useGsapAnimations'
@@ -140,7 +140,6 @@ function GlobalMiniPlayer({ onExpand }: { onExpand: () => void }) {
 export default function Layout() {
   const location = useLocation()
   const darkMode = usePlayerStore((s) => s.darkMode)
-  const currentSong = usePlayerStore((s) => s.currentSong)
   const [showPlayer, setShowPlayer] = useState(false)
 
   // 始终挂载 useAudioPlayer，确保音频控制不随 Player 组件卸载而失效

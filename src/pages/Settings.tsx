@@ -4,11 +4,8 @@ import { usePlayerStore } from '@/store/playerStore'
 import { showToast } from '@/store/toastStore'
 import { clsx } from 'clsx'
 import {
-  Sun,
-  Moon,
   Palette,
   Music,
-  Volume2,
   Search,
   Database,
   Download,
@@ -16,8 +13,7 @@ import {
   Info,
   Github,
   ChevronRight,
-  Trash2,
-  RotateCcw
+  Trash2
 } from 'lucide-react'
 import { Decorations } from '@/components/Decorations'
 
@@ -54,15 +50,11 @@ function ToggleSwitch({ enabled, onChange }: { enabled: boolean; onChange: (valu
 function SelectDropdown<T>({ 
   value, 
   options, 
-  onChange,
-  labelKey = 'label',
-  valueKey = 'value'
+  onChange
 }: { 
   value: T 
   options: SettingOption[] 
   onChange: (value: T) => void
-  labelKey?: string
-  valueKey?: string
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const darkMode = usePlayerStore((s) => s.darkMode)

@@ -206,6 +206,7 @@
     --theme-emerald-800: #5b21b6;
     --theme-emerald-900: #4c1d95;
   }
+}
 
 @layer components {
   .glass-card {
@@ -338,7 +339,6 @@
       0 8px 32px var(--theme-glass-hover-shadow);
     border-color: var(--theme-glass-hover-border);
   }
-}
 }
 
 @layer utilities {
