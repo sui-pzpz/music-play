@@ -36,7 +36,7 @@ export default function Player({ onMinimize }: PlayerProps) {
   const { seek, setSeeking } = useAudioPlayer()
   const currentSong = usePlayerStore((s) => s.currentSong)
   const toggleFavorite = usePlayerStore((s) => s.toggleFavorite)
-  const isFavorite = usePlayerStore((s) => s.isFavorite)
+  const favorites = usePlayerStore((s) => s.favorites)
   const displayMode = usePlayerStore((s) => s.displayMode)
   const setDisplayMode = usePlayerStore((s) => s.setDisplayMode)
   const nextSong = usePlayerStore((s) => s.nextSong)
@@ -45,7 +45,7 @@ export default function Player({ onMinimize }: PlayerProps) {
   const [bursts, setBursts] = useState<{ id: number; type: 'heart' | 'plus'; x: number; y: number }[]>([])
   const swipeHandlers = useSwipe({ onSwipeLeft: nextSong, onSwipeRight: prevSong })
 
-  const isCurrentFav = currentSong ? isFavorite(currentSong.id, currentSong.platform) : false
+  const isCurrentFav = currentSong ? favorites.some((s) => s.id === currentSong.id && s.platform === currentSong.platform) : false
 
   const handleFavoriteClick = useCallback((e: React.MouseEvent) => {
     if (!currentSong) return

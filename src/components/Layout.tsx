@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useLocation, Outlet, useNavigate } from 'react-router-dom'
-import { Home, User, Settings, Moon, Sun, Music, Play, Pause, SkipForward, SkipBack, Heart, ArrowLeft } from 'lucide-react'
+import { Home, User, Settings, Moon, Sun, Music, Play, Pause, SkipForward, SkipBack, Heart, ArrowLeft, ListMusic, X, ChevronUp, ChevronDown, PlayCircle } from 'lucide-react'
 import { usePlayerStore } from '@/store/playerStore'
 import { useAudioPlayer } from '@/hooks/useAudioPlayer'
 import { useEntranceAnimation, useInteractionFeedback } from '@/hooks/useGsapAnimations'
@@ -72,68 +72,165 @@ function GlobalMiniPlayer({ onExpand }: { onExpand: () => void }) {
   const nextSong = usePlayerStore((s) => s.nextSong)
   const prevSong = usePlayerStore((s) => s.prevSong)
   const darkMode = usePlayerStore((s) => s.darkMode)
-  const isFavorite = usePlayerStore((s) => s.isFavorite)
+  const favorites = usePlayerStore((s) => s.favorites)
   const toggleFavorite = usePlayerStore((s) => s.toggleFavorite)
+  const playNextQueue = usePlayerStore((s) => s.playNextQueue)
+  const addFavoritesToPlayNext = usePlayerStore((s) => s.addFavoritesToPlayNext)
+  const clearPlayNext = usePlayerStore((s) => s.clearPlayNext)
+  const [showQueue, setShowQueue] = useState(false)
 
   if (!currentSong) return null
 
-  const isFav = isFavorite(currentSong.id, currentSong.platform)
+  const isFav = favorites.some((s) => s.id === currentSong.id && s.platform === currentSong.platform)
 
   return (
-    <div
-      onClick={onExpand}
-      className={clsx(
-        'flex items-center gap-3 px-3 py-2 border-t cursor-pointer transition-all',
-        darkMode ? 'bg-[#16213e]/95 border-[#2a2a4a] hover:bg-[#1e2a4a]' : 'bg-cream-100/90 border-emerald-200/40 hover:bg-emerald-50/50',
-        'backdrop-blur-md'
+    <>
+      {/* 待播队列下拉面板 */}
+      {showQueue && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setShowQueue(false)} />
+          <div className={clsx(
+            'fixed bottom-14 left-2 right-2 z-50 rounded-xl shadow-2xl max-h-64 overflow-hidden flex flex-col',
+            darkMode ? 'bg-[#1e1e36] border border-[#3a3a5a]' : 'bg-white border border-emerald-100'
+          )}>
+            <div className={clsx(
+              'flex items-center justify-between px-3 py-2 border-b shrink-0',
+              darkMode ? 'border-[#3a3a5a]' : 'border-emerald-100'
+            )}>
+              <span className={clsx('text-xs font-medium', darkMode ? 'text-zinc-300' : 'text-emerald-700')}>待播队列</span>
+              <div className="flex items-center gap-2">
+                {favorites.length > 0 && (
+                  <button
+                    onClick={addFavoritesToPlayNext}
+                    className="flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700"
+                    title="将收藏歌曲全部加入待播"
+                  >
+                    <Heart className="h-3 w-3" fill="currentColor" />
+                    收藏全加入
+                  </button>
+                )}
+                {playNextQueue.length > 0 && (
+                  <button onClick={clearPlayNext} className="text-xs text-zinc-400 hover:text-red-500">清空</button>
+                )}
+              </div>
+            </div>
+            {playNextQueue.length === 0 ? (
+              <p className="py-4 text-center text-xs text-zinc-400">队列为空，在搜索结果中添加</p>
+            ) : (
+              <div className="overflow-y-auto scrollbar-thin space-y-1 p-1">
+                {playNextQueue.map((song, i) => (
+                  <div
+                    key={`${song.id}-${i}`}
+                    className={clsx('flex items-center gap-1 rounded-lg px-2 py-1.5 text-left group', darkMode ? 'hover:bg-[#2a2a4a]' : 'hover:bg-emerald-50')}
+                  >
+                    <button
+                      onClick={() => usePlayerStore.getState().playFromQueue(i)}
+                      className="flex-shrink-0 text-zinc-300 hover:text-emerald-600 transition-colors"
+                      title="播放此歌"
+                    >
+                      <PlayCircle className="h-4 w-4" />
+                    </button>
+                    <div className="min-w-0 flex-1">
+                      <p className={clsx('truncate text-xs font-medium', darkMode ? 'text-zinc-300' : 'text-zinc-700')}>{song.name}</p>
+                      <p className="truncate text-[10px] text-zinc-400">{song.artists}</p>
+                    </div>
+                    <button
+                      onClick={() => usePlayerStore.getState().moveInPlayNext(i, i - 1)}
+                      disabled={i === 0}
+                      className="flex-shrink-0 text-zinc-300 hover:text-emerald-600 transition-colors disabled:invisible"
+                      title="上移"
+                    >
+                      <ChevronUp className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => usePlayerStore.getState().moveInPlayNext(i, i + 1)}
+                      disabled={i === playNextQueue.length - 1}
+                      className="flex-shrink-0 text-zinc-300 hover:text-emerald-600 transition-colors disabled:invisible"
+                      title="下移"
+                    >
+                      <ChevronDown className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => usePlayerStore.getState().removeFromPlayNext(i)}
+                      className="flex-shrink-0 text-zinc-300 hover:text-red-500 transition-colors"
+                      title="移除"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
       )}
-    >
-      {/* 封面 */}
-      {currentSong.picUrl ? (
-        <img src={currentSong.picUrl} alt="" className="h-10 w-10 rounded-lg object-cover shadow-sm flex-shrink-0" />
-      ) : (
-        <div className={clsx('h-10 w-10 rounded-lg flex items-center justify-center flex-shrink-0', darkMode ? 'bg-[#2a2a4a]' : 'bg-emerald-50')}>
-          <Music className={clsx('h-5 w-5', darkMode ? 'text-emerald-400' : 'text-emerald-500')} />
+
+      <div
+        onClick={onExpand}
+        className={clsx(
+          'flex items-center gap-3 px-3 py-2 border-t cursor-pointer transition-all',
+          darkMode ? 'bg-[#16213e]/95 border-[#2a2a4a] hover:bg-[#1e2a4a]' : 'bg-cream-100/90 border-emerald-200/40 hover:bg-emerald-50/50',
+          'backdrop-blur-md'
+        )}
+      >
+        {/* 封面 */}
+        {currentSong.picUrl ? (
+          <img src={currentSong.picUrl} alt="" className="h-10 w-10 rounded-lg object-cover shadow-sm flex-shrink-0" />
+        ) : (
+          <div className={clsx('h-10 w-10 rounded-lg flex items-center justify-center flex-shrink-0', darkMode ? 'bg-[#2a2a4a]' : 'bg-emerald-50')}>
+            <Music className={clsx('h-5 w-5', darkMode ? 'text-emerald-400' : 'text-emerald-500')} />
+          </div>
+        )}
+
+        {/* 歌曲信息 */}
+        <div className="min-w-0 flex-1">
+          <p className={clsx('text-sm font-medium truncate', darkMode ? 'text-white' : 'text-emerald-900')}>{currentSong.name}</p>
+          <p className="text-xs text-emerald-400/70 truncate">{currentSong.artists}</p>
         </div>
-      )}
 
-      {/* 歌曲信息 */}
-      <div className="min-w-0 flex-1">
-        <p className={clsx('text-sm font-medium truncate', darkMode ? 'text-white' : 'text-emerald-900')}>{currentSong.name}</p>
-        <p className="text-xs text-emerald-400/70 truncate">{currentSong.artists}</p>
+        {/* 控制按钮 */}
+        <div className="flex items-center gap-0.5 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+          <button
+            onClick={() => toggleFavorite(currentSong)}
+            className={clsx('p-1.5 rounded-full transition-all', isFav ? 'text-red-500' : 'text-emerald-300 hover:text-red-400')}
+          >
+            <Heart className="h-4 w-4" fill={isFav ? 'currentColor' : 'none'} />
+          </button>
+          <button
+            onClick={prevSong}
+            className={clsx('p-1.5 rounded-full transition-all', darkMode ? 'text-zinc-400 hover:text-emerald-400' : 'text-emerald-400/70 hover:text-emerald-600')}
+          >
+            <SkipBack className="h-4 w-4" fill="currentColor" />
+          </button>
+          <button
+            onClick={togglePlay}
+            className={clsx(
+              'p-2 rounded-full transition-all',
+              darkMode ? 'bg-[#2a2a4a] text-emerald-400 hover:bg-[#3a3a5a]' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
+            )}
+          >
+            {isPlaying ? <Pause className="h-4 w-4" fill="currentColor" /> : <Play className="h-4 w-4" fill="currentColor" />}
+          </button>
+          <button
+            onClick={nextSong}
+            className={clsx('p-1.5 rounded-full transition-all', darkMode ? 'text-zinc-400 hover:text-emerald-400' : 'text-emerald-400/70 hover:text-emerald-600')}
+          >
+            <SkipForward className="h-4 w-4" fill="currentColor" />
+          </button>
+          <button
+            onClick={() => setShowQueue(!showQueue)}
+            className={clsx('relative p-1.5 rounded-full transition-all', darkMode ? 'text-zinc-400 hover:text-emerald-400' : 'text-emerald-400/70 hover:text-emerald-600')}
+          >
+            <ListMusic className="h-4 w-4" />
+            {playNextQueue.length > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-600 text-[9px] font-bold text-white">
+                {playNextQueue.length}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
-
-      {/* 控制按钮 */}
-      <div className="flex items-center gap-0.5 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
-        <button
-          onClick={() => toggleFavorite(currentSong)}
-          className={clsx('p-1.5 rounded-full transition-all', isFav ? 'text-red-500' : 'text-emerald-300 hover:text-red-400')}
-        >
-          <Heart className="h-4 w-4" fill={isFav ? 'currentColor' : 'none'} />
-        </button>
-        <button
-          onClick={prevSong}
-          className={clsx('p-1.5 rounded-full transition-all', darkMode ? 'text-zinc-400 hover:text-emerald-400' : 'text-emerald-400/70 hover:text-emerald-600')}
-        >
-          <SkipBack className="h-4 w-4" fill="currentColor" />
-        </button>
-        <button
-          onClick={togglePlay}
-          className={clsx(
-            'p-2 rounded-full transition-all',
-            darkMode ? 'bg-[#2a2a4a] text-emerald-400 hover:bg-[#3a3a5a]' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
-          )}
-        >
-          {isPlaying ? <Pause className="h-4 w-4" fill="currentColor" /> : <Play className="h-4 w-4" fill="currentColor" />}
-        </button>
-        <button
-          onClick={nextSong}
-          className={clsx('p-1.5 rounded-full transition-all', darkMode ? 'text-zinc-400 hover:text-emerald-400' : 'text-emerald-400/70 hover:text-emerald-600')}
-        >
-          <SkipForward className="h-4 w-4" fill="currentColor" />
-        </button>
-      </div>
-    </div>
+    </>
   )
 }
 
