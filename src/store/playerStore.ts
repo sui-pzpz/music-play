@@ -596,7 +596,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       const skipCount = _skipCount + 1
       set({ _skipCount: skipCount })
       if (skipCount >= MAX_CONSECUTIVE_SKIPS) {
-        showToast('连续多首无法播放，已停止', 'warning')
         set({ _skipCount: 0 })
         return
       }
@@ -671,12 +670,8 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       const skipCount = get()._skipCount + 1
       set({ isLoading: false, isPlaying: false, audioUrl: '', _skipCount: skipCount, _restoreSeekTarget: null })
       if (skipCount >= MAX_CONSECUTIVE_SKIPS) {
-        showToast('连续多首无法播放，已停止', 'warning')
         set({ _skipCount: 0 })
         return
-      }
-      if (skipCount === 1) {
-        showToast(reason, 'warning')
       }
       setCancelableTimeout(() => {
         const { currentSongIndex } = get()
@@ -765,7 +760,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     set((state) => ({
       playNextQueue: [...state.playNextQueue, song],
     }))
-    showToast(`已添加「${song.name}」到待播队列`, 'success')
   },
 
   removeFromPlayNext: (index: number) => {
@@ -819,10 +813,8 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     let newFavorites: Song[]
     if (exists >= 0) {
       newFavorites = favorites.filter((_, i) => i !== exists)
-      showToast('已取消收藏', 'info')
     } else {
       newFavorites = [...favorites, song]
-      showToast(`已收藏「${song.name}」`, 'success')
     }
     set({ favorites: newFavorites })
     saveFavorites(newFavorites)
@@ -837,7 +829,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     const existingIds = new Set(playNextQueue.map((s) => s.id))
     const toAdd = favorites.filter((s) => !existingIds.has(s.id))
     set({ playNextQueue: [...playNextQueue, ...toAdd] })
-    showToast(`已添加 ${toAdd.length} 首收藏到待播队列`, 'success')
   },
 
   playFavorite: (index: number) => {
@@ -866,7 +857,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
   addLocalSongs: (files: File[]) => {
     const audioFiles = files.filter((f) => f.type.startsWith('audio/'))
     if (audioFiles.length === 0) {
-      showToast('未选择有效的音频文件', 'warning')
       return
     }
     const { playlist } = get()
@@ -884,7 +874,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       }
     })
     set({ playlist: [...playlist, ...localSongs] })
-    showToast(`已添加 ${audioFiles.length} 首本地音乐`, 'success')
   },
 
   playHistory: (index: number) => {
@@ -913,7 +902,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
   clearHistory: () => {
     set({ history: [] })
     saveHistory([])
-    showToast('已清空播放历史', 'info')
   },
 
   loadSmartRecommend: async () => {
@@ -1002,11 +990,9 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
   setSleepTimer: (minutes: number) => {
     if (minutes <= 0) {
       set({ sleepTimer: 0, sleepTimerTotal: 0 })
-      showToast('已取消定时停止', 'info')
     } else {
       const seconds = minutes * 60
       set({ sleepTimer: seconds, sleepTimerTotal: seconds })
-      showToast(`将在 ${minutes} 分钟后自动暂停`, 'info')
     }
   },
 
@@ -1018,7 +1004,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       set({ sleepTimer: 0, sleepTimerTotal: 0 })
       if (isPlaying) {
         get().togglePlay()
-        showToast('定时结束，已暂停播放', 'info')
       }
     } else {
       set({ sleepTimer: newTimer })
@@ -1079,7 +1064,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
         setCancelableTimeout(() => set({ ocrProgress: '' }), 3000)
       } else {
         set({ ocrSongs: foundSongs, ocrLoading: false, ocrProgress: '' })
-        showToast(`识别到 ${foundSongs.length} 首歌曲`, 'success')
       }
     } catch {
       set({ ocrLoading: false, ocrProgress: '识别出错，请重试' })
@@ -1091,7 +1075,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     const { ocrSongs, playNextQueue } = get()
     if (ocrSongs.length === 0) return
     set({ playNextQueue: [...playNextQueue, ...ocrSongs], ocrSongs: [] })
-    showToast(`已添加 ${ocrSongs.length} 首歌到待播队列`, 'success')
   },
 
   clearOcrSongs: () => {
@@ -1304,7 +1287,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     const playlists = [...get().savedPlaylists, newPlaylist]
     set({ savedPlaylists: playlists })
     saveSavedPlaylists(playlists)
-    showToast(`已创建歌单「${name}」`, 'success')
     return id
   },
 
@@ -1312,7 +1294,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     const playlists = get().savedPlaylists.filter((p) => p.id !== id)
     set({ savedPlaylists: playlists })
     saveSavedPlaylists(playlists)
-    showToast('已删除歌单', 'info')
   },
 
   renamePlaylist: (id: string, name: string) => {
@@ -1363,7 +1344,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     const existingIds = new Set(playNextQueue.map((s) => `${s.id}:${s.platform}`))
     const toAdd = playlist.songs.filter((s) => !existingIds.has(`${s.id}:${s.platform}`))
     set({ playNextQueue: [...playNextQueue, ...toAdd] })
-    showToast(`已添加 ${toAdd.length} 首歌到待播队列`, 'success')
   },
 
   restoreProgress: () => {

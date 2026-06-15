@@ -241,12 +241,10 @@ export default function Settings() {
 
   const handleClearFavorites = () => {
     favorites.forEach((song) => toggleFavorite(song))
-    showToast('已清空收藏', 'info')
   }
 
   const handleClearAllPlaylists = () => {
     savedPlaylists.forEach((playlist) => deletePlaylist(playlist.id))
-    showToast('已清空所有歌单', 'info')
   }
 
   const handleExportData = () => {

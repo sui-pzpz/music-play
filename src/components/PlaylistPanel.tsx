@@ -33,9 +33,17 @@ export function SongRow({ song, isActive, onPlay, onFavorite, onAddNext, onDelet
   darkMode?: boolean
 }) {
   const [showPlaylistDropdown, setShowPlaylistDropdown] = useState(false)
+  const [added, setAdded] = useState(false)
   const size = compact ? 'h-9 w-9' : 'h-10 w-10'
   const iconSize = compact ? 'h-3.5 w-3.5' : 'h-4 w-4'
   const py = compact ? 'py-2' : 'py-3'
+
+  const handleAddNext = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onAddNext?.()
+    setAdded(true)
+    setTimeout(() => setAdded(false), 1000)
+  }
 
   return (
     <div
@@ -87,14 +95,17 @@ export function SongRow({ song, isActive, onPlay, onFavorite, onAddNext, onDelet
       )}
       {onAddNext && (
         <button
-          onClick={(e) => { e.stopPropagation(); onAddNext() }}
+          onClick={handleAddNext}
           className={clsx(
-            'flex-shrink-0 rounded-full p-1.5 text-zinc-300 md:opacity-0 transition-all md:group-hover:opacity-100',
-            darkMode ? 'hover:text-emerald-400 hover:bg-[#3a2a1a]' : 'hover:text-emerald-600 hover:bg-emerald-50'
+            'flex-shrink-0 rounded-full p-1.5 transition-all duration-300',
+            added
+              ? 'text-emerald-500 scale-110'
+              : 'text-zinc-300 md:opacity-0 md:group-hover:opacity-100',
+            !added && (darkMode ? 'hover:text-emerald-400 hover:bg-[#3a2a1a]' : 'hover:text-emerald-600 hover:bg-emerald-50')
           )}
           title="下一首播放"
         >
-          <Plus className="h-4 w-4" />
+          {added ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
         </button>
       )}
       {onAddToPlaylist && (

@@ -1,7 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Music, User, Clock, Heart, Plus } from 'lucide-react'
+import { ArrowLeft, Music, User, Clock, Heart, Plus, Check } from 'lucide-react'
 import { usePlayerStore } from '@/store/playerStore'
 import { clsx } from 'clsx'
+import { useState, useCallback } from 'react'
 
 export default function PlaylistDetail() {
   const { id } = useParams()
@@ -10,6 +11,13 @@ export default function PlaylistDetail() {
   const addToPlayNext = usePlayerStore((s) => s.addToPlayNext)
   const toggleFavorite = usePlayerStore((s) => s.toggleFavorite)
   const favorites = usePlayerStore((s) => s.favorites)
+  const [addedSongId, setAddedSongId] = useState<number | null>(null)
+
+  const handleAddToPlayNext = useCallback((song: typeof playlist.songs[0]) => {
+    addToPlayNext(song)
+    setAddedSongId(song.id)
+    setTimeout(() => setAddedSongId(null), 1000)
+  }, [addToPlayNext])
 
   const playlist = {
     id: id || '1',
@@ -115,13 +123,15 @@ export default function PlaylistDetail() {
                 <Heart className={clsx('h-4 w-4', isFav(song.id) && 'fill-current')} />
               </button>
               <button
-                onClick={() => addToPlayNext(song)}
+                onClick={() => handleAddToPlayNext(song)}
                 className={clsx(
-                  'p-1.5 rounded-full transition-all',
-                  darkMode ? 'text-zinc-500 hover:text-emerald-400' : 'text-emerald-400/70 hover:text-emerald-600'
+                  'p-1.5 rounded-full transition-all duration-300',
+                  addedSongId === song.id
+                    ? 'text-emerald-500 scale-110'
+                    : darkMode ? 'text-zinc-500 hover:text-emerald-400' : 'text-emerald-400/70 hover:text-emerald-600'
                 )}
               >
-                <Plus className="h-4 w-4" />
+                {addedSongId === song.id ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
               </button>
               <span className={clsx('text-xs w-12 text-right', darkMode ? 'text-zinc-500' : 'text-emerald-400/70')}>
                 <Clock className="h-3 w-3 inline mr-0.5" />

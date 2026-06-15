@@ -132,7 +132,6 @@ export function useAudioPlayer() {
       const newSkipCount = _skipCount + 1
       usePlayerStore.setState({ isLoading: false, isPlaying: false, _skipCount: newSkipCount })
       if (newSkipCount >= 5) {
-        showToast('连续多首无法播放，已停止', 'warning')
         usePlayerStore.setState({ _skipCount: 0 })
         return
       }
