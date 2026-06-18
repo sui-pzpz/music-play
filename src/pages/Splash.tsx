@@ -76,7 +76,6 @@ export default function Splash() {
       setCountdown(prev => {
         if (prev <= 1) {
           clearInterval(timer)
-          goToLogin()
           return 0
         }
         return prev - 1
@@ -84,7 +83,13 @@ export default function Splash() {
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [goToLogin])
+  }, [])
+
+  useEffect(() => {
+    if (countdown === 0 && !hasNavigated.current) {
+      goToLogin()
+    }
+  }, [countdown, goToLogin])
 
   return (
     <div
